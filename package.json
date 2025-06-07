@@ -1,5 +1,6 @@
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
   "name": "auto-project",
   "private": true,
   "version": "0.0.0",
@@ -19,6 +20,8 @@
     "vite": "^6.3.5"
   }
 =======
+=======
+>>>>>>> 4a8ceeff3ffc555c3b18c306f5cbeb4ca2a9aa89
     "name": "auto-project",
     "private": true,
     "version": "0.0.0",
@@ -31,7 +34,8 @@
     "dependencies": {
         "@tailwindcss/vite": "^4.1.8",
         "tailwindcss": "^4.1.8",
-        "vue": "^3.5.13"
+        "vue": "^3.5.13",
+        "vuedraggable": "^4.1.0"
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^5.2.3",
@@ -40,5 +44,8 @@
         "prettier-plugin-tailwindcss": "^0.6.12",
         "vite": "^6.3.5"
     }
+<<<<<<< HEAD
 >>>>>>> development
+=======
+>>>>>>> 4a8ceeff3ffc555c3b18c306f5cbeb4ca2a9aa89
 }
