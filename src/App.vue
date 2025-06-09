@@ -1,30 +1,59 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import { useBattleStore } from '@/stores/battleStore'
+
+const battle = useBattleStore();
+
+function resetStats() {
+  battle.updateHp('player', 100)
+  battle.updateMp('player', 50)
+  battle.updateshield('player', 0)
+
+  battle.updateHp('monster', 100)
+  battle.updateMp('monster', 50)
+  battle.updateshield('monster', 0)
+}
 </script>
 
+
+
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="p-6 space-y-4">
+    <h1 class="text-2xl font-bold">Battle Test</h1>
+
+    <div class="grid grid-cols-2 gap-6">
+      <div>
+        <h2 class="text-xl font-semibold">Player</h2>
+        <p>HP: {{ battle.player }}</p>
+        <p>MP: {{ battle.player.mp }}</p>
+        <p>Shield: {{ battle.player.shield }}</p>
+        <div class="space-x-2 mt-2">
+          <button @click="battle.attack('player', 10)">Attack Player</button>
+          <button @click="battle.consumMp('player', 5)">Use MP</button>
+          <button @click="battle.shieldAttack('player', 3)">Shield Attack</button>
+          <button @click="battle.shieldPlus('player', 5)">Shield Plus</button>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-xl font-semibold">Monster</h2>
+        <p>HP: {{ battle.monster }}</p>
+        <p>MP: {{ battle.monster.mp }}</p>
+        <p>Shield: {{ battle.monster.shield }}</p>
+        <div class="space-x-2 mt-2">
+          <button @click="battle.attack('monster', 12)">Attack Monster</button>
+          <button @click="battle.consumMp('monster', 6)">Use MP</button>
+          <button @click="battle.shieldAttack('monster', 4)">Shield Attack</button>
+          <button @click="battle.shieldPlus('monster', 7)">Shield Plus</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <button @click="resetStats" class="bg-gray-200 px-4 py-2 rounded">Reset</button>
+    </div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+
+
+
