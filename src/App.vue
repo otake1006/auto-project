@@ -3,5 +3,5 @@ import BoardSection from './components/BoardSection.vue'
 </script>
 
 <template>
-  <BoardSection />
+    <BoardSection />
 </template>
