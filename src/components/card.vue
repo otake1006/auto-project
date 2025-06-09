@@ -1,5 +1,6 @@
 <script setup>
 	defineProps({
+    id: Number,
 		name: String,
 		energy: String,
     ability: String,
