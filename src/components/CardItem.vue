@@ -1,12 +1,21 @@
-<script setup>
-    defineProps(['card']);
-</script>
-
+<!-- components/Card.vue -->
 <template>
-    <div class="w-full border border-gray-300 rounded-xl p-4 shadow-sm bg-white">
-        <img :src="imgSrc" class="logo" alt="Vite logo" />
-        <h2 class="text-lg font-semibold mb-2">{{ card.name }}</h2>
-        <p class="text-sm text-gray-700 mb-1">エナジー: {{ card.energy }}</p>
-        <p class="text-sm text-gray-500">{{ card.ability }}</p>
+    <div class="p-4 py-1 flex flex-row gap-6">
+        <!-- <CardItem :card="card" /> -->
+            <Card :cards="card"></Card>
+            <!-- <DescriptionCard :card="card" /> -->
     </div>
 </template>
+
+<script setup>
+import CardItem from './CardItem.vue'
+import Card from './card.vue'
+import DescriptionCard from './DescriptionCard.vue'
+
+defineProps({
+    card: {
+        type: Object,
+        required: true
+    }
+})
+</script>

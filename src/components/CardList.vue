@@ -6,7 +6,7 @@
 
 <script setup>
 import { defineProps } from 'vue'
-import Card from './Card.vue'
+import Card from './CardItem.vue'
 
 const props = defineProps({
   cards: Array
