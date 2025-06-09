@@ -4,7 +4,7 @@
     <span>{{ icon }}</span>
     <div class="relative w-24 h-3 bg-gray-300 rounded">
       <div
-        class="absolute h-3 rounded"
+        class="absolute h-3 rounded transition-all duration-500"
         :class="barColor"
         :style="{ width: `${(value / max) * 100}%` }"
       ></div>
