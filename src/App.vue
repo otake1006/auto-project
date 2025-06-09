@@ -3,7 +3,7 @@
   <div class="flex justify-around items-center min-h-screen bg-black text-white">
     <CharacterStatus
       icon="/assets/player.png"
-      :hp="20"
+      :hp="5"
       :maxHp="20"
       :energy="6"
       :maxEnergy="6"
