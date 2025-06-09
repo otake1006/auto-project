@@ -6,6 +6,7 @@ export const cards = [
     effect: '次のターン開始時 エナジー2回復',
     ability: 'ダメージ 2',
     type: 'skill', // 👈 分類（スキル）
+    imgSrc: '/hitokage.png',
     status: '休憩',
     description: {
       genre: '特兼',
