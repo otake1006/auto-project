@@ -1,11 +1,6 @@
 <script setup>
 	defineProps({
-    id: Number,
-		name: String,
-		energy: String,
-    ability: String,
-    type: String,
-    imgSrc: String,
+    cards: Object
 		
 	});
   const tailwindScript = document.createElement('script')
@@ -14,23 +9,23 @@
 </script>
 
 <template>
-  <div class="w-60 border border-gray-300 rounded-xl p-4 shadow-sm bg-white">
+  <div class="w-full min-w-40 border border-gray-300 rounded-xl p-4 shadow-sm bg-white ">
     
     <div class="flex items-center justify-between">
 
       <img
-       :src="imgSrc"
+       :src="cards.imgSrc"
        class="w-12 h-12 object-contain"
       />
 
     <!-- 中央：名前と能力 -->
      <div class="flex flex-col items-center text-center">
-       <h2 class="text-lg font-semibold">{{name}}</h2>
-       <p class="text-sm text-gray-500">{{ability}}</p>
+       <h2 class="text-lg font-semibold">{{cards.name}}</h2>
+       <p class="text-sm text-gray-500">{{cards.ability}}</p>
      </div>
 
      <!-- 右：数値 -->
-     <div class="text-sm text-gray-700 font-bold">{{energy}}</div>
+     <div class="text-sm text-gray-700 font-bold">{{cards.energy}}</div>
      
    </div>
   </div>
