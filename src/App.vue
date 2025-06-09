@@ -52,6 +52,9 @@ function resetStats() {
             <button @click="resetStats" class="bg-gray-200 px-4 py-2 rounded">Reset</button>
         </div>
     </div>
+
+    <CharacterStatus icon="/assets/player.png" :hp="20" :maxHp="20" :energy="6" :maxEnergy="6" />
+    <CharacterStatus icon="/assets/monster.png" :hp="15" :maxHp="20" :energy="3" :maxEnergy="6" />
 </template>
 
 <script setup lang="ts">
