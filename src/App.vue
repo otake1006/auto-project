@@ -54,6 +54,6 @@ function resetStats() {
         </div>
     </div>
 
-    <CharacterStatus icon="/assets/player.png" :hp="20" :maxHp="20" :energy="6" :maxEnergy="6" />
-    <CharacterStatus icon="/assets/monster.png" :hp="15" :maxHp="20" :energy="3" :maxEnergy="6" />
+    <CharacterStatus icon="/assets/player.png" :hp="battle.player.hp" :maxHp="battle.player.maxhp" :energy="battle.player.mp" :maxEnergy="battle.player.maxmp" />
+    <CharacterStatus icon="/assets/monster.png" :hp="battle.monster.hp" :maxHp="battle.monster.maxhp" :energy="battle.monster.mp" :maxEnergy="battle.monster.maxmp" />
 </template>

@@ -8,6 +8,8 @@ export const useBattleStore = defineStore('battle', () => {
     hp: 100,
     mp: 50,
     shield: 0,
+    maxhp:100,
+    maxmp:50,
   })
 
   const monster = reactive({
@@ -15,6 +17,8 @@ export const useBattleStore = defineStore('battle', () => {
     hp: 100,
     mp: 50,
     shield: 0,
+    maxhp: 100,
+    maxmp: 50,
   })
 
   function updateHp(entity, value) {
