@@ -1,26 +1,34 @@
 <script setup>
-import card3 from "./card3.vue"
-defineProps({
+import { ref } from 'vue'
+import card3 from "./card.vue"
+import draggable from "vuedraggable"
+const props = defineProps({
   parentList: Object
 })
+const parent = ref(props.parentList)
 </script>
 
 <template>
- <draggable v-model="parentList" group="parent" item-key="id">
+<div class="w-140 h-120 border border-gray-300 rounded-xl p-4 shadow-sm bg-white space-y-15">
+ <draggable v-model="parent" group="parent" item-key="id">
    <template #item="{ element }">
-     <div class="parent-box">
+     <div class="parent-box flex">
+        <p>親:{{ element.name }}</p>
        <draggable
          v-model="element.children"
          group="child"
          item-key="id"
+         class="flex"
         >
          <template #item="{ element: child}">
             <div class="child-box">
-              <Card :name="child.name">
+              <card3 :cards="child"></card3>
                 </div>
          </template>
         </draggable>
-       </div>
+        </div>
      </template>
     </draggable>
+    </div>
+
   </template>
