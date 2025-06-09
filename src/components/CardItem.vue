@@ -3,7 +3,7 @@
     <div class="p-4 py-1 flex flex-row gap-6">
         <!-- <CardItem :card="card" /> -->
             <Card :cards="card"></Card>
-            <!-- <DescriptionCard :card="card" /> -->
+            <DescriptionCard :card="card" />
     </div>
 </template>
 

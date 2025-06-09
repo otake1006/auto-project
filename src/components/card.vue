@@ -9,7 +9,7 @@
 </script>
 
 <template>
-  <div class="w-48 h-32 border border-gray-300 rounded-xl p-4 shadow-sm bg-white ">
+  <div class="flex-shrink-0 w-48 h-20 border border-gray-300 rounded-xl p-4 shadow-sm bg-white ">
     
     <div class="flex items-center justify-between">
 

@@ -11,7 +11,7 @@ export const cards = [
     description: {
       genre: '特兼',
       energy: 1,
-      effect: '次のターン開始時、エナジーを2回復する',
+      effect: '次のターン開始時、エナジーを',
       note: '休憩中'
     }
   },
