@@ -6,6 +6,9 @@ export const cards = [
         description: '次のターン開始時 エナジー2回復',
         ability: 'ダメージ 2',
         type: 'skill', // 👈 分類（スキル）
+        damage: 2,
+        battleType: 'attack',
+        attackCount: 1,
         imgSrc: '/hitokage.png',
     },
     {
@@ -15,6 +18,9 @@ export const cards = [
         description: 'やり6を×3与える',
         ability: 'ダメージ 2',
         type: 'skill', // 👈 分類（スキル）,
+        damage: 2,
+        battleType: 'attack',
+        attackCount: 1,
         imgSrc: '/hitokage.png',
     },
     {
