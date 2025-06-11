@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "concurrently \"npm --workspace client run dev\" \"npm --workspace backend run dev\"",
     "build": "npm --workspace client run build && npm --workspace backend run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier . --write"
   },
   "repository": {
     "type": "git",
@@ -24,5 +25,8 @@
   "homepage": "https://github.com/Elic0de/auto-project#readme",
   "dependencies": {
     "concurrently": "^9.1.2"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3"
   }
 }
