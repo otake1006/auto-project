@@ -1,0 +1,28 @@
+{
+  "name": "auto-project",
+  "version": "1.0.0",
+  "description": "",
+  "private:": true,
+  "workspaces": [
+    "client",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm --workspace client run dev\" \"npm --workspace backend run dev\"",
+    "build": "npm --workspace client run build && npm --workspace backend run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Elic0de/auto-project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Elic0de/auto-project/issues"
+  },
+  "homepage": "https://github.com/Elic0de/auto-project#readme",
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
