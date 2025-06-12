@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col overflow-hidden pl-2">
-        <TabButtons :tabs="skill.tabs" v-model:selectedTab="skill.setTab" />
+        <TabButtons :tabs="skill.tabs" :selectedTab="skill.currentTab" :setTab="skill.setTab" />
         <CardList :cards="skill.filteredCards" />
     </div>
 </template>
