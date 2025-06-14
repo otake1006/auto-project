@@ -12,6 +12,7 @@ export class BattleScene extends Phaser.Scene {
             frameHeight: 32,
         });
         this.load.audio('sfx_attack', 'assets/sfx/attack.mp3');
+        this.load.image('background', 'assets/background.jpg');
     }
 
     create() {
@@ -20,9 +21,13 @@ export class BattleScene extends Phaser.Scene {
         this.input.keyboard.on('keydown-SPACE', () => {
             this.manager.playTurn();
         });
+        this.add
+            .image(0, 0, 'background')
+            .setOrigin(0)
+            .setDisplaySize(this.sys.game.config.width, this.sys.game.config.height);
 
         const centerX = this.cameras.main.centerX;
-        const centerY = this.cameras.main.centerY;
+        const centerY = this.cameras.main.centerY - 10;
         const spacing = 600;
 
         const positions = [
