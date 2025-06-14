@@ -16,8 +16,8 @@ onMounted(() => {
         type: Phaser.AUTO,
         mode: Phaser.Scale.ScaleModes.RESIZE,
         backgroundColor: '#93cbee',
-        width: window.innerWidth,
-        height: 300,
+        width: 1440,
+        height: 258,
         parent: gameContainer.value,
         scene: [BattleScene]
     }
