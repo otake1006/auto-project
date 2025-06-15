@@ -1,4 +1,5 @@
 export function showDamage(scene, x, y, amount) {
+    if (!amount) return;
     const dmgText = scene.add
         .text(x, y, `-${amount}`, {
             fontSize: '20px',
