@@ -18,8 +18,8 @@ export class BattleScene extends Phaser.Scene {
     create() {
         this.add.text(20, 20, 'Press SPACE to use skill');
 
-        this.input.keyboard.on('keydown-SPACE', () => {
-            this.manager.playTurn();
+        this.input.keyboard.on('keydown-SPACE', async () => {
+            await this.manager.playTurn();
         });
         this.add
             .image(0, 0, 'background')
@@ -42,7 +42,7 @@ export class BattleScene extends Phaser.Scene {
             'player',
             'player',
             100,
-            100,
+            50,
             true,
         );
 
@@ -53,7 +53,7 @@ export class BattleScene extends Phaser.Scene {
             'player',
             'enemy',
             100,
-            100,
+            50,
             false,
         );
 
