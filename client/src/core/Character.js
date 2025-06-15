@@ -64,6 +64,7 @@ export default class Character extends Phaser.GameObjects.Sprite {
     }
 
     useSkill(skill, target) {
+        if (!skill) return;
         this.mp.decrease(skill.energy);
         target.hp.decrease(skill.damage);
     }
