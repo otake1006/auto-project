@@ -13,6 +13,10 @@ export default class Stat {
         this.current = Math.min(this.max, this.current + amount);
     }
 
+    reset() {
+        this.current = this.max;
+    }
+
     get ratio() {
         return this.current / this.max;
     }
