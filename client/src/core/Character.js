@@ -42,7 +42,7 @@ export default class Character extends Phaser.GameObjects.Sprite {
     }
 
     selectSkill() {
-        const context = { hp: this.hp, mp: this.mp };
+        const context = { hp: this.hp.current, mp: this.mp.current };
         for (const set of this.skillSets) {
             if (
                 set.skill &&
