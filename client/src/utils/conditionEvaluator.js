@@ -1,9 +1,9 @@
 export function evaluateCondition(condition, context) {
-    const { type, value } = condition;
+    const { conditionType, value } = condition;
 
     if (!condition) return true;
 
-    switch (type) {
+    switch (conditionType) {
         case 'HP_ABOVE':
             return context.hp > value;
         case 'HP_BELOW':
