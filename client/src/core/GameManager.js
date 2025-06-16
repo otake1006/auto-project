@@ -6,18 +6,36 @@ export default class GameManager {
         this.player = player;
         this.enemy = enemy;
         this.scene = scene;
+        this.winCount = 0;
+        this.winner = 'draw';
         this.turn = 0;
         this.round = 0;
         this.gameState = 'waiting';
     }
 
     async playTurn() {
+        if (this.gameState === 'ingame') return;
+        if (this.gameState === 'endgame') return;
         this.gameState = 'ingame';
 
         this.scene.updateSkillsets();
 
         while (true) {
             if (this.player.hp.current <= 0 || this.enemy.hp.current <= 0) {
+                if (this.enemy.hp.current <= 0 && this.player.hp.current > 0) this.winCount += 1;
+                this.round += 1;
+                this.player.hp.reset();
+                this.enemy.hp.reset();
+                this.player.mp.reset();
+                this.enemy.mp.reset();
+                if (this.round === 5) {
+                    if (this.winCount >= this.round - this.winCount) this.winner = 'player';
+                    if (this.winCount <= this.round - this.winCount) this.winner = 'enemy';
+                    this.gameState = 'endgame';
+                    return;
+                }
+                this.scene.onTurnEnd();
+                await this.sleep(500);
             }
             const playerskill = this.player.selectSkill();
             const enemyskill = this.enemy.selectSkill();
@@ -28,14 +46,15 @@ export default class GameManager {
             this.enemy.useSkill(enemyskill, this.player);
             showDamage(this.scene, enemyX, enemyY, playerskill?.damage);
             showDamage(this.scene, playerX, playerY, enemyskill?.damage);
-            await this.sleep(500);
             console.log(playerskill, enemyskill);
             console.log(enemyX, enemyY, playerX, playerY);
             if (!playerskill && !enemyskill) {
                 this.player.mp.reset();
                 this.enemy.mp.reset();
             }
+            this.turn++;
             this.scene.onTurnEnd();
+            await this.sleep(500);
         }
 
         // if (skill) {
