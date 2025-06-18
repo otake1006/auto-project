@@ -119,23 +119,6 @@ export class BattleScene extends Phaser.Scene {
         });
     }
 
-    updateSkillsets() {
-        const skillStore = useSkillStore();
-        const rawSets = toRaw(skillStore.skillSets);
-
-        this.player.updateSkillSets(rawSets);
-        this.enemy.updateSkillSets(rawSets);
-    }
-
-    updateStatusBars() {
-        this.playerView.updateBars();
-        this.enemyView.updateBars();
-    }
-
-    onTurnEnd() {
-        this.updateStatusBars();
-    }
-
     onGameOver(winner) {
         const centerX = this.cameras.main.centerX;
         const centerY = this.cameras.main.centerY;
