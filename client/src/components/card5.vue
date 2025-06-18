@@ -13,12 +13,13 @@ const parent = ref(props.parentList);
 
 <template>
     <div class="space-y-15 rounded-xl border border-gray-300 bg-white p-4 shadow-sm">
-        <draggable v-model="skillStore.skillSets" item-key="id" :group="{ name: 'skillSets', put: false }">
+        <draggable v-model="skillStore.skillSets" item-key="id" :group="{ name: 'skillSets', put: false }"
+            :ghost-class="'no-opacity'">
             <template #item="{ element, index }">
-                <div class="flex w-full border-2 py-6">
+                <div class="flex w-full p-4 py-2 flex-row gap-6">
                     <h3 class="font-semibold">{{ index + 1 }}</h3>
                     <draggable :list="element.skill ? [element.skill] : []" :group="{ name: 'skill' }" item-key="id"
-                        @add="(e) => skillStore.handleSkillAdd(e, index)">
+                        :ghost-class="'no-opacity'" @add="(e) => skillStore.handleSkillAdd(e, index)">
                         <template #item="{ element: skill }">
                             <card3 :cards="skill"></card3>
                         </template>
@@ -34,3 +35,9 @@ const parent = ref(props.parentList);
         </draggable>
     </div>
 </template>
+
+<style>
+.no-opacity {
+    opacity: 1 !important;
+}
+</style>
