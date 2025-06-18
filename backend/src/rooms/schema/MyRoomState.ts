@@ -1,6 +1,6 @@
 import { Schema, MapSchema, type, ArraySchema } from '@colyseus/schema';
 import { Skill } from './Skill';
-import { getSkillCard, getCondition } from '../../data/card';
+import { getSkillCard, getCondition, SkillCard } from '../../data/card';
 
 export class Player extends Schema {
     @type('string') name: string = 'player';
@@ -12,7 +12,7 @@ export class Player extends Schema {
     @type('number') ratiomp: number = 100;
     @type('boolean') ready: boolean = false;
     @type([Skill]) skill = new ArraySchema<Skill>();
-
+    @type([SkillCard]) skills = new ArraySchema<SkillCard>();
     reset() {
         this.hp = this.maxhp;
         this.mp = this.maxmp;
