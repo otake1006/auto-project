@@ -1,14 +1,17 @@
 import * as Colyseus from 'colyseus.js';
 
 export class ColyseusClient {
-    constructor(endpoint = 'ws://', roomName = 'my_room') {
+    constructor(
+        endpoint = import.meta.env.VITE_COLYSEUS_ENDPOINT,
+        roomName = import.meta.env.VITE_COLYSEUS_ROOM_NAME,
+    ) {
         this.client = new Colyseus.Client(endpoint);
         this.room = null;
         this.roomName = roomName;
     }
 
     async join() {
-        this.room = await this.client.joinOrCreate('my_room');
+        this.room = await this.client.joinOrCreate(this.roomName);
         return this.room;
     }
 
