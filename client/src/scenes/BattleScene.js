@@ -92,7 +92,6 @@ export class BattleScene extends Phaser.Scene {
 
         this.manager = new GameManager(this.player, this.enemy, this);
 
-        this.updateSkillsets();
         this.updateStatusBars();
 
         const $ = getStateCallbacks(this.room);
@@ -117,6 +116,11 @@ export class BattleScene extends Phaser.Scene {
                 });
             }
         });
+    }
+
+    updateStatusBars() {
+        this.playerView.updateBars();
+        this.enemyView.updateBars();
     }
 
     onGameOver(winner) {
