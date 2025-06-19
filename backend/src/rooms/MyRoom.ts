@@ -2,6 +2,7 @@ import { Room, Client } from '@colyseus/core';
 import { ArraySchema } from '@colyseus/schema';
 import { MyRoomState, Player } from './schema/MyRoomState';
 import { Skill } from './schema/Skill';
+import { SkillCard, skillCards, getInitialSkill } from '../data/card';
 
 export class MyRoom extends Room {
     maxClients = 2;
@@ -12,9 +13,11 @@ export class MyRoom extends Room {
     winCount = 0;
     round = 0;
     turn = 0;
+    initialSkill = new ArraySchema<SkillCard>();
 
     // Called when the room is created
     onCreate() {
+        this.initialSkill = getInitialSkill();
         this.onMessage('ready', (client, skillSet: any[]) => {
             if (this.gameState === 'ingame') return;
             if (this.gameState === 'endgame') return;
@@ -29,7 +32,6 @@ export class MyRoom extends Room {
             });
             player.skill = skillSets;
             player.ready = true;
-            console.log(this.checkReady());
             if (this.checkReady()) {
                 console.log('戦闘開始');
                 this.playTurn();
@@ -44,7 +46,13 @@ export class MyRoom extends Room {
 
     // Called when a client joins the room
     onJoin(client: Client, options: any) {
-        this.state.players.set(client.sessionId, new Player());
+        const joinPlayer = new Player();
+        for (const initial of this.initialSkill) {
+            joinPlayer.skills.push(initial);
+        }
+
+        console.log(joinPlayer.skills.toJSON());
+        this.state.players.set(client.sessionId, joinPlayer);
     }
 
     // Called when a client leaves the room
