@@ -1,6 +1,6 @@
 import { Schema, MapSchema, type, ArraySchema } from '@colyseus/schema';
 import { Skill } from './Skill';
-import { getSkillCard, getCondition, SkillCard } from '../../data/card';
+import { getSkillCard, getCondition, SkillCard, skillCards } from '../../data/card';
 
 export class Player extends Schema {
     @type('string') name: string = 'player';
