@@ -1,5 +1,4 @@
 import Character from '@/core/Character.js';
-import GameManager from '@/core/GameManager.js';
 import CharacterView from '@/core/CharacterView.js';
 import { useSkillStore } from '@/stores/skillStore';
 
