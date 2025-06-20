@@ -69,6 +69,11 @@ export default class Character extends Phaser.GameObjects.Sprite {
         target.hp.decrease(skill.damage);
     }
 
+    updatePlayer({ hp, mp }) {
+        this.hp = hp;
+        this.mp = mp;
+    }
+
     isAlive() {
         return !this.hp.isEmpty();
     }
