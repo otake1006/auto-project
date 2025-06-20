@@ -70,14 +70,19 @@ export const useSkillStore = defineStore('skill', () => {
     // 実際には type でフィルタする（例: 'skill', 'condition', 'relic' など）
     const filteredCards = computed(() => {
         const type = tabTypeMap[currentTab.value];
-        if (type === "skill") {
-            return skills.value
-        };
+        if (type === 'skill') {
+            return skills.value;
+        }
         return cards.filter((card) => card.type === type);
     });
 
     function setSkills(value) {
         skills.value = value;
+    }
+
+    function addSkills(value) {
+        const test = [...skills.value, ...value];
+        skills.value = test;
     }
 
     const currentType = computed(() => tabTypeMap[currentTab.value]);
@@ -91,6 +96,7 @@ export const useSkillStore = defineStore('skill', () => {
         itemList,
         skillSets,
         setSkills,
+        addSkills,
         cards,
         tabs,
         currentType,
