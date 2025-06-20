@@ -6,7 +6,7 @@
         <!-- 下部：作戦＆カード選択 -->
         <div class="flex flex-[4] overflow-hidden border-t-2 border-gray-300 bg-neutral-700 p-4">
             <TacticsBoard class="w-1/2 overflow-y-auto pr-2" />
-            <SkillSelection class="w-1/2 flex flex-col pl-2" :tabs="tabs" :cards="filteredCards" />
+            <SkillSelection class="w-1/2 flex flex-col pl-2" />
         </div>
     </div>
 </template>
