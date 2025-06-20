@@ -12,14 +12,18 @@ export function useTabCards() {
 
   const selectedTab = ref('スキル')
 
+  const skills = ref('スキル')
+
   // 実際には type でフィルタする（例: 'skill', 'condition', 'relic' など）
   const filteredCards = computed(() => {
     const type = tabTypeMap[selectedTab.value]
+    if (type === "skill") return skills.value;
     return cards.filter(card => card.type === type)
   })
 
   return {
     tabs,
+    skills,
     selectedTab,
     filteredCards
   }
