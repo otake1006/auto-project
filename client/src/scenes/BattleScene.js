@@ -1,15 +1,10 @@
 import Character from '@/core/Character.js';
-import Skill from '@/core/Skill.js';
 import GameManager from '@/core/GameManager.js';
 import CharacterView from '@/core/CharacterView.js';
 import { useSkillStore } from '@/stores/skillStore';
-import { watch, toRaw } from 'vue';
 
-import { Client, Room } from 'colyseus.js';
-import { getStateCallbacks } from 'colyseus.js';
 import { ColyseusClient } from '@/colyseus/client';
-
-// (...)
+import { phaserEvents, Event } from '@/events/EventCenter';
 
 export class BattleScene extends Phaser.Scene {
     constructor() {
@@ -17,8 +12,6 @@ export class BattleScene extends Phaser.Scene {
         this.playerEntities = {}; // sessionId => { sprite, hpBar, hpText }
         this.colyseus = new ColyseusClient();
     }
-    client = new Client('https://cd59c5mw-2567.asse.devtunnels.ms');
-    room;
 
     preload() {
         this.load.spritesheet('player', 'assets/Slime_Blue.png', {
@@ -30,24 +23,17 @@ export class BattleScene extends Phaser.Scene {
     }
 
     async create() {
-        console.log('joining room...');
-        try {
-            this.room = await this.client.joinOrCreate('my_room');
-            console.log('Joined successfully!');
-        } catch (e) {
-            console.error(e);
-        }
-
         this.add.text(20, 20, 'Press SPACE to use skill');
+        const skillStore = useSkillStore();
 
         this.input.keyboard.on('keydown-SPACE', async () => {
-            const skillStore = useSkillStore();
-            this.room.send(
-                'ready',
-                skillStore.skillSets.map((set) => ({
-                    skill: set.skill ? set.skill.id : null,
-                    conditions: set.conditions.map((condition) => condition.id),
-                })),
+            this.colyseus.sendSkillSet(
+                skillStore.skillSets
+                    .filter((set) => set.skill !== null)
+                    .map((set) => ({
+                        skill: set.skill ? set.skill.id : null,
+                        conditions: set.conditions.map((condition) => condition.id),
+                    })),
             );
         });
 
@@ -90,32 +76,21 @@ export class BattleScene extends Phaser.Scene {
         this.playerView = new CharacterView(this, this.player, positions[0].x, positions[0].y);
         this.enemyView = new CharacterView(this, this.enemy, positions[1].x, positions[1].y);
 
-        this.manager = new GameManager(this.player, this.enemy, this);
+        // 通信処理
+        this.colyseus.onPlayerUpdated(this.handlePlayerUpdated, this);
+        this.colyseus.onEnemyUpdated(this.handlePlayerEnemyUpdated, this);
+    }
 
+    // 同じコードなので何とかする
+    handlePlayerUpdated(field, value, id) {
+        this.player?.updatePlayer(field, value);
         this.updateStatusBars();
+    }
 
-        const $ = getStateCallbacks(this.room);
-
-        $(this.room.state).players.onAdd((player, sessionId) => {
-            if (this.room.sessionId === sessionId) {
-                console.log('自分のキャラが追加されました:', player);
-                // 自キャラの同期
-
-                $(player).onChange(() => {
-                    // update local position immediately
-                    this.player.hp.current = player.hp;
-                    this.player.mp.current = player.mp;
-                    this.updateStatusBars();
-                });
-            } else {
-                $(player).onChange(() => {
-                    // update local position immediately
-                    this.enemy.hp.current = player.hp;
-                    this.enemy.mp.current = player.mp;
-                    this.updateStatusBars();
-                });
-            }
-        });
+    // todo
+    handlePlayerEnemyUpdated(field, value, id) {
+        this.enemy?.updatePlayer(field, value);
+        this.updateStatusBars();
     }
 
     updateStatusBars() {
