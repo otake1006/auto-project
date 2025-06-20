@@ -2,10 +2,13 @@ export const cards = [
     {
         id: 1,
         name: '乱数調整',
-        energy: 1,
+        energy: 20,
         description: '次のターン開始時 エナジー2回復',
         ability: 'ダメージ 2',
         type: 'skill', // 👈 分類（スキル）
+        damage: 20,
+        battleType: 'attack',
+        attackCount: 1,
         imgSrc: '/hitokage.png',
     },
     {
@@ -15,15 +18,19 @@ export const cards = [
         description: 'やり6を×3与える',
         ability: 'ダメージ 2',
         type: 'skill', // 👈 分類（スキル）,
+        damage: 2,
+        battleType: 'attack',
+        attackCount: 1,
         imgSrc: '/hitokage.png',
     },
     {
         id: 3,
-        name: '毒の契約',
-        energy: 2,
+        name: 'HP49より上',
         description: '次のターンから2ダメージ継続',
         ability: '',
         type: 'condition', // 👈 分類（条件）,
+        conditionType: 'HP_ABOVE',
+        value: 49,
         imgSrc: '/hitokage.png',
     },
     {
