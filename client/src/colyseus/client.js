@@ -1,9 +1,12 @@
+// src/colyseus/ColyseusClient.js
 import * as Colyseus from 'colyseus.js';
 import { getStateCallbacks } from 'colyseus.js';
+import { setupMessageHandlers } from './messageHandlers';
 import { phaserEvents, Event } from '@/events/EventCenter';
-import { useSkillStore } from '@/stores/skillStore';
 
 export class ColyseusClient {
+    client;
+    room;
     mySessionId;
 
     constructor(
@@ -13,77 +16,66 @@ export class ColyseusClient {
         this.client = new Colyseus.Client(endpoint);
         this.room = null;
         this.roomName = roomName;
+
         this.join();
     }
 
+    /**
+     * Colyseusルームに参加して初期化処理を行う
+     */
     async join() {
-        this.room = await this.client.joinOrCreate(this.roomName);
-        this.initialize();
+        try {
+            this.room = await this.client.joinOrCreate(this.roomName);
+            this.mySessionId = this.room.sessionId;
+            console.log('[Colyseus] Joined Room:', this.roomName, 'Session ID:', this.mySessionId);
+            this.initialize();
+        } catch (e) {
+            console.error('[Colyseus] Failed to join room:', e);
+        }
     }
 
+    /**
+     * サーバーにスキル選択を送信
+     * @param {Object} data
+     */
     sendSkillSet(data) {
-        this.room.send('ready', data);
+        if (this.room) {
+            this.room.send('ready', data);
+        }
     }
 
+    /**
+     * ルームの初期化処理
+     */
     initialize() {
-        const skillStore = useSkillStore();
         if (!this.room) return;
 
-        this.mySessionId = this.room.sessionId;
-        console.log(this.mySessionId);
         const $ = getStateCallbacks(this.room);
 
+        // プレイヤーの状態監視
         $(this.room.state).players.onAdd((player, sessionId) => {
-            if (this.room.sessionId === sessionId) {
-                console.log('自分のキャラが追加されました:', player);
-                // 自キャラの同期
-                // $(player.skills).onAdd((test) => {
-                //     console.log(test);
-                // });
+            const isMyself = this.room.sessionId === sessionId;
+            const event = isMyself ? Event.PLAYER_UPDATED : Event.ENEMY_UPDATED;
 
-                // todo 同じコード
-                $(player).onChange(() => {
-                    phaserEvents.emit(Event.PLAYER_UPDATED, {
-                        hp: player.hp,
-                        mp: player.mp,
-                        ready: player.ready,
-                    });
-                });
-            } else {
-                $(player).onChange(() => {
-                    phaserEvents.emit(Event.ENEMY_UPDATED, {
-                        hp: player.hp,
-                        mp: player.mp,
-                        ready: player.ready,
-                    });
-                });
-            }
+            console.log(`[Colyseus] ${isMyself ? 'My' : 'Enemy'} player added`, player);
 
-            // $(player.ready).onChange(() => {
-            //     phaserEvents.emit('player-ready');
-            // });
-        });
-
-        this.room.onMessage('action', (skills) => {
-            skillStore.setSkills(skills);
-        });
-
-        this.room.onMessage('randomSkill', (skills) => {
-            console.log(skills);
-            skillStore.addSkills(skills);
-        });
-
-        this.room.onMessage('skillLogs', (logs) => {
-            logs.forEach(({ sessionId, skill }) => {
-                const isEnemy = mySessionId === sessionId;
-                phaserEvents.emit('useSkill', {
-                    isEnemy,
-                    skill,
+            // HP/MP/Ready状態が変更されたらPhaserに通知
+            $(player).onChange(() => {
+                phaserEvents.emit(event, {
+                    hp: player.hp,
+                    mp: player.mp,
+                    ready: player.ready,
                 });
             });
         });
+
+        // メッセージハンドラを登録
+        setupMessageHandlers(this.room);
     }
 
+    /**
+     * Phaser側のイベント購読API
+     */
     onPlayerUpdated(callback, context) {
         phaserEvents.on(Event.PLAYER_UPDATED, callback, context);
     }
