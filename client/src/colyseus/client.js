@@ -16,8 +16,6 @@ export class ColyseusClient {
         this.client = new Colyseus.Client(endpoint);
         this.room = null;
         this.roomName = roomName;
-
-        this.join();
     }
 
     /**

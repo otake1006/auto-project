@@ -28,6 +28,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     create() {
+        this.colyseus.join();
         this.initLayout();
         this.createPlayers();
         this.setupUI();
@@ -123,6 +124,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     handlePlayerUpdate(character, view, field) {
+        console.log(field);
         character.updatePlayer(field);
         view.setReady(field.ready);
         view.updateBars();
