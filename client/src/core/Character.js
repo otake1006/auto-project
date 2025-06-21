@@ -70,8 +70,8 @@ export default class Character extends Phaser.GameObjects.Sprite {
     }
 
     updatePlayer({ hp, mp }) {
-        this.hp = hp;
-        this.mp = mp;
+        this.hp.current = hp;
+        this.mp.current = mp;
     }
 
     isAlive() {
