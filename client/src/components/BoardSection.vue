@@ -11,6 +11,8 @@
                 <TacticsBoard class="w-1/2 overflow-y-auto pr-2" />
                 <SkillSelection class="w-1/2 flex flex-col pl-2" :tabs="tabs" :cards="filteredCards" />
             </div>
+            <button @click="openSkillModal" class="btn">Open Skill Modal</button>
+            <ModalDispatcher />
         </div>
     </div>
 </template>
@@ -18,8 +20,25 @@
 
 <script setup>
 import PhaserGame from '@/components/PhaserGame.vue'
-import BattleStatus from './BattleStatus.vue'
 import TacticsBoard from './TacticsBoard.vue'
 import SkillSelection from './SkillSelection.vue'
+import ModalDispatcher from '@/components/modals/ModalDispatcher.vue';
+import { useModalStore } from '@/stores/modalStore';
 
+const modalStore = useModalStore();
+
+async function openSkillModal() {
+    const selected = await modalStore.open('skillSelect', {
+        cards: [
+            { id: 1, name: 'Fireball', description: 'Burns enemy' },
+            { id: 2, name: 'Ice Shield', description: 'Blocks damage' },
+            { id: 3, name: 'Heal', description: 'Restores HP' },
+        ],
+    });
+
+    if (selected) {
+        console.log('Selected skill:', selected);
+        // Colyseusに送信: room.send('selectSkill', { id: selected })
+    }
+}
 </script>
