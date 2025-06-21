@@ -31,15 +31,6 @@ export class WipeAppearDisappearText extends Phaser.GameObjects.Container {
             })
             .setOrigin(0.5);
 
-        // scene.add
-        //     .text(-width + 75, 0, label, {
-        //         fontSize: '18px',
-        //         fontFamily: 'DotGothic16',
-        //         color: '#ffffff',
-        //         stroke: '#000000',
-        //         strokeThickness: 2,
-        //     })
-        //     .setOrigin(0, 0.5);
         // --- 背景 ---
         const boxWidth = textObj.width + padding;
         const boxHeight = textObj.height + padding;
@@ -52,7 +43,8 @@ export class WipeAppearDisappearText extends Phaser.GameObjects.Container {
         // --- マスク矩形（左→右に表示、右→左に非表示） ---
         const maskRect = scene.add
             .rectangle(x - boxWidth / 2, y, boxWidth, boxHeight, bgColor)
-            .setOrigin(0, 0.5);
+            .setOrigin(0, 0.5)
+            .setVisible(false);
         const mask = maskRect.createGeometryMask();
         this.setMask(mask);
 
