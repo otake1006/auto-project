@@ -76,6 +76,11 @@ export function getInitialSkill() {
     return initialSkill;
 }
 
+export function getRandomSkill() {
+    const shuffleCard = shuffle(skillCards);
+    return shuffleCard[1];
+}
+
 export function shuffle<T>(array: T[]) {
     const out = Array.from(array);
     for (let i = out.length - 1; i > 0; i--) {
