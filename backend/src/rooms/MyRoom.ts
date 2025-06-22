@@ -2,22 +2,25 @@ import { Room, Client } from '@colyseus/core';
 import { ArraySchema } from '@colyseus/schema';
 import { MyRoomState, Player } from './schema/MyRoomState';
 import { Skill } from './schema/Skill';
-import { SkillCard, skillCards, getInitialSkill } from '../data/card';
+import { SkillCard, skillCards, getInitialSkill, getRandomSkill, getSkillCard } from '../data/card';
 
 export class MyRoom extends Room {
     maxClients = 2;
     name: string;
     state = new MyRoomState();
     gameState = 'ready';
-    winner = 'draw';
+    winner = 'draw'; //ここから
     winCount = 0;
     round = 0;
-    turn = 0;
+    turn = 0; //ここまで新しいbattledtateを作る
     initialSkill = new ArraySchema<SkillCard>();
+    player1SkillState: SkillCard[] = [];
+    player2SkillState: SkillCard[] = [];
 
     // Called when the room is created
     onCreate() {
         this.initialSkill = getInitialSkill();
+        //console.log(this.initialSkill.toJSON());
         this.onMessage('ready', (client, skillSet: any[]) => {
             if (this.gameState === 'ingame') return;
             if (this.gameState === 'endgame') return;
@@ -39,19 +42,22 @@ export class MyRoom extends Room {
         });
 
         this.onMessage('battle', (client) => {
-            const player = this.state.players.get(client.sessionId);
-            player.hp -= 10;
+            for (const [a, x] of this.state.players) {
+                console.log(x.skills.toJSON());
+            }
         });
     }
 
     // Called when a client joins the room
     onJoin(client: Client, options: any) {
         const joinPlayer = new Player();
-        for (const initial of this.initialSkill) {
-            joinPlayer.skills.push(initial);
-        }
-
-        console.log(joinPlayer.skills.toJSON());
+        // for (const initial of this.initialSkill) {
+        //     joinPlayer.skills.push(initial);
+        //     console.log(initial.name);
+        // }
+        //joinPlayer.skills = this.initialSkill;
+        //console.log(joinPlayer.skills.toJSON());
+        this.broadcast('action', this.initialSkill);
         this.state.players.set(client.sessionId, joinPlayer);
     }
 
@@ -90,13 +96,28 @@ export class MyRoom extends Room {
                 this.gameState = 'ready';
                 player1.ready = false;
                 player2.ready = false;
+                this.player1SkillState.push(getRandomSkill());
+                this.player2SkillState.push(getRandomSkill());
+                this.clients.forEach((client) => {
+                    if (client.sessionId === sessionId1) {
+                        client.send('randomSkill', this.player1SkillState);
+                    }
+                    if (client.sessionId === sessionId2) {
+                        client.send('randomSkill', this.player2SkillState);
+                    }
+                });
+
                 return;
             }
             const player1skill = player1.selectSkill();
             const player2skill = player2.selectSkill();
-
             player1.useSkill(player1skill, player2);
             player2.useSkill(player2skill, player1);
+            this.broadcast('useSkill', {
+                sessionId: sessionId1,
+                skillname1: getSkillCard(player1skill)?.name,
+                skillname2: getSkillCard(player2skill)?.name,
+            });
             if (!player1skill && !player2skill) {
                 player1.resetMp();
                 player2.resetMp();
