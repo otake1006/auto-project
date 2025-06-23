@@ -2,7 +2,15 @@ import { Room, Client } from '@colyseus/core';
 import { ArraySchema } from '@colyseus/schema';
 import { MyRoomState, Player } from './schema/MyRoomState';
 import { Skill } from './schema/Skill';
-import { SkillCard, skillCards, getInitialSkill, getRandomSkill, getSkillCard } from '../data/card';
+import {
+    SkillCard,
+    conditionCards,
+    ConditionCard,
+    getInitialSkill,
+    getRandomSkill,
+    getSkillCard,
+    selectRandomSkills,
+} from '../data/card';
 
 export class MyRoom extends Room {
     maxClients = 2;
@@ -44,6 +52,21 @@ export class MyRoom extends Room {
         this.onMessage('battle', (client) => {
             for (const [a, x] of this.state.players) {
                 console.log(x.skills.toJSON());
+            }
+        });
+
+        this.onMessage('selectSkill', (client, id: any) => {
+            const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
+            if (id) {
+                const getSkill = getSkillCard(id);
+                if (getSkill) {
+                    if (client.sessionId === sessionId1) {
+                        this.player1SkillState.push(getSkill);
+                    }
+                    if (client.sessionId === sessionId2) {
+                        this.player2SkillState.push(getSkill);
+                    }
+                }
             }
         });
     }
@@ -96,14 +119,16 @@ export class MyRoom extends Room {
                 this.gameState = 'ready';
                 player1.ready = false;
                 player2.ready = false;
-                this.player1SkillState.push(getRandomSkill());
-                this.player2SkillState.push(getRandomSkill());
+                // this.player1SkillState.push(getRandomSkill());
+                // this.player2SkillState.push(getRandomSkill());
+                const player1RandomSkill = selectRandomSkills();
+                const player2RandomSkill = selectRandomSkills();
                 this.clients.forEach((client) => {
                     if (client.sessionId === sessionId1) {
-                        client.send('randomSkill', this.player1SkillState);
+                        client.send('giveCards', player1RandomSkill);
                     }
                     if (client.sessionId === sessionId2) {
-                        client.send('randomSkill', this.player2SkillState);
+                        client.send('giveCards', player2RandomSkill);
                     }
                 });
 
