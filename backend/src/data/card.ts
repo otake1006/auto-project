@@ -81,6 +81,11 @@ export function getRandomSkill() {
     return shuffleCard[1];
 }
 
+export function selectRandomSkills(): SkillCard[] {
+    const shuffledCards = shuffle(skillCards);
+    return shuffledCards.slice(0, 3); // 最初の3つを返す
+}
+
 export function shuffle<T>(array: T[]) {
     const out = Array.from(array);
     for (let i = out.length - 1; i > 0; i--) {
@@ -156,7 +161,7 @@ export const conditionCards: ConditionCard[] = [
         name: 'HP49より上',
         description: '次のターンから2ダメージ継続',
         conditionType: 'HP_ABOVE',
-        value: 49,
+        value: 0,
         imgSrc: '/hitokage.png',
         ability: '',
     }),
