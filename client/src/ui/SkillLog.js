@@ -36,17 +36,17 @@ export default class SkillLog {
         this.logs.push(logText);
 
         // 一定時間後にフェードアウト＆削除
-        // this.scene.time.delayedCall(500, () => {
-        //     this.scene.tweens.add({
-        //         targets: logText,
-        //         alpha: 0,
-        //         duration: 200,
-        //         onComplete: () => {
-        //             this.container.remove(logText, true);
-        //             this.logs = this.logs.filter((l) => l !== logText);
-        //         },
-        //     });
-        // });
+        this.scene.time.delayedCall(500, () => {
+            this.scene.tweens.add({
+                targets: logText,
+                alpha: 0,
+                duration: 300,
+                onComplete: () => {
+                    this.container.remove(logText, true);
+                    this.logs = this.logs.filter((l) => l !== logText);
+                },
+            });
+        });
     }
 
     destroy() {

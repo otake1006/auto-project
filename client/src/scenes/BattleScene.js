@@ -62,7 +62,7 @@ export class BattleScene extends Phaser.Scene {
 
     setupUI() {
         this.readyButton = new ReadyButton(this, this.centerX, this.centerY + 30, () => {
-            // this.sendSkillSet();
+            this.sendSkillSet();
             this.readyButton.hide();
         });
 
@@ -131,10 +131,11 @@ export class BattleScene extends Phaser.Scene {
         view.updateBars();
     }
 
-    handleSkillLog(isEnemy, skill) {
-        if (!skill) return;
-        const logText = `Used ${skill}`;
-        const view = isEnemy ? this.enemyView : this.playerView;
+    handleSkillLog(isEnemy) {
+        if (!isEnemy) return;
+        const logText = `Used ${isEnemy.skill}`;
+        console.log(`Skill log: ${logText}`);
+        const view = isEnemy.isEnemy ? this.enemyView : this.playerView;
         view.showSkillLog(logText);
     }
 
