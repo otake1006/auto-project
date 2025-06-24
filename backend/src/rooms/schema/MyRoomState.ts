@@ -1,5 +1,5 @@
 import { Schema, MapSchema, type, ArraySchema } from '@colyseus/schema';
-import { Skill } from './Skill';
+import { Condition, Skill } from './Skill';
 import { getSkillCard, getCondition, SkillCard, skillCards } from '../../data/card';
 
 export class Player extends Schema {
@@ -45,11 +45,11 @@ export class Player extends Schema {
         }
     }
 
-    evaluateCondition(condition: number, context: any) {
+    evaluateCondition(condition: Condition, context: any) {
         if (!getCondition(condition)) return true;
 
         const Condition = getCondition(condition);
-
+        Condition.value = condition.value;
         switch (Condition.conditionType) {
             case 'HP_ABOVE':
                 return context.hp > Condition.value;
