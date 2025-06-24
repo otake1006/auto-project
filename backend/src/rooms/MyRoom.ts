@@ -118,10 +118,9 @@ export class MyRoom extends Room {
                     return;
                 }
                 this.gameState = 'ready';
+                this.broadcast('showReady');
                 player1.ready = false;
                 player2.ready = false;
-                // this.player1SkillState.push(getRandomSkill());
-                // this.player2SkillState.push(getRandomSkill());
                 const player1RandomSkill = selectRandomSkills();
                 const player2RandomSkill = selectRandomSkills();
                 this.clients.forEach((client) => {
