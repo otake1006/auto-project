@@ -20,23 +20,23 @@ export class ReadyButton extends TextButton {
 
     handleClick() {
         this.isReady = !this.isReady;
-        if (this.isReady) {
-            this.label.setText('Waiting...');
-            this.onReady?.();
-        } else {
-            this.label.setText('Ready!');
-            this.onCancel?.();
-        }
+        // if (this.isReady) {
+        //     this.label.setText('Waiting...');
+        //     this.onReady?.();
+        // } else {
+        //     this.label.setText('Ready!');
+        //     this.onCancel?.();
+        // }
         this._onRest(); // optional: reset button state
     }
 
     setReadyState(isReady) {
         this.isReady = isReady;
-        if (isReady) {
-            this.label.setText('Waiting...');
-        } else {
-            this.label.setText('Ready!');
-        }
+        // if (isReady) {
+        //     this.label.setText('Waiting...');
+        // } else {
+        //     this.label.setText('Ready!');
+        // }
         this._onRest?.();
     }
 }

@@ -38,6 +38,7 @@ export class ColyseusClient {
      */
     sendSkillSet(data) {
         if (this.room) {
+            console.log(data);
             this.room.send('ready', data);
         }
     }
@@ -84,5 +85,9 @@ export class ColyseusClient {
 
     onSkillLog(callback, context) {
         phaserEvents.on('useSkill', callback, context);
+    }
+
+    onShowReady(callback) {
+        phaserEvents.on('showReady', callback);
     }
 }

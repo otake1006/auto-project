@@ -120,7 +120,8 @@ export class BattleScene extends Phaser.Scene {
         this.colyseus.onEnemyUpdated(
             this.handlePlayerUpdate.bind(this, this.enemy, this.enemyView),
         );
-        this.colyseus.onSkillLog(this.handleSkillLog.bind(this));
+        this.colyseus.onSkillLog(this.handleSkillLog, this);
+        this.colyseus.onShowReady(() => this.handleShowReady());
     }
 
     handlePlayerUpdate(character, view, field) {
@@ -135,6 +136,10 @@ export class BattleScene extends Phaser.Scene {
         const logText = `Used ${skill}`;
         const view = isEnemy ? this.enemyView : this.playerView;
         view.showSkillLog(logText);
+    }
+
+    handleShowReady() {
+        this.readyButton.show();
     }
 
     sendSkillSet() {

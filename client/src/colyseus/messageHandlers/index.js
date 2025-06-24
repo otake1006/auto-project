@@ -1,6 +1,7 @@
 // src/colyseus/messageHandlers/index.js
 import { onAction } from './onAction';
 import { onRandomSkill } from './onRandomSkill';
+import { onShowReady } from './onShowReady';
 import { onSkillLogs } from './onSkillLogs';
 import { onSkillSelectModal } from './onSkillSelectModal';
 
@@ -13,4 +14,5 @@ export function setupMessageHandlers(room) {
     room.onMessage('randomSkill', (data) => onRandomSkill(room, data));
     room.onMessage('skillLogs', (data) => onSkillLogs(room, data));
     room.onMessage('giveCards', (data) => onSkillSelectModal(room, data));
+    room.onMessage('showReady', () => onShowReady(room));
 }
