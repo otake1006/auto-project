@@ -11,6 +11,7 @@ import { useModalStore } from '@/stores/modalStore';
 
 import ModalBase from '@/components/modals/ModalBase.vue';
 import SkillSelectModal from '@/components/modals/SkillSelectModal.vue';
+import ConditionInputModal from '@/components/modals/ConditionInputModal.vue';
 
 const modalStore = useModalStore();
 
@@ -18,6 +19,8 @@ const modalComponent = computed(() => {
     switch (modalStore.modalType) {
         case 'skillSelect':
             return SkillSelectModal;
+        case 'conditionInput':
+            return ConditionInputModal;
         default:
             return null;
     }
