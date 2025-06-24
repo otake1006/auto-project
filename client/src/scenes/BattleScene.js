@@ -1,92 +1,156 @@
+// BattleScene.js
 import Character from '@/core/Character.js';
-import Skill from '@/core/Skill.js';
-import GameManager from '@/core/GameManager.js';
 import CharacterView from '@/core/CharacterView.js';
 import { useSkillStore } from '@/stores/skillStore';
-import { watch, toRaw } from 'vue';
+import { ColyseusClient } from '@/colyseus/client';
+import { phaserEvents, Event } from '@/events/EventCenter';
+
+import { ReadyButton } from '@/ui/ReadyButton';
+import { EffectManager } from '@/core/EffectManager.js';
+import { RoundStatusUI } from '@/ui/RoundStatus.js';
+import { WipeAppearDisappearText } from '@/effects/WipeAppearDisappearText.js';
+import { TurnIndicator } from '@/effects/TurnIndicator';
+
+const PLAYER_CONFIG = {
+    hp: 100,
+    mp: 50,
+    spriteKey: 'player',
+};
 
 export class BattleScene extends Phaser.Scene {
+    constructor() {
+        super('BattleScene');
+        this.colyseus = new ColyseusClient();
+    }
+
     preload() {
+        this.loadAssets();
+    }
+
+    create() {
+        this.colyseus.join();
+        this.initLayout();
+        this.createPlayers();
+        this.setupUI();
+        this.setupNetworkHandlers();
+    }
+
+    loadAssets() {
         this.load.spritesheet('player', 'assets/Slime_Blue.png', {
             frameWidth: 32,
             frameHeight: 32,
         });
         this.load.audio('sfx_attack', 'assets/sfx/attack.mp3');
         this.load.image('background', 'assets/background.jpg');
+        this.load.image('winIcon', 'assets/3302.png');
     }
 
-    create() {
-        this.add.text(20, 20, 'Press SPACE to use skill');
-
-        this.input.keyboard.on('keydown-SPACE', async () => {
-            await this.manager.playTurn();
-        });
+    initLayout() {
+        this.cameras.main.setBackgroundColor('#000');
         this.add
             .image(0, 0, 'background')
             .setOrigin(0)
             .setDisplaySize(this.sys.game.config.width, this.sys.game.config.height);
 
-        const centerX = this.cameras.main.centerX;
-        const centerY = this.cameras.main.centerY - 10;
-        const spacing = 600;
-
-        const positions = [
-            { x: centerX - spacing / 2, y: centerY }, // 自分
-            { x: centerX + spacing / 2, y: centerY }, // 相手
+        this.centerX = this.cameras.main.centerX;
+        this.centerY = this.cameras.main.centerY - 10;
+        this.positions = [
+            { x: this.centerX - 300, y: this.centerY },
+            { x: this.centerX + 300, y: this.centerY },
         ];
+    }
 
-        this.player = new Character(
+    setupUI() {
+        this.readyButton = new ReadyButton(this, this.centerX, this.centerY + 30, () => {
+            // this.sendSkillSet();
+            this.readyButton.hide();
+        });
+
+        this.effectManager = new EffectManager(this);
+        new WipeAppearDisappearText(this, this.centerX, this.centerY, 'Round 1!', {
+            textStyle: {
+                fontSize: '36px',
+                fontFamily: 'Arial',
+                color: '#ffcc00',
+            },
+            bgColor: 0x333333,
+        });
+        this.turnIndicator = new TurnIndicator(this);
+        this.turnIndicator.showTurn(2);
+        // UIの将来的な拡張用
+        // this.roundUI = new RoundStatusUI(this, this.centerX, 20);
+    }
+
+    createPlayers() {
+        this.player = this.createCharacter(this.positions[0], true, 'player');
+        this.enemy = this.createCharacter(this.positions[1], false, 'enemy');
+
+        this.playerView = new CharacterView(
             this,
-            positions[0].x,
-            positions[0].y,
-            'player',
-            'player',
-            100,
-            50,
+            this.player,
+            this.positions[0].x,
+            this.positions[0].y,
+        );
+        this.enemyView = new CharacterView(
+            this,
+            this.enemy,
+            this.positions[1].x,
+            this.positions[1].y,
             true,
         );
+    }
 
-        this.enemy = new Character(
+    createCharacter(position, isPlayer, id) {
+        return new Character(
             this,
-            positions[1].x,
-            positions[1].y,
-            'player',
-            'enemy',
-            100,
-            50,
-            false,
+            position.x,
+            position.y,
+            PLAYER_CONFIG.spriteKey,
+            id,
+            PLAYER_CONFIG.hp,
+            PLAYER_CONFIG.mp,
+            isPlayer,
         );
-
-        this.playerView = new CharacterView(this, this.player, positions[0].x, positions[0].y);
-        this.enemyView = new CharacterView(this, this.enemy, positions[1].x, positions[1].y);
-
-        this.manager = new GameManager(this.player, this.enemy, this);
-
-        this.updateSkillsets();
-        this.updateStatusBars();
     }
 
-    updateSkillsets() {
+    setupNetworkHandlers() {
+        this.colyseus.onPlayerUpdated(
+            this.handlePlayerUpdate.bind(this, this.player, this.playerView),
+        );
+        this.colyseus.onEnemyUpdated(
+            this.handlePlayerUpdate.bind(this, this.enemy, this.enemyView),
+        );
+        this.colyseus.onSkillLog(this.handleSkillLog.bind(this));
+    }
+
+    handlePlayerUpdate(character, view, field) {
+        console.log(field);
+        character.updatePlayer(field);
+        view.setReady(field.ready);
+        view.updateBars();
+    }
+
+    handleSkillLog(isEnemy, skill) {
+        if (!skill) return;
+        const logText = `Used ${skill}`;
+        const view = isEnemy ? this.enemyView : this.playerView;
+        view.showSkillLog(logText);
+    }
+
+    sendSkillSet() {
         const skillStore = useSkillStore();
-        const rawSets = toRaw(skillStore.skillSets);
+        const payload = skillStore.skillSets
+            .filter((set) => set.skill)
+            .map((set) => ({
+                skill: set.skill.id,
+                conditions: set.conditions.map((c) => c.id),
+            }));
 
-        this.player.updateSkillSets(rawSets);
-        this.enemy.updateSkillSets(rawSets);
-    }
-
-    updateStatusBars() {
-        this.playerView.updateBars();
-        this.enemyView.updateBars();
-    }
-
-    onTurnEnd() {
-        this.updateStatusBars();
+        this.colyseus.sendSkillSet(payload);
     }
 
     onGameOver(winner) {
-        const centerX = this.cameras.main.centerX;
-        const centerY = this.cameras.main.centerY;
-        this.add.text(centerX, centerY, `${winner} wins!`, {
+        this.add.text(this.centerX, this.centerY, `${winner} wins!`, {
             fontSize: '32px',
             color: '#ff0000',
         });
