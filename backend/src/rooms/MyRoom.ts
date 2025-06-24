@@ -42,7 +42,7 @@ export class MyRoom extends Room {
             });
             player.skill = skillSets;
             player.ready = true;
-            if (this.checkReady()) {
+            if (this.checkReady() && this.clients.length === 2) {
                 console.log('戦闘開始');
                 this.playTurn();
             }
@@ -57,7 +57,9 @@ export class MyRoom extends Room {
         this.onMessage('selectSkill', (client, id: any) => {
             const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
             if (id) {
+                console.log(id);
                 const getSkill = getSkillCard(id);
+                console.log(getSkill.toJSON());
                 if (getSkill) {
                     if (client.sessionId === sessionId1) {
                         this.player1SkillState.push(getSkill);
@@ -137,11 +139,10 @@ export class MyRoom extends Room {
             const player2skill = player2.selectSkill();
             player1.useSkill(player1skill, player2);
             player2.useSkill(player2skill, player1);
-            this.broadcast('useSkill', {
-                sessionId: sessionId1,
-                skillname1: getSkillCard(player1skill)?.name,
-                skillname2: getSkillCard(player2skill)?.name,
-            });
+            this.broadcast('skillLogs', [
+                { sessionId: sessionId1, skill: getSkillCard(player1skill)?.name },
+                { sessionId: sessionId2, skill: getSkillCard(player2skill)?.name },
+            ]);
             if (!player1skill && !player2skill) {
                 player1.resetMp();
                 player2.resetMp();
