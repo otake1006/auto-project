@@ -1,4 +1,5 @@
 import { Schema, type, ArraySchema } from '@colyseus/schema';
+import { Condition, Skill } from '../rooms/schema/Skill';
 export type CardType = 'skill' | 'condition' | 'relic';
 export type BattleType = 'attack' | 'defense' | 'support'; // 必要に応じて拡張
 export type ConditionType = 'HP_ABOVE' | 'HP_BELOW' | 'MP_ABOVE' | 'MP_BELOW'; // 例
@@ -59,8 +60,8 @@ export function getSkillCard(id: number): SkillCard | undefined {
     return skillCards.find((card) => card.id === id);
 }
 
-export function getCondition(id: number): ConditionCard | undefined {
-    return conditionCards.find((card) => card.id === id);
+export function getCondition(condition: Condition): ConditionCard | undefined {
+    return conditionCards.find((card) => card.id === condition.id);
 }
 
 export function getRelic(id: number): RelicCard | undefined {
@@ -114,8 +115,8 @@ export const skillCards: SkillCard[] = [
         name: '炎弾',
         energy: 3,
         description: 'やり6を×3与える',
-        ability: 'ダメージ 2',
-        damage: 2,
+        ability: 'ダメージ 20',
+        damage: 20,
         battleType: 'attack',
         attackCount: 1,
         imgSrc: '/hitokage.png',
@@ -125,8 +126,8 @@ export const skillCards: SkillCard[] = [
         name: '水弾',
         energy: 3,
         description: 'やり6を×3与える',
-        ability: 'ダメージ 2',
-        damage: 2,
+        ability: 'ダメージ 20',
+        damage: 20,
         battleType: 'attack',
         attackCount: 1,
         imgSrc: '/hitokage.png',
@@ -136,8 +137,8 @@ export const skillCards: SkillCard[] = [
         name: '雷弾',
         energy: 3,
         description: 'やり6を×3与える',
-        ability: 'ダメージ 2',
-        damage: 2,
+        ability: 'ダメージ 20',
+        damage: 20,
         battleType: 'attack',
         attackCount: 1,
         imgSrc: '/hitokage.png',
@@ -147,8 +148,8 @@ export const skillCards: SkillCard[] = [
         name: '跳弾',
         energy: 3,
         description: 'やり6を×3与える',
-        ability: 'ダメージ 2',
-        damage: 2,
+        ability: 'ダメージ 20',
+        damage: 20,
         battleType: 'attack',
         attackCount: 1,
         imgSrc: '/hitokage.png',
