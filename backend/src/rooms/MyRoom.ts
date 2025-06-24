@@ -7,7 +7,6 @@ import {
     conditionCards,
     ConditionCard,
     getInitialSkill,
-    getRandomSkill,
     getSkillCard,
     selectRandomSkills,
 } from '../data/card';
