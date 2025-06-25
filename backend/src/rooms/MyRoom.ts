@@ -152,8 +152,8 @@ export class MyRoom extends Room {
             if (!player1skill && !player2skill) {
                 player1.resetMp();
                 player2.resetMp();
+                this.turn++;
             }
-            this.turn++;
             await this.sleep(500);
         }
     }
