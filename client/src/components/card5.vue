@@ -12,7 +12,7 @@ const props = defineProps({
 const parent = ref(props.parentList);
 const dropArea = ref(null)
 
-function onDragEnd(evt) {
+function onDragEnd(evt, targetIndex) {
     const mouseX = evt.originalEvent.clientX
     const mouseY = evt.originalEvent.clientY
     const dropRect = dropArea.value.getBoundingClientRect()
@@ -23,9 +23,8 @@ function onDragEnd(evt) {
         mouseY > dropRect.bottom
 
     if (isOutside) {
-        const index = evt.oldIndex
-        if (index !== undefined) {
-            skillStore.handleSkillRemove(index);
+        if (targetIndex !== undefined) {
+            skillStore.handleSkillRemove(targetIndex);
         }
     }
 
@@ -66,7 +65,8 @@ async function onDropped(data, index) {
                     <h3 class="font-semibold drag-handle">{{ index + 1 }}</h3>
                     <draggable :list="element.skill ? [element.skill] : []" :group="{ name: 'skill', pull: false }"
                         item-key="id" chosen-class="'ghost'" @add="(e) => skillStore.handleSkillAdd(e, index)"
-                        @end="onDragEnd" @remove="(e) => skillStore.handleSkillRemove(index)" :ghost-class="'ghost'">
+                        @end="(e) => onDragEnd(e, index)" @remove="(e) => skillStore.handleSkillRemove(index)"
+                        :ghost-class="'ghost'">
                         <template #item="{ element: skill }">
                             <card3 :cards="skill"></card3>
                         </template>
