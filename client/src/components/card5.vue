@@ -41,12 +41,21 @@ function canMove(evt) {
 
 async function onDropped(data, index) {
     const modalStore = useModalStore();
-    const inputValue = await modalStore.open('conditionInput', { card: data.item.__draggable_context.element });
+    const inputValue = await modalStore.open('conditionInput', {
+        card: data.item.__draggable_context.element
+    });
+
     const draggedItem = data.item.__draggable_context.element;
-    skillStore.skillSets[index].conditions.splice(event.newIndex, 1);
+
+    const currentConditions = skillStore.skillSets[index].conditions;
+    if (currentConditions.length >= 3) {
+        return;
+    }
+
+    currentConditions.splice(data.newDraggableIndex, 1);
+
     if (inputValue) {
-        // 任意の位置に手動で追加
-        skillStore.skillSets[index].conditions.splice(data.newIndex, 0, {
+        currentConditions.splice(data.newDraggableIndex, 0, {
             ...draggedItem,
             value: inputValue
         });
