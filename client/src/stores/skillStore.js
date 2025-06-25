@@ -37,6 +37,10 @@ export const useSkillStore = defineStore('skill', () => {
         return draggedElement.skill !== null;
     }
 
+    function handleConditionInput(id, inputValue, index) {
+        console.log(skillSets.value[index], skillSets.value, index);
+    }
+
     function handleSkillAdd(event, index) {
         // 追加されたスキルを取得
         const addedSkill =
@@ -104,6 +108,7 @@ export const useSkillStore = defineStore('skill', () => {
         filteredCards,
         handleSkillAdd,
         handleSkillRemove,
+        handleConditionInput,
         setTab,
     };
 });
