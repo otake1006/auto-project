@@ -99,6 +99,9 @@ export class MyRoom extends Room {
     sleep(options: number) {
         return new Promise((resolve) => setTimeout(resolve, options));
     }
+    mergeSkills(schemaSkills: ArraySchema<SkillCard>, arraySkills: SkillCard[]): SkillCard[] {
+        return [...schemaSkills, ...arraySkills];
+    }
 
     async playTurn() {
         this.gameState = 'ingame';
@@ -121,8 +124,12 @@ export class MyRoom extends Room {
                 this.broadcast('showReady');
                 player1.ready = false;
                 player2.ready = false;
-                const player1RandomSkill = selectRandomSkills();
-                const player2RandomSkill = selectRandomSkills();
+                const player1RandomSkill = selectRandomSkills(
+                    this.mergeSkills(this.initialSkill, this.player1SkillState),
+                );
+                const player2RandomSkill = selectRandomSkills(
+                    this.mergeSkills(this.initialSkill, this.player2SkillState),
+                );
                 this.clients.forEach((client) => {
                     if (client.sessionId === sessionId1) {
                         client.send('giveCards', player1RandomSkill);
