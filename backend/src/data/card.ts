@@ -18,7 +18,18 @@ export class SkillCard extends Schema {
 
     constructor(init?: Partial<SkillCard>) {
         super();
-        Object.assign(this, init);
+        if (init) {
+            this.id = init.id ?? 0;
+            this.name = init.name ?? '';
+            this.description = init.description ?? '';
+            this.type = init.type ?? 'skill';
+            this.energy = init.energy ?? 0;
+            this.damage = init.damage ?? 0;
+            this.battleType = init.battleType ?? 'attack';
+            this.Count = init.Count ?? 0;
+            this.imgSrc = init.imgSrc ?? '';
+            this.ability = init.ability;
+        }
     }
 }
 
@@ -56,7 +67,8 @@ export class RelicCard extends Schema {
 }
 
 export function getSkillCard(id: number): SkillCard | undefined {
-    return skillCards.find((card) => card.id === id);
+    let Skill = new SkillCard(skillCards.find((card) => card.id === id));
+    return Skill;
 }
 
 export function getCondition(condition: Condition): ConditionCard | undefined {
