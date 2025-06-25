@@ -1,6 +1,5 @@
 import { Schema, type, ArraySchema } from '@colyseus/schema';
 import { Condition, Skill } from '../rooms/schema/Skill';
-export type CardType = 'skill' | 'condition' | 'relic';
 export type BattleType = 'attack' | 'defense' | 'support'; // 必要に応じて拡張
 export type ConditionType = 'HP_ABOVE' | 'HP_BELOW' | 'MP_ABOVE' | 'MP_BELOW'; // 例
 
@@ -13,7 +12,7 @@ export class SkillCard extends Schema {
     @type('number') energy: number;
     @type('number') damage: number;
     @type('string') battleType: BattleType;
-    @type('number') attackCount: number;
+    @type('number') Count: number;
     @type('string') imgSrc: string;
     @type('string') ability?: string;
 
@@ -45,7 +44,7 @@ export class RelicCard extends Schema {
     @type('number') id: number;
     @type('string') name: string;
     @type('string') description: string;
-    @type('string') type: 'relic' = 'relic';
+    @type('string') type: string;
     @type('string') imgSrc: string;
     @type('string') ability?: string;
     @type('number') energy?: number;
@@ -120,7 +119,7 @@ export const skillCards: SkillCard[] = [
         ability: 'ダメージ 2',
         damage: 20,
         battleType: 'attack',
-        attackCount: 1,
+        Count: 1,
         imgSrc: '/hitokage.png',
     }),
     new SkillCard({
@@ -131,7 +130,7 @@ export const skillCards: SkillCard[] = [
         ability: 'ダメージ 20',
         damage: 20,
         battleType: 'attack',
-        attackCount: 1,
+        Count: 1,
         imgSrc: '/hitokage.png',
     }),
     new SkillCard({
@@ -142,7 +141,7 @@ export const skillCards: SkillCard[] = [
         ability: 'ダメージ 20',
         damage: 20,
         battleType: 'attack',
-        attackCount: 1,
+        Count: 1,
         imgSrc: '/hitokage.png',
     }),
     new SkillCard({
@@ -153,7 +152,7 @@ export const skillCards: SkillCard[] = [
         ability: 'ダメージ 20',
         damage: 20,
         battleType: 'attack',
-        attackCount: 1,
+        Count: 1,
         imgSrc: '/hitokage.png',
     }),
     new SkillCard({
@@ -164,7 +163,7 @@ export const skillCards: SkillCard[] = [
         ability: 'ダメージ 20',
         damage: 20,
         battleType: 'attack',
-        attackCount: 1,
+        Count: 1,
         imgSrc: '/hitokage.png',
     }),
     new SkillCard({
@@ -175,7 +174,7 @@ export const skillCards: SkillCard[] = [
         ability: 'ダメージ 20',
         damage: 20,
         battleType: 'attack',
-        attackCount: 1,
+        Count: 1,
         imgSrc: '/hitokage.png',
     }),
     new SkillCard({
@@ -186,7 +185,7 @@ export const skillCards: SkillCard[] = [
         ability: 'ダメージ 20',
         damage: 20,
         battleType: 'attack',
-        attackCount: 1,
+        Count: 1,
         imgSrc: '/hitokage.png',
     }),
     new SkillCard({
@@ -197,7 +196,7 @@ export const skillCards: SkillCard[] = [
         ability: 'ダメージ 20',
         damage: 20,
         battleType: 'attack',
-        attackCount: 1,
+        Count: 1,
         imgSrc: '/hitokage.png',
     }),
     new SkillCard({
@@ -208,18 +207,18 @@ export const skillCards: SkillCard[] = [
         ability: 'ダメージ 20',
         damage: 20,
         battleType: 'attack',
-        attackCount: 1,
+        Count: 1,
         imgSrc: '/hitokage.png',
     }),
     new SkillCard({
         id: 10,
-        name: '刀',
+        name: '大盾',
         energy: 3,
         description: 'やり6を×3与える',
         ability: 'ダメージ 20',
         damage: 20,
-        battleType: 'attack',
-        attackCount: 1,
+        battleType: 'defense',
+        Count: 1,
         imgSrc: '/hitokage.png',
     }),
 ];
@@ -238,11 +237,10 @@ export const conditionCards: ConditionCard[] = [
 
 export const relicCards: RelicCard[] = [
     new RelicCard({
-        id: 4,
+        id: 1,
+        type: 'permanent',
         name: '聖なる指輪',
-        energy: 0,
-        description: '自動で毎ターン回復+1',
+        description: 'ラウンド終了時HPを10回復',
         imgSrc: '/hitokage.png',
-        ability: '',
     }),
 ];
