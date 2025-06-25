@@ -6,6 +6,7 @@ export class Player extends Schema {
     @type('string') name: string = 'player';
     @type('number') hp: number = 100;
     @type('number') mp: number = 50;
+    @type('number') shield: number = 0;
     @type('number') maxhp: number = 100;
     @type('number') maxmp: number = 50;
     @type('number') ratiohp: number = 100;
@@ -42,6 +43,10 @@ export class Player extends Schema {
         if (skill.battleType === 'attack') {
             this.mp -= skill.energy;
             target.hp -= skill.damage;
+        }
+        if (skill.battleType === 'defense') {
+            this.mp -= skill.energy;
+            this.shield += skill.damage;
         }
     }
 
