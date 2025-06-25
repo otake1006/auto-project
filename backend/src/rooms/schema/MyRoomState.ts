@@ -1,5 +1,6 @@
 import { Schema, MapSchema, type, ArraySchema } from '@colyseus/schema';
 import { Condition, Skill } from './Skill';
+import { buff } from './buff';
 import { getSkillCard, getCondition, SkillCard, skillCards } from '../../data/card';
 
 export class Player extends Schema {
@@ -9,18 +10,25 @@ export class Player extends Schema {
     @type('number') shield: number = 0;
     @type('number') maxhp: number = 100;
     @type('number') maxmp: number = 50;
+    @type('number') maxshield: number = 100;
     @type('number') ratiohp: number = 100;
     @type('number') ratiomp: number = 100;
     @type('boolean') ready: boolean = false;
     @type([Skill]) skill = new ArraySchema<Skill>();
     @type([SkillCard]) skills = new ArraySchema<SkillCard>();
+    @type(buff) buffs = new buff();
     reset() {
         this.hp = this.maxhp;
         this.mp = this.maxmp;
+        this.shield = 0;
     }
 
     resetMp() {
         this.mp = this.maxmp;
+    }
+
+    resetShield() {
+        this.shield = 0;
     }
 
     selectSkill() {
@@ -42,11 +50,13 @@ export class Player extends Schema {
         const skill = getSkillCard(skillId);
         if (skill.battleType === 'attack') {
             this.mp -= skill.energy;
-            target.hp -= skill.damage;
+            const damage = Math.max(0, skill.damage - target.shield);
+            target.shield = Math.max(0, target.shield - skill.damage);
+            target.hp = Math.max(0, target.hp - damage);
         }
         if (skill.battleType === 'defense') {
             this.mp -= skill.energy;
-            this.shield += skill.damage;
+            this.shield = Math.min(this.maxshield, this.shield + skill.damage);
         }
     }
 
