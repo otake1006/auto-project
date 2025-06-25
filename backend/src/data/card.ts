@@ -82,9 +82,22 @@ export function getRandomSkill() {
     return shuffleCard[1];
 }
 
-export function selectRandomSkills(): SkillCard[] {
-    const shuffledCards = shuffle(skillCards);
-    return shuffledCards.slice(0, 3); // 最初の3つを返す
+// export function selectRandomSkills(): SkillCard[] {
+//     const shuffledCards = shuffle(skillCards);
+//     return shuffledCards.slice(0, 3); // 最初の3つを返す
+// }
+
+export function selectRandomSkills(arraySkills: SkillCard[]): SkillCard[] {
+    const xIds = new Set(arraySkills.map((card) => card.id));
+
+    // Card から x に含まれていないカードを抽出
+    const missing = skillCards.filter((card) => !xIds.has(card.id));
+
+    // シャッフル
+    const shuffledCards = shuffle(missing);
+
+    // 最初の3つを返す（足りなければ全部）
+    return shuffledCards.slice(0, 3);
 }
 
 export function shuffle<T>(array: T[]) {
@@ -146,6 +159,61 @@ export const skillCards: SkillCard[] = [
     new SkillCard({
         id: 5,
         name: '跳弾',
+        energy: 3,
+        description: 'やり6を×3与える',
+        ability: 'ダメージ 20',
+        damage: 20,
+        battleType: 'attack',
+        attackCount: 1,
+        imgSrc: '/hitokage.png',
+    }),
+    new SkillCard({
+        id: 6,
+        name: 'ファイア',
+        energy: 3,
+        description: 'やり6を×3与える',
+        ability: 'ダメージ 20',
+        damage: 20,
+        battleType: 'attack',
+        attackCount: 1,
+        imgSrc: '/hitokage.png',
+    }),
+    new SkillCard({
+        id: 7,
+        name: 'サンダー',
+        energy: 3,
+        description: 'やり6を×3与える',
+        ability: 'ダメージ 20',
+        damage: 20,
+        battleType: 'attack',
+        attackCount: 1,
+        imgSrc: '/hitokage.png',
+    }),
+    new SkillCard({
+        id: 8,
+        name: '連続切り',
+        energy: 3,
+        description: 'やり6を×3与える',
+        ability: 'ダメージ 20',
+        damage: 20,
+        battleType: 'attack',
+        attackCount: 1,
+        imgSrc: '/hitokage.png',
+    }),
+    new SkillCard({
+        id: 9,
+        name: '麻酔銃',
+        energy: 3,
+        description: 'やり6を×3与える',
+        ability: 'ダメージ 20',
+        damage: 20,
+        battleType: 'attack',
+        attackCount: 1,
+        imgSrc: '/hitokage.png',
+    }),
+    new SkillCard({
+        id: 10,
+        name: '刀',
         energy: 3,
         description: 'やり6を×3与える',
         ability: 'ダメージ 20',
