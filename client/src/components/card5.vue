@@ -12,7 +12,7 @@ const props = defineProps({
 const parent = ref(props.parentList);
 const dropArea = ref(null)
 
-function onDragEnd(evt) {
+function onDragEnd(evt, targetIndex) {
     const mouseX = evt.originalEvent.clientX
     const mouseY = evt.originalEvent.clientY
     const dropRect = dropArea.value.getBoundingClientRect()
@@ -23,15 +23,15 @@ function onDragEnd(evt) {
         mouseY > dropRect.bottom
 
     if (isOutside) {
-        const index = evt.oldIndex
-        if (index !== undefined) {
-            skillStore.handleSkillRemove(index);
+        if (targetIndex !== undefined) {
+            skillStore.handleSkillRemove(targetIndex);
         }
     }
 
 }
 
 function canMove(evt) {
+    console.log('canMove called', evt);
     const draggedElement = evt.relatedContext.element;
     const contextElement = evt.draggedContext.element;
 
@@ -39,36 +39,26 @@ function canMove(evt) {
 }
 
 
-
-function handleChange(evt) {
-    if (evt.added && evt.added.element) {
-        const newItem = evt.added.element;
-        console.log('New item added:', evt);
-
-        // 追加対象リストを取得（componentごとにドラッグ先が異なる場合は要工夫）
-        const toList = evt.to.__draggable_component?.modelValue;
-        const index = evt.added.newIndex;
-
-        // Vue 3 では .value や $set 不要、splice で OK
-        if (toList) {
-            toList.splice(index, 1, {
-                ...newItem,
-                value: 0  // ← 任意の値に書き換え
-            });
-        }
-    }
-}
-
-
 async function onDropped(data, index) {
     const modalStore = useModalStore();
-    const inputValue = await modalStore.open('conditionInput', { card: data.item.__draggable_context.element });
+    const inputValue = await modalStore.open('conditionInput', {
+        card: data.item.__draggable_context.element
+    });
+
+    const draggedItem = data.item.__draggable_context.element;
+
+    const currentConditions = skillStore.skillSets[index].conditions;
+    if (currentConditions.length >= 3) {
+        return;
+    }
+
+    currentConditions.splice(data.newDraggableIndex, 1);
+
     if (inputValue) {
-        const newIndex = data.newIndex;
-        skillStore.skillSets[index].conditions[newIndex] = {
-            ...data.item.__draggable_context.element,
-            value: inputValue  // ← ここで書き換え！
-        };
+        currentConditions.splice(data.newDraggableIndex, 0, {
+            ...draggedItem,
+            value: inputValue
+        });
     }
 
 }
@@ -84,7 +74,8 @@ async function onDropped(data, index) {
                     <h3 class="font-semibold drag-handle">{{ index + 1 }}</h3>
                     <draggable :list="element.skill ? [element.skill] : []" :group="{ name: 'skill', pull: false }"
                         item-key="id" chosen-class="'ghost'" @add="(e) => skillStore.handleSkillAdd(e, index)"
-                        @end="onDragEnd" @remove="(e) => skillStore.handleSkillRemove(index)" :ghost-class="'ghost'">
+                        @end="(e) => onDragEnd(e, index)" @remove="(e) => skillStore.handleSkillRemove(index)"
+                        :ghost-class="'ghost'">
                         <template #item="{ element: skill }">
                             <card3 :cards="skill"></card3>
                         </template>
@@ -96,9 +87,9 @@ async function onDropped(data, index) {
                         </template>
                     </draggable>
 
-
                     <draggable v-model="element.conditions" :ghost-class="'ghost'" :group="{ name: 'condition' }"
-                        @add="(e) => onDropped(e, index)" item-key="id" class="flex gap-6">
+                        data-group="condition" :data-index="index" @add="(e) => onDropped(e, index)" item-key="id"
+                        class="flex gap-6" :move="canMove">
                         <template #item="{ element: condition }">
                             <card3 :cards="condition"></card3>
                         </template>

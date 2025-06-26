@@ -66,9 +66,7 @@ export const useSkillStore = defineStore('skill', () => {
     }
 
     function handleSkillRemove(index) {
-        const card = skillSets.value[index];
-        card.skill = null;
-        card.conditions = [];
+        skillSets.value.splice(index, 1);
     }
 
     // 実際には type でフィルタする（例: 'skill', 'condition', 'relic' など）
