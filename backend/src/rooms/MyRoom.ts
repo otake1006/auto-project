@@ -1,7 +1,7 @@
 import { Room, Client } from '@colyseus/core';
 import { ArraySchema } from '@colyseus/schema';
 import { MyRoomState, Player } from './schema/MyRoomState';
-import { Skill } from './schema/Skill';
+import { Skill, Condition } from './schema/Skill';
 import {
     SkillCard,
     conditionCards,
@@ -20,7 +20,7 @@ export class MyRoom extends Room {
     winCount1 = 0;
     winCount2 = 0;
     drawCount = 0;
-    round = 0;
+    round = 1;
     turn = 1; //ここまで新しいbattledtateを作る
     initialSkill = new ArraySchema<SkillCard>();
     player1SkillState: SkillCard[] = [];
@@ -39,7 +39,14 @@ export class MyRoom extends Room {
             skillSet.forEach((item) => {
                 const skillSet = new Skill();
                 skillSet.skill = item.skill;
-                skillSet.conditions = item.conditions;
+                skillSet.conditions = new ArraySchema<Condition>(
+                    ...item.conditions.map((c: any) => {
+                        const condition = new Condition();
+                        condition.id = c.id;
+                        condition.value = c.value;
+                        return condition;
+                    }),
+                );
                 skillSets.push(skillSet);
             });
             player.skill = skillSets;
@@ -103,21 +110,25 @@ export class MyRoom extends Room {
     async playTurn() {
         this.gameState = 'ingame';
         this.broadcast('turn', this.turn);
+        this.broadcast('round', this.round);
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
 
         while (true) {
             if (player1.hp <= 0 || player2.hp <= 0 || this.turn > 10) {
+                this.turn = 1;
                 if (player1.hp > 0 && player2.hp <= 0) this.winCount1 += 1;
                 if (player2.hp > 0 && player1.hp <= 0) this.winCount2 += 1;
                 this.round += 1;
                 player1.reset();
                 player2.reset();
-                if (this.round === 5) {
+                if (this.round >= 6) {
                     if (this.winCount1 > this.winCount2) {
                         this.winner = 'player1';
+                        this.broadcast('winner', sessionId1);
                     }
                     if (this.winCount1 < this.winCount2) {
                         this.winner = 'player2';
+                        this.broadcast('winner', sessionId2);
                     }
                     this.gameState = 'endgame';
                     return;
@@ -149,9 +160,11 @@ export class MyRoom extends Room {
             if (skill.battleType === 'defense') {
                 player2.useSkill(player2skill, player1);
                 player1.useSkill(player1skill, player2);
+            } else {
+                player1.useSkill(player1skill, player2);
+                player2.useSkill(player2skill, player1);
             }
-            player1.useSkill(player1skill, player2);
-            player2.useSkill(player2skill, player1);
+
             this.broadcast('skillLogs', [
                 { sessionId: sessionId1, skill: getSkillCard(player1skill)?.name },
                 { sessionId: sessionId2, skill: getSkillCard(player2skill)?.name },
@@ -159,6 +172,8 @@ export class MyRoom extends Room {
             if (!player1skill && !player2skill) {
                 player1.resetMp();
                 player2.resetMp();
+                player1.resetShield();
+                player2.resetShield();
                 this.turn++;
                 this.broadcast('turn', this.turn);
             }
