@@ -31,7 +31,7 @@ export const cards = [
         type: 'condition', // 👈 分類（条件）,
         conditionType: 'HP_ABOVE',
         value: '0',
-        imgSrc: '/hitokage.png',
+        imgSrc: '/fc868.png',
     },
     {
         id: 4,
