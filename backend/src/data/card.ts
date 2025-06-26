@@ -132,7 +132,7 @@ export const skillCards: SkillCard[] = [
         damage: 20,
         battleType: 'attack',
         Count: 1,
-        imgSrc: '/hitokage.png',
+        imgSrc: '/fc290.png',
     }),
     new SkillCard({
         id: 2,
@@ -143,7 +143,7 @@ export const skillCards: SkillCard[] = [
         damage: 20,
         battleType: 'attack',
         Count: 1,
-        imgSrc: '/hitokage.png',
+        imgSrc: '/fc290.png',
     }),
     new SkillCard({
         id: 3,
@@ -154,7 +154,7 @@ export const skillCards: SkillCard[] = [
         damage: 20,
         battleType: 'attack',
         Count: 1,
-        imgSrc: '/hitokage.png',
+        imgSrc: '/fc290.png',
     }),
     new SkillCard({
         id: 4,
@@ -165,7 +165,7 @@ export const skillCards: SkillCard[] = [
         damage: 20,
         battleType: 'attack',
         Count: 1,
-        imgSrc: '/hitokage.png',
+        imgSrc: '/fc290.png',
     }),
     new SkillCard({
         id: 5,
@@ -176,7 +176,7 @@ export const skillCards: SkillCard[] = [
         damage: 20,
         battleType: 'attack',
         Count: 1,
-        imgSrc: '/hitokage.png',
+        imgSrc: '/fc290.png',
     }),
     new SkillCard({
         id: 6,
@@ -187,7 +187,7 @@ export const skillCards: SkillCard[] = [
         damage: 20,
         battleType: 'attack',
         Count: 1,
-        imgSrc: '/hitokage.png',
+        imgSrc: '/fc290.png',
     }),
     new SkillCard({
         id: 7,
@@ -198,7 +198,7 @@ export const skillCards: SkillCard[] = [
         damage: 20,
         battleType: 'attack',
         Count: 1,
-        imgSrc: '/hitokage.png',
+        imgSrc: '/fc290.png',
     }),
     new SkillCard({
         id: 8,
@@ -209,7 +209,7 @@ export const skillCards: SkillCard[] = [
         damage: 20,
         battleType: 'attack',
         Count: 1,
-        imgSrc: '/hitokage.png',
+        imgSrc: '/fc290.png',
     }),
     new SkillCard({
         id: 9,
@@ -220,7 +220,7 @@ export const skillCards: SkillCard[] = [
         damage: 20,
         battleType: 'attack',
         Count: 1,
-        imgSrc: '/hitokage.png',
+        imgSrc: '/fc290.png',
     }),
     new SkillCard({
         id: 10,
@@ -231,7 +231,7 @@ export const skillCards: SkillCard[] = [
         damage: 20,
         battleType: 'defense',
         Count: 1,
-        imgSrc: '/hitokage.png',
+        imgSrc: '/fc290.png',
     }),
 ];
 
@@ -242,7 +242,7 @@ export const conditionCards: ConditionCard[] = [
         description: '次のターンから2ダメージ継続',
         conditionType: 'HP_ABOVE',
         value: 0,
-        imgSrc: '/hitokage.png',
+        imgSrc: '/fc868.png',
         ability: '',
     }),
 ];
