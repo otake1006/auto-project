@@ -76,7 +76,6 @@ export class BattleScene extends Phaser.Scene {
             bgColor: 0x333333,
         });
         this.turnIndicator = new TurnIndicator(this);
-        this.turnIndicator.showTurn(2);
         // UIの将来的な拡張用
         // this.roundUI = new RoundStatusUI(this, this.centerX, 20);
     }
@@ -122,6 +121,11 @@ export class BattleScene extends Phaser.Scene {
         );
         this.colyseus.onSkillLog(this.handleSkillLog, this);
         this.colyseus.onShowReady(() => this.handleShowReady());
+        this.colyseus.onTurn(this.handleTurn, this);
+    }
+
+    handleTurn(turn) {
+        this.turnIndicator.showTurn(turn);
     }
 
     handlePlayerUpdate(character, view, field) {
