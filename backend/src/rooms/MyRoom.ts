@@ -77,13 +77,8 @@ export class MyRoom extends Room {
     // Called when a client joins the room
     onJoin(client: Client, options: any) {
         const joinPlayer = new Player();
-        // for (const initial of this.initialSkill) {
-        //     joinPlayer.skills.push(initial);
-        //     console.log(initial.name);
-        // }
-        //joinPlayer.skills = this.initialSkill;
-        //console.log(joinPlayer.skills.toJSON());
-        this.broadcast('action', this.initialSkill);
+        client.send('action', this.initialSkill);
+        client.send('condition', conditionCards);
         this.state.players.set(client.sessionId, joinPlayer);
     }
 
@@ -107,7 +102,7 @@ export class MyRoom extends Room {
 
     async playTurn() {
         this.gameState = 'ingame';
-
+        this.broadcast('turn', this.turn);
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
 
         while (true) {
@@ -150,6 +145,11 @@ export class MyRoom extends Room {
             }
             const player1skill = player1.selectSkill();
             const player2skill = player2.selectSkill();
+            const skill = getSkillCard(player2skill);
+            if (skill.battleType === 'defense') {
+                player2.useSkill(player2skill, player1);
+                player1.useSkill(player1skill, player2);
+            }
             player1.useSkill(player1skill, player2);
             player2.useSkill(player2skill, player1);
             this.broadcast('skillLogs', [
@@ -160,6 +160,7 @@ export class MyRoom extends Room {
                 player1.resetMp();
                 player2.resetMp();
                 this.turn++;
+                this.broadcast('turn', this.turn);
             }
             await this.sleep(500);
         }
