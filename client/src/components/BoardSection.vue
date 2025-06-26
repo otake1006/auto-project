@@ -6,15 +6,30 @@
             <!-- 上部：バトル -->
             <PhaserGame class="flex-1" />
 
-            <!-- 下部：作戦＆カード選択
-            <div class="flex flex-[2] overflow-hidden border-t-2 border-gray-300 bg-neutral-700 p-4">
+            <!-- 下部：作戦＆カード選択 -->
+            <div
+                v-show="currentScene === 'BattleScene'"
+                class="flex flex-[2] overflow-hidden border-t-2 border-gray-300 bg-neutral-700 p-4"
+            >
                 <TacticsBoard class="w-1/2 overflow-y-auto pr-2" />
-                <SkillSelection class="w-1/2 flex flex-col pl-2" :tabs="tabs" :cards="filteredCards" />
-                <SpriteButton sprite-src="assets/chests.png" :scale="4" :col="0" :row="0"
-                    className="absolute bottom-40 left-0" :action="openSkillModal" />
+                <SkillSelection
+                    class="flex w-1/2 flex-col pl-2"
+                    :tabs="tabs"
+                    :cards="filteredCards"
+                />
+                <SpriteButton
+                    sprite-src="assets/chests.png"
+                    :scale="4"
+                    :col="0"
+                    :row="0"
+                    className="absolute bottom-40 left-0"
+                    :action="openSkillModal"
+                />
             </div>
-            <button @click="openSkillModal" class="btn">Open Skill Modal</button>
-            <ModalDispatcher /> -->
+            <button v-show="currentScene === 'BattleScene'" @click="openSkillModal" class="btn">
+                Open Skill Modal
+            </button>
+            <ModalDispatcher v-show="currentScene === 'BattleScene'" />
         </div>
     </div>
 </template>
@@ -26,8 +41,18 @@
     import ModalDispatcher from '@/components/modals/ModalDispatcher.vue';
     import { useModalStore } from '@/stores/modalStore';
     import SpriteButton from './SpriteButton.vue';
+    import { phaserEvents, Event } from '@/events/EventCenter';
+    import { ref } from 'vue';
+
+    phaserEvents.on('scene-changed', onSceneChanged);
 
     const modalStore = useModalStore();
+
+    function onSceneChanged(newSceneName) {
+        currentScene.value = newSceneName;
+        console.log(newSceneName);
+    }
+    const currentScene = ref('StartScene');
 
     async function openSkillModal() {
         const selected = await modalStore.open('conditionInput', {
