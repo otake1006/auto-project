@@ -43,6 +43,7 @@ export class BattleScene extends Phaser.Scene {
         this.load.audio('sfx_attack', 'assets/sfx/attack.mp3');
         this.load.image('background', 'assets/background.jpg');
         this.load.image('winIcon', 'assets/3302.png');
+        this.load.image('shield', 'fc2151.png');
     }
 
     initLayout() {
