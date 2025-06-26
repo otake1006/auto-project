@@ -123,6 +123,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     handleRound(round) {
+        console.log(round);
         new WipeAppearDisappearText(this, this.centerX, this.centerY, `Round ${round}!`, {
             textStyle: {
                 fontSize: '36px',
@@ -134,10 +135,10 @@ export class BattleScene extends Phaser.Scene {
     }
 
     handlePlayerUpdate(character, view, player) {
-        console.log(player, player.hp);
         character.updatePlayer(player);
         view.setReady(player.ready);
-        view.updateBars(player.shield);
+        view.updateBars();
+        view.updateCount(player.shield);
     }
 
     handleSkillLog(isEnemy) {
