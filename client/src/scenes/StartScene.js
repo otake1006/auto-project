@@ -1,7 +1,8 @@
+import { phaserEvents } from '@/events/EventCenter';
 // scenes/TitleScene.js
-export default class StartScene extends Phaser.Scene {
+export class StartScene extends Phaser.Scene {
     constructor() {
-        super('TitleScene');
+        super('StartScene');
     }
 
     preload() {
@@ -9,11 +10,13 @@ export default class StartScene extends Phaser.Scene {
     }
 
     create() {
+        phaserEvents.emit('scene-changed', 'StartScene');
         // タイトルテキスト
         this.add
-            .text(400, 200, 'タイトル画面', {
-                fontSize: '48px',
-                color: '#ffffff',
+            .text(400, 200, 'オートプロジェクト', {
+                fontSize: '60px',
+                fontFamily: 'DotGothic16',
+                color: '#00000',
             })
             .setOrigin(0.5);
 
