@@ -1,6 +1,7 @@
 // core/CharacterView.js
 import StatusBar from '@/ui/StatusBar.js';
 import SkillLog from '@/ui/SkillLog.js'; // 追加
+import { StatusIcon } from '@/ui/StatusIcon';
 
 export default class CharacterView {
     constructor(scene, character, x, y, isRight = false) {
@@ -27,6 +28,11 @@ export default class CharacterView {
             .setOrigin(0.5);
 
         this.skillLog = new SkillLog(scene, x, y, isRight); // 右に表示（左なら x - 80）
+
+        this.armorIcon = new StatusIcon(scene, isRight ? x + 60 : x - 60, y, {
+            key: 'shield',
+            count: 0,
+        });
     }
 
     showSkillLog(text) {
@@ -40,6 +46,10 @@ export default class CharacterView {
     updateBars() {
         this.hpBar.update(this.character.hp.current, 100);
         this.mpBar.update(this.character.mp.current, 50);
+    }
+
+    updateCount(count) {
+        this.armorIcon.updateCount(count);
     }
 
     destroy() {
