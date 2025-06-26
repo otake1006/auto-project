@@ -1,6 +1,7 @@
 // src/colyseus/messageHandlers/index.js
 import { onAction } from './onAction';
 import { onRandomSkill } from './onRandomSkill';
+import { onRound } from './onRound';
 import { onShowReady } from './onShowReady';
 import { onSkillLogs } from './onSkillLogs';
 import { onSkillSelectModal } from './onSkillSelectModal';
