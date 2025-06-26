@@ -82,9 +82,13 @@ export function getRelic(id: number): RelicCard | undefined {
 export function getInitialSkill() {
     const initialSkill = new ArraySchema<SkillCard>();
     const shuffleCard = shuffle(skillCards);
+
     for (let i = 0; i < 3; i++) {
-        initialSkill.push(shuffleCard[i]);
+        // 新しいインスタンスを作る（コピー）
+        const card = shuffleCard[i];
+        initialSkill.push(new SkillCard({ ...card }));
     }
+
     return initialSkill;
 }
 
