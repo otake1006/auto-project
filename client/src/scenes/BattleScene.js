@@ -115,11 +115,11 @@ export class BattleScene extends Phaser.Scene {
         this.colyseus.onSkillLog(this.handleSkillLog, this);
         this.colyseus.onShowReady(() => this.handleShowReady());
         this.colyseus.onTurn(this.handleTurn, this);
+        this.colyseus.onRound(this.handleRound, this);
     }
 
     handleTurn(turn) {
         this.turnIndicator.showTurn(turn);
-        this.colyseus.onRound(this.handleRound, this);
     }
 
     handleRound(round) {
