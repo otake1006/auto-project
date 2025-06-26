@@ -60,11 +60,7 @@ export class ColyseusClient {
 
             // HP/MP/Ready状態が変更されたらPhaserに通知
             $(player).onChange(() => {
-                phaserEvents.emit(event, {
-                    hp: player.hp,
-                    mp: player.mp,
-                    ready: player.ready,
-                });
+                phaserEvents.emit(event, player);
             });
         });
 
