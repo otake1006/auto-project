@@ -7,9 +7,13 @@
     import { onMounted, onBeforeUnmount, ref } from 'vue';
     import Phaser from 'phaser';
     import { BattleScene } from '@/scenes/BattleScene';
+    import { StartScene } from '@/scenes/StartScene';
+    import { useModalStore } from '@/stores/modalStore';
 
     const gameContainer = ref(null);
     let game = null;
+
+    // グローバルイベントなどでシーンの切り替え通知を受ける想定
 
     onMounted(() => {
         const config = {
@@ -17,7 +21,7 @@
             mode: Phaser.Scale.ScaleModes.RESIZE,
             backgroundColor: '#93cbee',
             width: 1440,
-            height: 258,
+            height: 810,
             parent: gameContainer.value,
             scene: [StartScene, BattleScene],
         };
