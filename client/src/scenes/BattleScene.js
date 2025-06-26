@@ -133,8 +133,8 @@ export class BattleScene extends Phaser.Scene {
 
     handleSkillLog(isEnemy) {
         if (!isEnemy) return;
-        const logText = `Used ${isEnemy.skill}`;
-        console.log(`Skill log: ${logText}`);
+        if (!isEnemy.skill) return;
+        const logText = `${isEnemy.skill} を唱えた!`;
         const view = isEnemy.isEnemy ? this.enemyView : this.playerView;
         view.showSkillLog(logText);
     }
