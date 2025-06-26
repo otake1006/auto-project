@@ -133,11 +133,11 @@ export class BattleScene extends Phaser.Scene {
         });
     }
 
-    handlePlayerUpdate(character, view, field) {
-        console.log(field);
-        character.updatePlayer(field);
-        view.setReady(field.ready);
-        view.updateBars();
+    handlePlayerUpdate(character, view, player) {
+        console.log(player, player.hp);
+        character.updatePlayer(player);
+        view.setReady(player.ready);
+        view.updateBars(player.shield);
     }
 
     handleSkillLog(isEnemy) {
