@@ -15,4 +15,5 @@ export function setupMessageHandlers(room) {
     room.onMessage('skillLogs', (data) => onSkillLogs(room, data));
     room.onMessage('giveCards', (data) => onSkillSelectModal(room, data));
     room.onMessage('showReady', () => onShowReady(room));
+    room.onMessage('round', (data) => onRound(data));
 }

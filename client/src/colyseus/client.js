@@ -90,4 +90,8 @@ export class ColyseusClient {
     onShowReady(callback) {
         phaserEvents.on('showReady', callback);
     }
+
+    onRound(callback, context) {
+        phaserEvents.on('round', callback, context);
+    }
 }

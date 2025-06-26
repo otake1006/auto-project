@@ -67,14 +67,6 @@ export class BattleScene extends Phaser.Scene {
         });
 
         this.effectManager = new EffectManager(this);
-        new WipeAppearDisappearText(this, this.centerX, this.centerY, 'Round 1!', {
-            textStyle: {
-                fontSize: '36px',
-                fontFamily: 'Arial',
-                color: '#ffcc00',
-            },
-            bgColor: 0x333333,
-        });
         this.turnIndicator = new TurnIndicator(this);
         this.turnIndicator.showTurn(2);
         // UIの将来的な拡張用
@@ -122,6 +114,18 @@ export class BattleScene extends Phaser.Scene {
         );
         this.colyseus.onSkillLog(this.handleSkillLog, this);
         this.colyseus.onShowReady(() => this.handleShowReady());
+        this.colyseus.onRound(this.handleRound, this);
+    }
+
+    handleRound(round) {
+        new WipeAppearDisappearText(this, this.centerX, this.centerY, `Round ${round}!`, {
+            textStyle: {
+                fontSize: '36px',
+                fontFamily: 'Arial',
+                color: '#ffcc00',
+            },
+            bgColor: 0x333333,
+        });
     }
 
     handlePlayerUpdate(character, view, field) {
