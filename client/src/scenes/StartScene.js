@@ -34,4 +34,9 @@ export class StartScene extends Phaser.Scene {
                 this.scene.start('BattleScene'); // ゲーム画面に遷移
             });
     }
+
+    shutdown() {
+        // クリーンアップ（イベントの重複登録防止）
+        phaserEvents.removeAllListeners('scene-changed');
+    }
 }
