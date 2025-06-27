@@ -20,7 +20,7 @@ export function setupMessageHandlers(room) {
     room.onMessage('giveCards', (data) => onSkillSelectModal(room, data));
     room.onMessage('showReady', () => onShowReady(room));
     room.onMessage('winner', (data) => {
-        phaserEvents.emit('scene-changed', data); // ← scene変更イベントを送る
+        phaserEvents.emit('resultScene', data); // ← scene変更イベントを送る
     });
     room.onMessage('turn', (data) => onTurn(data));
     room.onMessage('round', (data) => onRound(data));
