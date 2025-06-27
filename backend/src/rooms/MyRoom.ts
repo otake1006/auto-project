@@ -130,6 +130,7 @@ export class MyRoom extends Room {
                         this.winner = 'player2';
                         this.broadcast('winner', sessionId2);
                     }
+                    this.broadcast('winner', this.winner);
                     this.gameState = 'endgame';
                     return;
                 }
