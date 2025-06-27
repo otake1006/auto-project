@@ -16,13 +16,9 @@ export const useSkillStore = defineStore('skill', () => {
         hp: 10,
     });
 
-    const categories = ['Attack', 'Defense', 'Magic'];
-    const currentCategory = ref('Attack');
     const currentTab = ref('スキル');
 
     const itemList = ref([[], [], [], [], []]);
-
-    const skills = ref([]);
 
     const skillSets = ref([
         {
@@ -31,6 +27,10 @@ export const useSkillStore = defineStore('skill', () => {
             conditions: [],
         },
     ]);
+
+    const skills = ref([]);
+    const conditions = ref([]);
+    const relics = ref([]);
 
     function canMove(evt) {
         const draggedElement = evt.draggedContext.element;
@@ -75,8 +75,33 @@ export const useSkillStore = defineStore('skill', () => {
         if (type === 'skill') {
             return skills.value;
         }
+        if (type === 'condition') {
+            return getGroupedByKey(conditions.value).map((group) => group.items[0]);
+        }
         return cards.filter((card) => card.type === type);
     });
+
+    function loadConditionFromColyseus(data) {
+        conditions.value = data || [];
+    }
+
+    function getGroupedByKey(conditions) {
+        const groups = {};
+        for (const item of conditions) {
+            (groups[item.groupId] = groups[item.groupId] || []).push(item);
+        }
+        return Object.entries(groups).map(([groupId, items]) => ({
+            groupId,
+            items,
+            representative: items[0],
+        }));
+    }
+
+    function getItemsByGroupId(groupId) {
+        const grouped = getGroupedByKey(conditions.value);
+        const group = grouped.find((group) => group.groupId === groupId);
+        return group ? group.items : [];
+    }
 
     function setSkills(value) {
         skills.value = value;
@@ -107,6 +132,8 @@ export const useSkillStore = defineStore('skill', () => {
         handleSkillAdd,
         handleSkillRemove,
         handleConditionInput,
+        loadConditionFromColyseus,
+        getItemsByGroupId,
         setTab,
     };
 });

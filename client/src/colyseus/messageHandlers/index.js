@@ -1,5 +1,6 @@
 // src/colyseus/messageHandlers/index.js
 import { onAction } from './onAction';
+import { onCondition } from './onCondition';
 import { onRandomSkill } from './onRandomSkill';
 import { onRound } from './onRound';
 import { onShowReady } from './onShowReady';
@@ -19,4 +20,5 @@ export function setupMessageHandlers(room) {
     room.onMessage('showReady', () => onShowReady(room));
     room.onMessage('turn', (data) => onTurn(data));
     room.onMessage('round', (data) => onRound(data));
+    room.onMessage('condition', (data) => onCondition(data));
 }
