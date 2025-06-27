@@ -94,4 +94,8 @@ export class ColyseusClient {
     onRound(callback, context) {
         phaserEvents.on('round', callback, context);
     }
+
+    onSceneChanged(callback, context) {
+        phaserEvents.on('scene-changed', callback, context);
+    }
 }

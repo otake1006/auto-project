@@ -34,10 +34,6 @@ export class BattleScene extends Phaser.Scene {
         this.createPlayers();
         this.setupUI();
         this.setupNetworkHandlers();
-
-        phaserEvents.on('scene-changed', (sceneName, data) => {
-            this.scene.start(sceneName, data); // ← ResultScene に遷移
-        });
     }
 
     shutdown() {
@@ -126,6 +122,12 @@ export class BattleScene extends Phaser.Scene {
         this.colyseus.onShowReady(() => this.handleShowReady());
         this.colyseus.onTurn(this.handleTurn, this);
         this.colyseus.onRound(this.handleRound, this);
+        this.colyseus.onSceneChanged(this.handleSceneChanged, this);
+    }
+
+    handleSceneChanged(data) {
+        console.log('sdf');
+        this.scene.start('ResultScene', data); // ← ResultScene に遷移
     }
 
     handleTurn(turn) {
