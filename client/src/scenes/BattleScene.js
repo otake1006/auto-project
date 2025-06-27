@@ -34,6 +34,15 @@ export class BattleScene extends Phaser.Scene {
         this.createPlayers();
         this.setupUI();
         this.setupNetworkHandlers();
+
+        phaserEvents.on('scene-changed', (sceneName, data) => {
+            this.scene.start(sceneName, data); // ← ResultScene に遷移
+        });
+    }
+
+    shutdown() {
+        // クリーンアップ（イベントの重複登録防止）
+        phaserEvents.removeAllListeners('scene-changed');
     }
 
     loadAssets() {
