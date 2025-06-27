@@ -95,7 +95,9 @@ export class MyRoom extends Room {
     }
 
     // Called when the room is disposed
-    onDispose() {}
+    onDispose() {
+        console.log('ルームが削除されました');
+    }
 
     checkReady() {
         return this.state.players.values().every((player) => player.ready);
@@ -132,6 +134,7 @@ export class MyRoom extends Room {
                     }
                     this.broadcast('winner', this.winner);
                     this.gameState = 'endgame';
+                    this.disconnect();
                     return;
                 }
                 this.gameState = 'ready';
