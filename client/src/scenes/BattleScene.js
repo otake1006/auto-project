@@ -34,6 +34,8 @@ export class BattleScene extends Phaser.Scene {
         this.createPlayers();
         this.setupUI();
         this.setupNetworkHandlers();
+
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     }
 
     shutdown() {
@@ -75,6 +77,7 @@ export class BattleScene extends Phaser.Scene {
 
         this.effectManager = new EffectManager(this);
         this.turnIndicator = new TurnIndicator(this);
+
         // UIの将来的な拡張用
         // this.roundUI = new RoundStatusUI(this, this.centerX, 20);
     }
@@ -126,7 +129,6 @@ export class BattleScene extends Phaser.Scene {
     }
 
     handleSceneChanged(data) {
-        console.log('sdf');
         this.scene.start('ResultScene', data); // ← ResultScene に遷移
     }
 
@@ -148,7 +150,9 @@ export class BattleScene extends Phaser.Scene {
 
     handlePlayerUpdate(character, view, player) {
         character.updatePlayer(player);
-        view.setReady(player.ready);
+        if (view?.setReady) {
+            view.setReady(player.ready);
+        }
         view.updateBars();
         view.updateCount(player.shield);
     }
@@ -182,5 +186,40 @@ export class BattleScene extends Phaser.Scene {
             fontSize: '32px',
             color: '#ff0000',
         });
+    }
+
+    cleanup() {
+        console.log('[BattleScene] Cleaning up scene.');
+        const skillStore = useSkillStore();
+        skillStore.reset();
+        // Colyseusのイベント解除とleave
+        this.colyseus?.leave?.();
+        this.colyseus?.removeAllListeners?.();
+
+        // Phaser EventCenterのリスナー解除
+        phaserEvents.removeAllListeners();
+
+        // 各UI要素・オブジェクト破棄
+        this.readyButton?.destroy?.();
+        this.effectManager?.destroy?.();
+        this.turnIndicator?.destroy?.();
+
+        this.playerView?.destroy?.();
+        this.enemyView?.destroy?.();
+
+        this.player?.destroy?.();
+        this.enemy?.destroy?.();
+
+        // メモリリーク防止
+        this.readyButton = null;
+        this.effectManager = null;
+        this.turnIndicator = null;
+        this.playerView = null;
+        this.enemyView = null;
+        this.player = null;
+        this.enemy = null;
+
+        // Phaserが保持しているDisplayObjectも削除（念のため）
+        this.children.removeAll(true);
     }
 }
