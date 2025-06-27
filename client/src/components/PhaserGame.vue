@@ -23,7 +23,7 @@
             width: 1440,
             height: 810,
             parent: gameContainer.value,
-            scene: [StartScene, BattleScene],
+            scene: [StartScene, BattleScene, ResultScene],
         };
 
         game = new Phaser.Game(config);
