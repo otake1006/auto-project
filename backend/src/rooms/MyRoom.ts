@@ -33,6 +33,7 @@ export class MyRoom extends Room {
         this.onMessage('ready', (client, skillSet: any[]) => {
             if (this.gameState === 'ingame') return;
             if (this.gameState === 'endgame') return;
+            console.log(skillSet);
             const player = this.state.players.get(client.sessionId);
             const skillSets = new ArraySchema<Skill>();
 
@@ -44,6 +45,7 @@ export class MyRoom extends Room {
                         const condition = new Condition();
                         condition.id = c.id;
                         condition.value = c.value;
+                        console.log(c);
                         return condition;
                     }),
                 );
