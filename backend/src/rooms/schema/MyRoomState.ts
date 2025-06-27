@@ -67,11 +67,13 @@ export class Player extends Schema {
         Condition.value = condition.value;
         switch (Condition.conditionType) {
             case 'HP_ABOVE':
-                return context.hp > Condition.value;
+                return context.hp >= Condition.value;
             case 'HP_BELOW':
-                return context.hp < Condition.value;
+                return context.hp <= Condition.value;
             case 'MP_ABOVE':
-                return context.mp > Condition.value;
+                return context.mp >= Condition.value;
+            case 'MP_BELOW':
+                return context.mp <= Condition.value;
             // 追加条件にも対応可能
             default:
                 return false;
