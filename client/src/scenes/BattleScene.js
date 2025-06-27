@@ -175,7 +175,9 @@ export class BattleScene extends Phaser.Scene {
             .filter((set) => set.skill)
             .map((set) => ({
                 skill: set.skill.id,
-                conditions: set.conditions.map((c) => c.id),
+                conditions: set.conditions.map((c) => {
+                    return { id: c.id, value: c.value };
+                }),
             }));
 
         this.colyseus.sendSkillSet(payload);
