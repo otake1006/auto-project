@@ -8,6 +8,7 @@
     import Phaser from 'phaser';
     import { BattleScene } from '@/scenes/BattleScene';
     import { StartScene } from '@/scenes/StartScene';
+    import { ResultScene } from '@/scenes/ResultScene';
     import { useModalStore } from '@/stores/modalStore';
 
     const gameContainer = ref(null);
