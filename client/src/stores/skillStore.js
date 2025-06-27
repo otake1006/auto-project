@@ -120,6 +120,18 @@ export const useSkillStore = defineStore('skill', () => {
         currentTab.value = tab;
     }
 
+    function reset() {
+        skillSets.value = [
+            {
+                id: 'set1',
+                skill: null,
+                conditions: [],
+            },
+        ];
+        skills.value = [];
+        conditions.value = [];
+    }
+
     return {
         player,
         itemList,
@@ -137,5 +149,6 @@ export const useSkillStore = defineStore('skill', () => {
         loadConditionFromColyseus,
         getItemsByGroupId,
         setTab,
+        reset,
     };
 });
