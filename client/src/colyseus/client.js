@@ -96,6 +96,6 @@ export class ColyseusClient {
     }
 
     onSceneChanged(callback, context) {
-        phaserEvents.on('scene-changed', callback, context);
+        phaserEvents.on('resultScene', callback, context);
     }
 }
