@@ -98,6 +98,8 @@ export const useSkillStore = defineStore('skill', () => {
     }
 
     function getItemsByGroupId(groupId) {
+        if (!groupId) return undefined;
+
         const grouped = getGroupedByKey(conditions.value);
         const group = grouped.find((group) => group.groupId === groupId);
         return group ? group.items : [];
