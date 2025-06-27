@@ -43,6 +43,7 @@ export class ConditionCard extends Schema {
     @type('number') value: number;
     @type('string') imgSrc: string;
     @type('string') ability?: string;
+    @type('string') groupId: string;
 
     constructor(init?: Partial<ConditionCard>) {
         super();
@@ -241,13 +242,44 @@ export const skillCards: SkillCard[] = [
 
 export const conditionCards: ConditionCard[] = [
     new ConditionCard({
-        id: 3,
-        name: 'HP49より上',
+        id: 1,
+        name: 'HP以上',
         description: '次のターンから2ダメージ継続',
         conditionType: 'HP_ABOVE',
         value: 0,
         imgSrc: '/fc868.png',
         ability: '',
+        groupId: 'hp',
+    }),
+    new ConditionCard({
+        id: 2,
+        name: 'HP以下',
+        description: '次のターンから2ダメージ継続',
+        conditionType: 'HP_BELOW',
+        value: 0,
+        imgSrc: '/fc868.png',
+        ability: '',
+        groupId: 'hp',
+    }),
+    new ConditionCard({
+        id: 3,
+        name: 'MP以上',
+        description: '次のターンから2ダメージ継続',
+        conditionType: 'MP_ABOVE',
+        value: 0,
+        imgSrc: '/fc868.png',
+        ability: '',
+        groupId: 'mp',
+    }),
+    new ConditionCard({
+        id: 4,
+        name: 'MP以下',
+        description: '次のターンから2ダメージ継続',
+        conditionType: 'MP_BELOW',
+        value: 0,
+        imgSrc: '/fc868.png',
+        ability: '',
+        groupId: 'mp',
     }),
 ];
 
