@@ -4,7 +4,6 @@ import CharacterView from '@/core/CharacterView.js';
 import { useSkillStore } from '@/stores/skillStore';
 import { ColyseusClient } from '@/colyseus/client';
 import { phaserEvents, Event } from '@/events/EventCenter';
-
 import { ReadyButton } from '@/ui/ReadyButton';
 import { EffectManager } from '@/core/EffectManager.js';
 import { RoundStatusUI } from '@/ui/RoundStatus.js';
@@ -28,11 +27,22 @@ export class BattleScene extends Phaser.Scene {
     }
 
     create() {
+        phaserEvents.emit('scene-changed', 'BattleScene');
+        this.scale.resize(1440, 258);
         this.colyseus.join();
         this.initLayout();
         this.createPlayers();
         this.setupUI();
         this.setupNetworkHandlers();
+
+        phaserEvents.on('scene-changed', (sceneName, data) => {
+            this.scene.start(sceneName, data); // ← ResultScene に遷移
+        });
+    }
+
+    shutdown() {
+        // クリーンアップ（イベントの重複登録防止）
+        phaserEvents.removeAllListeners('scene-changed');
     }
 
     loadAssets() {

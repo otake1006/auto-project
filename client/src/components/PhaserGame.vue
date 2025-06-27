@@ -4,30 +4,34 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue'
-import Phaser from 'phaser'
-import { BattleScene } from '@/scenes/BattleScene';
+    import { onMounted, onBeforeUnmount, ref } from 'vue';
+    import Phaser from 'phaser';
+    import { BattleScene } from '@/scenes/BattleScene';
+    import { StartScene } from '@/scenes/StartScene';
+    import { useModalStore } from '@/stores/modalStore';
 
-const gameContainer = ref(null)
-let game = null
+    const gameContainer = ref(null);
+    let game = null;
 
-onMounted(() => {
-    const config = {
-        type: Phaser.AUTO,
-        mode: Phaser.Scale.ScaleModes.RESIZE,
-        backgroundColor: '#93cbee',
-        width: 1440,
-        height: 258,
-        parent: gameContainer.value,
-        scene: [BattleScene]
-    }
+    // グローバルイベントなどでシーンの切り替え通知を受ける想定
 
-    game = new Phaser.Game(config)
-})
+    onMounted(() => {
+        const config = {
+            type: Phaser.AUTO,
+            mode: Phaser.Scale.ScaleModes.RESIZE,
+            backgroundColor: '#93cbee',
+            width: 1440,
+            height: 810,
+            parent: gameContainer.value,
+            scene: [StartScene, BattleScene, ResultScene],
+        };
 
-onBeforeUnmount(() => {
-    if (game) {
-        game.destroy(true)
-    }
-})
+        game = new Phaser.Game(config);
+    });
+
+    onBeforeUnmount(() => {
+        if (game) {
+            game.destroy(true);
+        }
+    });
 </script>
