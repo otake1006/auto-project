@@ -5,5 +5,5 @@ export class Condition extends Schema {
 }
 export class Skill extends Schema {
     @type('number') skill: number;
-    @type(['number']) conditions = new ArraySchema<number>();
+    @type([Condition]) conditions = new ArraySchema<Condition>();
 }
