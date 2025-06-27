@@ -42,8 +42,9 @@ function canMove(evt) {
 async function onDropped(data, index) {
     const modalStore = useModalStore();
     const card = data.item.__draggable_context.element;
+    const groupedCards = skillStore.getItemsByGroupId(card.groupId) || [card];
     const inputCard = await modalStore.open('conditionInput', {
-        cards: skillStore.getItemsByGroupId(card.groupId)
+        cards: groupedCards
     });
 
     const draggedItem = data.item.__draggable_context.element;
