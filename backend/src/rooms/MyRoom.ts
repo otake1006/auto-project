@@ -47,23 +47,30 @@ export class MyRoom extends Room {
                         const condition = new Condition();
                         condition.id = c.id;
                         condition.value = c.value;
-                        console.log(c);
                         return condition;
                     }),
                 );
                 skillSets.push(skillSet);
             });
-            const skillSetId = this.extractIds(Array.from(skillSets));
+            const skillSetId = this.extractIds([...skillSets]);
             if (
                 client.sessionId === sessionId1 &&
-                this.extractIds(this.player1SkillState).every((item) => skillSetId.includes(item))
+                skillSetId.every((item) =>
+                    this.extractIds(
+                        this.mergeSkills(this.initialSkill, this.player1SkillState),
+                    ).includes(item),
+                )
             ) {
                 player.skill = skillSets;
                 player.ready = true;
             }
             if (
                 client.sessionId === sessionId2 &&
-                this.extractIds(this.player2SkillState).every((item) => skillSetId.includes(item))
+                skillSetId.every((item) =>
+                    this.extractIds(
+                        this.mergeSkills(this.initialSkill, this.player2SkillState),
+                    ).includes(item),
+                )
             ) {
                 player.skill = skillSets;
                 player.ready = true;
@@ -78,21 +85,23 @@ export class MyRoom extends Room {
         this.onMessage('selectSkill', (client, id: any) => {
             const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
             if (id) {
-                console.log(id);
+                //console.log(id);
                 const getSkill = getSkillCard(id);
-                console.log(getSkill.toJSON());
+                //console.log(getSkill.toJSON());
                 if (getSkill) {
                     if (
                         client.sessionId === sessionId1 &&
                         this.player1RandomSkill.some((skill) => skill.id === id)
                     ) {
                         this.player1SkillState.push(getSkill);
+                        console.log(this.player1SkillState);
                     }
                     if (
                         client.sessionId === sessionId2 &&
                         this.player2RandomSkill.some((skill) => skill.id === id)
                     ) {
                         this.player2SkillState.push(getSkill);
+                        console.log(this.player2SkillState);
                     }
                 }
             }
@@ -127,7 +136,7 @@ export class MyRoom extends Room {
         return [...schemaSkills, ...arraySkills];
     }
     extractIds(items: any[]): number[] {
-        return items.map((item) => item.id);
+        return items.map((item) => item.skill ?? item.id);
     }
 
     async playTurn() {
