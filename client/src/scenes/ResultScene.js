@@ -8,9 +8,10 @@ export class ResultScene extends Phaser.Scene {
     }
 
     create() {
+        const displayText = this.winner === 'draw' ? '相打ち！' : `勝者: ${this.winner}`;
         // 背景色などが必要であれば追加してください
         this.add
-            .text(720, 300, `勝者: ${this.winner}`, {
+            .text(720, 300, displayText, {
                 fontSize: '48px',
                 color: '#ffffff',
             })
