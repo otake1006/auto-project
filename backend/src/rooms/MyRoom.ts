@@ -53,10 +53,22 @@ export class MyRoom extends Room {
                 );
                 skillSets.push(skillSet);
             });
-            if (client.sessionId === sessionId1) {
+            const skillSetId = this.extractIds(Array.from(skillSets));
+            if (
+                client.sessionId === sessionId1 &&
+                this.extractIds(this.player1SkillState).every((item) => skillSetId.includes(item))
+            ) {
+                player.skill = skillSets;
+                player.ready = true;
             }
-            player.skill = skillSets;
-            player.ready = true;
+            if (
+                client.sessionId === sessionId2 &&
+                this.extractIds(this.player2SkillState).every((item) => skillSetId.includes(item))
+            ) {
+                player.skill = skillSets;
+                player.ready = true;
+            }
+
             if (this.checkReady() && this.clients.length === 2) {
                 console.log('戦闘開始');
                 this.playTurn();
@@ -113,6 +125,9 @@ export class MyRoom extends Room {
     }
     mergeSkills(schemaSkills: ArraySchema<SkillCard>, arraySkills: SkillCard[]): SkillCard[] {
         return [...schemaSkills, ...arraySkills];
+    }
+    extractIds(items: any[]): number[] {
+        return items.map((item) => item.id);
     }
 
     async playTurn() {
