@@ -6,11 +6,13 @@ export class StartScene extends Phaser.Scene {
     }
 
     preload() {
-        // 必要ならボタン画像などを読み込む
+        this.load.image('background', 'IMG_0011.png'); // パスは正しく書き換えてください
     }
 
     create() {
         phaserEvents.emit('scene-changed', 'StartScene');
+
+        this.add.image(0, 0, 'background').setOrigin(0).setDisplaySize(1440, 810);
         // タイトルテキスト
         this.add
             .text(400, 200, 'オートプロジェクト', {
