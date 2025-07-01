@@ -6,25 +6,27 @@ export class StartScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('background', 'IMG_0011.png'); // パスは正しく書き換えてください
+        this.load.spritesheet('bgAnim', 'UntitledArtwork2.png', {
+            frameWidth: 1440,
+            frameHeight: 810,
+        });
     }
 
     create() {
         phaserEvents.emit('scene-changed', 'StartScene');
 
-        this.add.image(0, 0, 'background').setOrigin(0).setDisplaySize(1440, 810);
-        // タイトルテキスト
-        this.add
-            .text(400, 200, 'オートプロジェクト', {
-                fontSize: '60px',
-                fontFamily: 'DotGothic16',
-                color: '#00000',
-            })
-            .setOrigin(0.5);
+        this.anims.create({
+            key: 'bg-loop',
+            frames: this.anims.generateFrameNumbers('bgAnim'),
+            frameRate: 8, // フレーム速度
+            repeat: -1, // ループ
+        });
+
+        this.add.sprite(0, 0, 'bgAnim').setOrigin(0).setDisplaySize(1440, 810).play('bg-loop');
 
         // バトルスタートボタン
         const startButton = this.add
-            .text(400, 400, 'バトルスタート', {
+            .text(770, 400, 'バトルスタート', {
                 fontSize: '32px',
                 backgroundColor: '#00aa00',
                 color: '#ffffff',
