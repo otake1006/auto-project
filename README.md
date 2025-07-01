@@ -1,10 +1,11 @@
-# 🎮 [ゲームタイトル]
+# 🎮 AU-TA
 
-![demo-gif](demo.gif) <!-- ゲームプレイのGIFやスクショ（重要） -->
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/b96c9c7f-9e76-4a22-9bbf-51f6aa6525cc" />
+
 
 ## 📌 概要 / Overview
 
-このゲームは、[ジャンル]（例：ターン制カードバトル / 2Dアクション）で、[Unity / Phaser / Vue / Colyseusなど] を用いて開発した作品です。  
+このゲームは、対戦型ビジュアルプログラミングゲームで、[Phaser / Vue / Colyseusなど] を用いて開発した作品です。  
 技術力・設計力・UXを意識し、**保守性・拡張性** を重視して実装しました。
 
 ## 🚀 デモ / Demo
