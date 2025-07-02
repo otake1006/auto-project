@@ -162,5 +162,6 @@ export const useSkillStore = defineStore('skill', () => {
         setTab,
         clearSelectCards,
         setSelectCards,
+        reset,
     };
 });
