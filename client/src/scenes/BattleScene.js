@@ -9,6 +9,9 @@ import { EffectManager } from '@/core/EffectManager.js';
 import { RoundStatusUI } from '@/ui/RoundStatus.js';
 import { WipeAppearDisappearText } from '@/effects/WipeAppearDisappearText.js';
 import { TurnIndicator } from '@/effects/TurnIndicator';
+import { BattleManager } from '../core/BattleManager';
+import { sm } from '../core/SoundManager';
+
 
 const PLAYER_CONFIG = {
     hp: 100,
@@ -27,6 +30,20 @@ export class BattleScene extends Phaser.Scene {
     }
 
     create() {
+        this.anims.create({
+            key: 'cast_anim',
+            frames: this.anims.generateFrameNumbers('cast_effect', { start: 0, end: 16 }),
+            frameRate: 10,
+            repeat: 0,
+        });
+
+        this.anims.create({
+            key: 'cast_anim_air',
+            frames: this.anims.generateFrameNumbers('cast_air', { start: 0, end: 6 }),
+            frameRate: 12,
+            repeat: 0,
+        });
+
         phaserEvents.emit('scene-changed', 'BattleScene');
         this.scale.resize(1440, 258);
         this.colyseus.join();
@@ -34,7 +51,9 @@ export class BattleScene extends Phaser.Scene {
         this.createPlayers();
         this.setupUI();
         this.setupNetworkHandlers();
+        this.battleManager = new BattleManager(this, this.playerView, this.enemyView);
 
+        // sm.playBgm('bgm_battle');
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     }
 
@@ -52,6 +71,15 @@ export class BattleScene extends Phaser.Scene {
         this.load.image('background', 'battleback.png');
         this.load.image('winIcon', 'assets/3302.png');
         this.load.image('shield', 'fc2151.png');
+        this.load.spritesheet('cast_effect', '674.png', {
+            frameWidth: 64,
+            frameHeight: 64,
+        });
+        this.load.spritesheet('cast_air', 'Air_Burst.png', {
+            frameWidth: 64,
+            frameHeight: 64,
+        });
+        this.load.audio('bgm_battle', 'Future_1.mp3');
     }
 
     initLayout() {
@@ -154,15 +182,16 @@ export class BattleScene extends Phaser.Scene {
         view.updateCount(player.shield);
     }
 
-    handleSkillLog(isEnemy) {
+    async handleSkillLog(isEnemy) {
         if (!isEnemy) return;
         if (!isEnemy.skill) return;
         const logText = `${isEnemy.skill} を唱えた!`;
         const view = isEnemy.isEnemy ? this.enemyView : this.playerView;
         view.showSkillLog(logText);
+        await this.battleManager.startTurn(isEnemy.isEnemy);
     }
 
-    handleShowReady() {
+    async handleShowReady() {
         this.readyButton.show();
     }
 
