@@ -9,7 +9,7 @@ import { EffectManager } from '@/core/EffectManager.js';
 import { RoundStatusUI } from '@/ui/RoundStatus.js';
 import { WipeAppearDisappearText } from '@/effects/WipeAppearDisappearText.js';
 import { TurnIndicator } from '@/effects/TurnIndicator';
-import { SoundManager } from '../core/SoundManager';
+import { sm } from '../core/SoundManager';
 
 const PLAYER_CONFIG = {
     hp: 100,
@@ -35,8 +35,7 @@ export class BattleScene extends Phaser.Scene {
         this.createPlayers();
         this.setupUI();
         this.setupNetworkHandlers();
-        this.soundManager = new SoundManager(this);
-        this.soundManager.playBgm('bgm_battle');
+        // sm.playBgm('bgm_battle');
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     }
 
