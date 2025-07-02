@@ -4,7 +4,7 @@ export class ResultScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('result', 'result.png', {
+        this.load.spritesheet('result', 'result2.png', {
             frameWidth: 1440,
             frameHeight: 810,
         });
