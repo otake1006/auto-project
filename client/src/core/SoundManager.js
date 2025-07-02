@@ -1,26 +1,45 @@
 import { BgmManager } from './BgmManager';
 import { ButtonClickSound } from './sounds/ButtonClickSound';
 
-export class SoundManager {
-    constructor(scene) {
-        this.scene = scene;
-        this.bgmManager = new BgmManager(scene);
-        //this.buttonClick = new ButtonClickSound(scene);
+export class SoundEventManager {
+    constructor(basePath = '/') {
+        this.basePath = basePath;
+        this.cache = {};
     }
 
-    playBgm(key) {
-        this.bgmManager.play(key);
-    }
-
-    stopBgm() {
-        this.bgmManager.stop();
+    play(fileName) {
+        if (!fileName) return;
+        if (!this.cache[fileName]) {
+            this.cache[fileName] = new Audio(this.basePath + fileName);
+        }
+        const audio = this.cache[fileName];
+        audio.currentTime = 0;
+        audio.play();
     }
 
     playClick() {
-        //this.buttonClick.play();
+        this.play('click.mp3');
     }
 
-    playEffect(key) {
-        //this.scene.sound.play(key);
+    playConfirm() {
+        this.play('confirm.mp3');
+    }
+
+    playWin() {
+        this.play('win.mp3');
+    }
+
+    playLose() {
+        this.play('lose.mp3');
+    }
+
+    playLevelUp() {
+        this.play('levelup.mp3');
+    }
+
+    playBgm() {
+        this.play('Future_1.mp3');
     }
 }
+
+export const sm = new SoundEventManager();
