@@ -49,17 +49,14 @@ export class BattleScene extends Phaser.Scene {
             frameHeight: 32,
         });
         this.load.audio('sfx_attack', 'assets/sfx/attack.mp3');
-        this.load.image('background', 'assets/background.jpg');
+        this.load.image('background', 'battleback.png');
         this.load.image('winIcon', 'assets/3302.png');
         this.load.image('shield', 'fc2151.png');
     }
 
     initLayout() {
         this.cameras.main.setBackgroundColor('#000');
-        this.add
-            .image(0, 0, 'background')
-            .setOrigin(0)
-            .setDisplaySize(this.sys.game.config.width, this.sys.game.config.height);
+        this.add.image(0, 0, 'background').setOrigin(0);
 
         this.centerX = this.cameras.main.centerX;
         this.centerY = this.cameras.main.centerY - 10;
