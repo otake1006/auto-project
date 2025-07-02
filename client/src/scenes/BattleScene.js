@@ -176,7 +176,7 @@ export class BattleScene extends Phaser.Scene {
         const logText = `${isEnemy.skill} を唱えた!`;
         const view = isEnemy.isEnemy ? this.enemyView : this.playerView;
         view.showSkillLog(logText);
-        await this.battleManager.startTurn(isEnemy);
+        await this.battleManager.startTurn(isEnemy.isEnemy);
     }
 
     async handleShowReady() {
