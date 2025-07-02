@@ -1,3 +1,5 @@
+import { sm } from '@/core/SoundManager';
+
 export class TextButton extends Phaser.GameObjects.Container {
     constructor(
         scene,
@@ -54,6 +56,7 @@ export class TextButton extends Phaser.GameObjects.Container {
         this.on('pointerup', () => {
             this._onHover();
             this.onClick();
+            sm.playClick();
         });
     }
 
