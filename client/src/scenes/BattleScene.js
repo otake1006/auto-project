@@ -10,6 +10,8 @@ import { RoundStatusUI } from '@/ui/RoundStatus.js';
 import { WipeAppearDisappearText } from '@/effects/WipeAppearDisappearText.js';
 import { TurnIndicator } from '@/effects/TurnIndicator';
 import { BattleManager } from '../core/BattleManager';
+import { sm } from '../core/SoundManager';
+
 
 const PLAYER_CONFIG = {
     hp: 100,
@@ -51,6 +53,7 @@ export class BattleScene extends Phaser.Scene {
         this.setupNetworkHandlers();
         this.battleManager = new BattleManager(this, this.playerView, this.enemyView);
 
+        // sm.playBgm('bgm_battle');
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     }
 
@@ -65,7 +68,7 @@ export class BattleScene extends Phaser.Scene {
             frameHeight: 32,
         });
         this.load.audio('sfx_attack', 'assets/sfx/attack.mp3');
-        this.load.image('background', 'assets/background.jpg');
+        this.load.image('background', 'battleback.png');
         this.load.image('winIcon', 'assets/3302.png');
         this.load.image('shield', 'fc2151.png');
         this.load.spritesheet('cast_effect', '674.png', {
@@ -76,14 +79,12 @@ export class BattleScene extends Phaser.Scene {
             frameWidth: 64,
             frameHeight: 64,
         });
+        this.load.audio('bgm_battle', 'Future_1.mp3');
     }
 
     initLayout() {
         this.cameras.main.setBackgroundColor('#000');
-        this.add
-            .image(0, 0, 'background')
-            .setOrigin(0)
-            .setDisplaySize(this.sys.game.config.width, this.sys.game.config.height);
+        this.add.image(0, 0, 'background').setOrigin(0);
 
         this.centerX = this.cameras.main.centerX;
         this.centerY = this.cameras.main.centerY - 10;
