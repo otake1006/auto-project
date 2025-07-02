@@ -1,7 +1,7 @@
 import { Room, Client } from '@colyseus/core';
 import { ArraySchema } from '@colyseus/schema';
 import { MyRoomState, Player } from './schema/MyRoomState';
-import { Skill } from './schema/Skill';
+import { Skill, Condition } from './schema/Skill';
 import {
     SkillCard,
     conditionCards,
@@ -17,9 +17,11 @@ export class MyRoom extends Room {
     state = new MyRoomState();
     gameState = 'ready';
     winner = 'draw'; //ここから
-    winCount = 0;
-    round = 0;
-    turn = 0; //ここまで新しいbattledtateを作る
+    winCount1 = 0;
+    winCount2 = 0;
+    drawCount = 0;
+    round = 1;
+    turn = 1; //ここまで新しいbattledtateを作る
     initialSkill = new ArraySchema<SkillCard>();
     player1SkillState: SkillCard[] = [];
     player2SkillState: SkillCard[] = [];
@@ -31,18 +33,27 @@ export class MyRoom extends Room {
         this.onMessage('ready', (client, skillSet: any[]) => {
             if (this.gameState === 'ingame') return;
             if (this.gameState === 'endgame') return;
+            console.log(skillSet);
             const player = this.state.players.get(client.sessionId);
             const skillSets = new ArraySchema<Skill>();
 
             skillSet.forEach((item) => {
                 const skillSet = new Skill();
                 skillSet.skill = item.skill;
-                skillSet.conditions = item.conditions;
+                skillSet.conditions = new ArraySchema<Condition>(
+                    ...item.conditions.map((c: any) => {
+                        const condition = new Condition();
+                        condition.id = c.id;
+                        condition.value = c.value;
+                        console.log(c);
+                        return condition;
+                    }),
+                );
                 skillSets.push(skillSet);
             });
             player.skill = skillSets;
             player.ready = true;
-            if (this.checkReady()) {
+            if (this.checkReady() && this.clients.length === 2) {
                 console.log('戦闘開始');
                 this.playTurn();
             }
@@ -57,7 +68,9 @@ export class MyRoom extends Room {
         this.onMessage('selectSkill', (client, id: any) => {
             const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
             if (id) {
+                console.log(id);
                 const getSkill = getSkillCard(id);
+                console.log(getSkill.toJSON());
                 if (getSkill) {
                     if (client.sessionId === sessionId1) {
                         this.player1SkillState.push(getSkill);
@@ -73,13 +86,8 @@ export class MyRoom extends Room {
     // Called when a client joins the room
     onJoin(client: Client, options: any) {
         const joinPlayer = new Player();
-        // for (const initial of this.initialSkill) {
-        //     joinPlayer.skills.push(initial);
-        //     console.log(initial.name);
-        // }
-        //joinPlayer.skills = this.initialSkill;
-        //console.log(joinPlayer.skills.toJSON());
-        this.broadcast('action', this.initialSkill);
+        client.send('action', this.initialSkill);
+        client.send('condition', conditionCards);
         this.state.players.set(client.sessionId, joinPlayer);
     }
 
@@ -89,7 +97,9 @@ export class MyRoom extends Room {
     }
 
     // Called when the room is disposed
-    onDispose() {}
+    onDispose() {
+        console.log('ルームが削除されました');
+    }
 
     checkReady() {
         return this.state.players.values().every((player) => player.ready);
@@ -97,31 +107,48 @@ export class MyRoom extends Room {
     sleep(options: number) {
         return new Promise((resolve) => setTimeout(resolve, options));
     }
+    mergeSkills(schemaSkills: ArraySchema<SkillCard>, arraySkills: SkillCard[]): SkillCard[] {
+        return [...schemaSkills, ...arraySkills];
+    }
 
     async playTurn() {
         this.gameState = 'ingame';
-
+        this.broadcast('turn', this.turn);
+        this.broadcast('round', this.round);
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
 
         while (true) {
-            if (player1.hp <= 0 || player2.hp <= 0) {
-                if (player1.hp > 0 && player2.hp <= 0) this.winCount += 1;
+            if (player1.hp <= 0 || player2.hp <= 0 || this.turn > 10) {
+                this.turn = 1;
+                if (player1.hp > 0 && player2.hp <= 0) this.winCount1 += 1;
+                if (player2.hp > 0 && player1.hp <= 0) this.winCount2 += 1;
                 this.round += 1;
                 player1.reset();
                 player2.reset();
-                if (this.round === 5) {
-                    if (this.winCount >= this.round - this.winCount) this.winner = 'player1';
-                    if (this.winCount <= this.round - this.winCount) this.winner = 'player2';
+                if (this.round >= 6) {
+                    if (this.winCount1 > this.winCount2) {
+                        this.winner = 'player1';
+                        this.broadcast('winner', sessionId1);
+                    }
+                    if (this.winCount1 < this.winCount2) {
+                        this.winner = 'player2';
+                        this.broadcast('winner', sessionId2);
+                    }
+                    this.broadcast('winner', this.winner);
                     this.gameState = 'endgame';
+                    this.disconnect();
                     return;
                 }
                 this.gameState = 'ready';
+                this.broadcast('showReady');
                 player1.ready = false;
                 player2.ready = false;
-                // this.player1SkillState.push(getRandomSkill());
-                // this.player2SkillState.push(getRandomSkill());
-                const player1RandomSkill = selectRandomSkills();
-                const player2RandomSkill = selectRandomSkills();
+                const player1RandomSkill = selectRandomSkills(
+                    this.mergeSkills(this.initialSkill, this.player1SkillState),
+                );
+                const player2RandomSkill = selectRandomSkills(
+                    this.mergeSkills(this.initialSkill, this.player2SkillState),
+                );
                 this.clients.forEach((client) => {
                     if (client.sessionId === sessionId1) {
                         client.send('giveCards', player1RandomSkill);
@@ -135,18 +162,27 @@ export class MyRoom extends Room {
             }
             const player1skill = player1.selectSkill();
             const player2skill = player2.selectSkill();
-            player1.useSkill(player1skill, player2);
-            player2.useSkill(player2skill, player1);
-            this.broadcast('useSkill', {
-                sessionId: sessionId1,
-                skillname1: getSkillCard(player1skill)?.name,
-                skillname2: getSkillCard(player2skill)?.name,
-            });
+            const skill = getSkillCard(player2skill);
+            if (skill.battleType === 'defense') {
+                player2.useSkill(player2skill, player1);
+                player1.useSkill(player1skill, player2);
+            } else {
+                player1.useSkill(player1skill, player2);
+                player2.useSkill(player2skill, player1);
+            }
+
+            this.broadcast('skillLogs', [
+                { sessionId: sessionId1, skill: getSkillCard(player1skill)?.name },
+                { sessionId: sessionId2, skill: getSkillCard(player2skill)?.name },
+            ]);
             if (!player1skill && !player2skill) {
                 player1.resetMp();
                 player2.resetMp();
+                player1.resetShield();
+                player2.resetShield();
+                this.turn++;
+                this.broadcast('turn', this.turn);
             }
-            this.turn++;
             await this.sleep(500);
         }
     }

@@ -11,10 +11,12 @@ export class ResultScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.winner = data?.winner || '不明';
+        this.winner = data || '不明';
     }
 
     create() {
+        this.scale.resize(1440, 810);
+
         const displayText = this.winner === 'draw' ? '相打ち！' : `${this.winner}`;
         // 背景色などが必要であれば追加してください
 

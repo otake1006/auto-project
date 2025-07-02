@@ -41,8 +41,10 @@ function canMove(evt) {
 
 async function onDropped(data, index) {
     const modalStore = useModalStore();
-    const inputValue = await modalStore.open('conditionInput', {
-        card: data.item.__draggable_context.element
+    const card = data.item.__draggable_context.element;
+    const groupedCards = skillStore.getItemsByGroupId(card.groupId) || [card];
+    const inputCard = await modalStore.open('conditionInput', {
+        cards: groupedCards
     });
 
     const draggedItem = data.item.__draggable_context.element;
@@ -54,14 +56,14 @@ async function onDropped(data, index) {
 
     currentConditions.splice(data.newDraggableIndex, 1);
 
-    if (inputValue) {
+    if (inputCard) {
         currentConditions.splice(data.newDraggableIndex, 0, {
-            ...draggedItem,
-            value: inputValue
+            ...inputCard,
         });
     }
 
 }
+
 </script>
 
 <template>

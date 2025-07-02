@@ -60,11 +60,7 @@ export class ColyseusClient {
 
             // HP/MP/Ready状態が変更されたらPhaserに通知
             $(player).onChange(() => {
-                phaserEvents.emit(event, {
-                    hp: player.hp,
-                    mp: player.mp,
-                    ready: player.ready,
-                });
+                phaserEvents.emit(event, player);
             });
         });
 
@@ -89,5 +85,17 @@ export class ColyseusClient {
 
     onShowReady(callback) {
         phaserEvents.on('showReady', callback);
+    }
+
+    onTurn(callback, context) {
+        phaserEvents.on('turn', callback, context);
+    }
+
+    onRound(callback, context) {
+        phaserEvents.on('round', callback, context);
+    }
+
+    onSceneChanged(callback, context) {
+        phaserEvents.on('resultScene', callback, context);
     }
 }

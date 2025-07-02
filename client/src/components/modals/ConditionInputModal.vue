@@ -6,10 +6,14 @@
         <div class="mb-4 flex items-center justify-between rounded border border-white bg-black p-2">
             <div class="flex items-center space-x-2">
                 <div class="flex h-6 w-6 items-center justify-center rounded-full bg-white font-bold text-black">⏱</div>
-                <div class="text-sm">{{ props.card.name }} = <span class="text-red-400">{{ displayValue }}</span></div>
+                <div class="text-sm">
+                    {{ currentCard.name }} = <span class="text-red-400">{{ displayValue }}</span>
+                </div>
             </div>
-            <button
-                class="rounded border border-white px-2 py-1 text-sm transition hover:bg-white hover:text-black">切替</button>
+            <button @click="handleSwitch"
+                class="rounded border border-white px-2 py-1 text-sm transition hover:bg-white hover:text-black">
+                切替
+            </button>
         </div>
 
         <!-- 電卓ボタン -->
@@ -27,12 +31,21 @@
 import { ref, computed } from 'vue';
 
 const props = defineProps({
-    card: { type: Object, required: true }
+    cards: { type: Array, required: true }
 });
 const emit = defineEmits(['confirm']);
 
+const currentIndex = ref(0);
+
+const currentCard = computed(() => props.cards[currentIndex.value]);
+
 const input = ref(''); // 数字列として扱うと便利
 const displayValue = computed(() => input.value || '0');
+
+function handleSwitch() {
+    console.log(1)
+    currentIndex.value = (currentIndex.value + 1) % props.cards.length;
+}
 
 // 数字・操作ボタンの定義（保守性と拡張性UP）
 const buttons = [
@@ -49,7 +62,10 @@ function handleInput(btn) {
     const { label, action } = btn;
 
     if (action === 'confirm') {
-        emit('confirm', parseInt(input.value || '0'));
+        emit('confirm', {
+            ...currentCard.value,
+            value: parseInt(input.value || '0')
+        });
         input.value = '';
     } else if (action === 'backspace') {
         input.value = input.value.slice(0, -1);
