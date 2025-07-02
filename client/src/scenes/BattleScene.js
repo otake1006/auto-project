@@ -12,7 +12,6 @@ import { TurnIndicator } from '@/effects/TurnIndicator';
 import { BattleManager } from '../core/BattleManager';
 import { sm } from '../core/SoundManager';
 
-
 const PLAYER_CONFIG = {
     hp: 100,
     mp: 50,
@@ -52,7 +51,9 @@ export class BattleScene extends Phaser.Scene {
         this.setupUI();
         this.setupNetworkHandlers();
         this.battleManager = new BattleManager(this, this.playerView, this.enemyView);
-
+        phaserEvents.on('scene-changed', (sceneName, data) => {
+            this.scene.start(sceneName, data); // ← ResultScene に遷移
+        });
         // sm.playBgm('bgm_battle');
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     }
