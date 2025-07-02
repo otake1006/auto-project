@@ -10,8 +10,6 @@
                 class="flex flex-[2] overflow-hidden border-t-2 border-gray-300 bg-neutral-700 p-4">
                 <TacticsBoard class="w-1/2 overflow-y-auto pr-2" />
                 <SkillSelection class="flex w-1/2 flex-col pl-2" :tabs="tabs" :cards="filteredCards" />
-                <SpriteButton sprite-src="assets/chests.png" :scale="4" :col="0" :row="0"
-                    className="absolute bottom-40 left-0" :action="openSkillModal" />
             </div>
             <button v-show="currentScene === 'BattleScene'" @click="openSkillModal" class="btn">
                 Open Skill Modal
