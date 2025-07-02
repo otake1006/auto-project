@@ -25,12 +25,15 @@ import TacticsBoard from './TacticsBoard.vue';
 import SkillSelection from './SkillSelection.vue';
 import ModalDispatcher from '@/components/modals/ModalDispatcher.vue';
 import { useModalStore } from '@/stores/modalStore';
+import { useSkillStore } from '@/stores/skillStore';
+
 import SpriteButton from './SpriteButton.vue';
 import { phaserEvents, Event } from '@/events/EventCenter';
 import { ref } from 'vue';
 
 phaserEvents.on('scene-changed', onSceneChanged);
 
+const skillStore = useSkillStore();
 const modalStore = useModalStore();
 
 function onSceneChanged(newSceneName) {
@@ -40,17 +43,18 @@ function onSceneChanged(newSceneName) {
 const currentScene = ref('StartScene');
 
 async function openSkillModal() {
-    const selected = await modalStore.open('conditionInput', {
-        cards: [
-            { id: 1, name: 'Fireball', description: 'Burns enemy' },
-            { id: 2, name: 'Ice Shield', description: 'Blocks damage' },
-            { id: 3, name: 'Heal', description: 'Restores HP' },
-        ],
+    const selectSkills = skillStore.selectCards;
+    if (!selectSkills.length) return
+
+    const selected = await modalStore.open('skillSelect', {
+        cards: selectSkills,
     });
 
     if (selected) {
-        console.log('Selected skill:', selected);
         // Colyseusに送信: room.send('selectSkill', { id: selected })
+        skillStore.addSkills([selected]);
+        skillStore.clearSelectCards()
+        phaserEvents.emit("selectCard", selected.id)
     }
 }
 </script>

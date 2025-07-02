@@ -43,6 +43,12 @@ export class ColyseusClient {
         }
     }
 
+    sendSelectSkill(cardId) {
+        if (this.room) {
+            this.room.send('selectSkill', cardId);
+        }
+    }
+
     /**
      * ルームの初期化処理
      */
@@ -66,6 +72,7 @@ export class ColyseusClient {
 
         // メッセージハンドラを登録
         setupMessageHandlers(this.room);
+        phaserEvents.on('selectCard', this.sendSelectSkill);
     }
 
     /**

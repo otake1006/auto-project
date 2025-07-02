@@ -28,6 +28,16 @@ export const useSkillStore = defineStore('skill', () => {
         },
     ]);
 
+    const selectCards = ref([]);
+
+    function setSelectCards(cards) {
+        selectCards.value = cards;
+    }
+
+    function clearSelectCards() {
+        selectCards.value = [];
+    }
+
     const skills = ref([]);
     const conditions = ref([]);
     const relics = ref([]);
@@ -143,12 +153,14 @@ export const useSkillStore = defineStore('skill', () => {
         currentType,
         currentTab,
         filteredCards,
+        selectCards,
         handleSkillAdd,
         handleSkillRemove,
         handleConditionInput,
         loadConditionFromColyseus,
         getItemsByGroupId,
         setTab,
-        reset,
+        clearSelectCards,
+        setSelectCards,
     };
 });
