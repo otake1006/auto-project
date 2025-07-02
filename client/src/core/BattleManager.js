@@ -19,20 +19,20 @@ export class BattleManager {
             queue.add(
                 new CastEffectAnimation(
                     this.scene,
-                    this.enemy.getPosition().x,
-                    this.enemy.getPosition().y,
-                    'cast_effect',
-                    'cast_anim',
+                    this.enemy.getPosition().x - 80,
+                    this.enemy.getPosition().y + 20,
+                    'cast_air',
+                    'cast_anim_air',
                 ),
             );
         } else {
             queue.add(
                 new CastEffectAnimation(
                     this.scene,
-                    this.player.getPosition().x,
-                    this.player.getPosition().y,
-                    'cast_effect',
-                    'cast_anim',
+                    this.player.getPosition().x + 80,
+                    this.player.getPosition().y + 20,
+                    'cast_air',
+                    'cast_anim_air',
                 ),
             );
         }

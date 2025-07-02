@@ -35,6 +35,13 @@ export class BattleScene extends Phaser.Scene {
             repeat: 0,
         });
 
+        this.anims.create({
+            key: 'cast_anim_air',
+            frames: this.anims.generateFrameNumbers('cast_air', { start: 0, end: 6 }),
+            frameRate: 12,
+            repeat: 0,
+        });
+
         phaserEvents.emit('scene-changed', 'BattleScene');
         this.scale.resize(1440, 258);
         this.colyseus.join();
@@ -62,6 +69,10 @@ export class BattleScene extends Phaser.Scene {
         this.load.image('winIcon', 'assets/3302.png');
         this.load.image('shield', 'fc2151.png');
         this.load.spritesheet('cast_effect', '674.png', {
+            frameWidth: 64,
+            frameHeight: 64,
+        });
+        this.load.spritesheet('cast_air', 'Air_Burst.png', {
             frameWidth: 64,
             frameHeight: 64,
         });
