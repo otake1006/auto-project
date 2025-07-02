@@ -55,6 +55,8 @@ export class BattleScene extends Phaser.Scene {
             this.scene.start(sceneName, data); // ← ResultScene に遷移
         });
         // sm.playBgm('bgm_battle');
+        this.effectManager.fadeIn();
+
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     }
 
@@ -164,6 +166,8 @@ export class BattleScene extends Phaser.Scene {
 
     handleRound(round) {
         console.log(round);
+        this.effectManager.shakeCamera();
+        this.effectManager.flashColor();
         new WipeAppearDisappearText(this, this.centerX, this.centerY, `Round ${round}!`, {
             textStyle: {
                 fontSize: '36px',
@@ -189,6 +193,10 @@ export class BattleScene extends Phaser.Scene {
         const logText = `${isEnemy.skill} を唱えた!`;
         const view = isEnemy.isEnemy ? this.enemyView : this.playerView;
         view.showSkillLog(logText);
+        if (!isEnemy.isEnemy) {
+            this.effectManager.shakeCamera();
+        }
+
         await this.battleManager.startTurn(isEnemy.isEnemy);
     }
 
