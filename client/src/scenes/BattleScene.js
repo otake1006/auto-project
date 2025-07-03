@@ -11,6 +11,8 @@ import { WipeAppearDisappearText } from '@/effects/WipeAppearDisappearText.js';
 import { TurnIndicator } from '@/effects/TurnIndicator';
 import { BattleManager } from '../core/BattleManager';
 import { sm } from '../core/SoundManager';
+import { BgmManager } from '@/core/BgmManager';
+import { bgmMap } from '@/core/sounds/bgmMap';
 
 const PLAYER_CONFIG = {
     hp: 100,
@@ -55,9 +57,13 @@ export class BattleScene extends Phaser.Scene {
             this.scene.start(sceneName, data); // ← ResultScene に遷移
         });
 
+        this.bgmManager = new BgmManager(this);
+        this.bgmManager.play(this.scene.key, bgmMap);
+
         await this.colyseus.join(() => {
             this.readyButton.show();
         });
+
         // sm.playBgm('bgm_battle');
         this.effectManager.fadeIn();
 
@@ -66,6 +72,7 @@ export class BattleScene extends Phaser.Scene {
 
     shutdown() {
         // クリーンアップ（イベントの重複登録防止）
+        this.bgmManager.fadeOut();
         phaserEvents.removeAllListeners('scene-changed');
     }
 
@@ -162,7 +169,9 @@ export class BattleScene extends Phaser.Scene {
     }
 
     handleSceneChanged(data) {
-        this.scene.start('ResultScene', data); // ← ResultScene に遷移
+        this.bgmManager.fadeOut(500, () => {
+            this.scene.start('ResultScene', data); // ← ResultScene に遷移
+        });
     }
 
     handleTurn(turn) {
