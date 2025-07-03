@@ -30,7 +30,7 @@ export class BattleScene extends Phaser.Scene {
         this.loadAssets();
     }
 
-    create() {
+    async create() {
         this.anims.create({
             key: 'cast_anim',
             frames: this.anims.generateFrameNumbers('cast_effect', { start: 0, end: 16 }),
@@ -47,7 +47,7 @@ export class BattleScene extends Phaser.Scene {
 
         phaserEvents.emit('scene-changed', 'BattleScene');
         this.scale.resize(1440, 258);
-        this.colyseus.join();
+
         this.initLayout();
         this.createPlayers();
         this.setupUI();
@@ -59,7 +59,14 @@ export class BattleScene extends Phaser.Scene {
 
         this.bgmManager = new BgmManager(this);
         this.bgmManager.play(this.scene.key, bgmMap);
+
+        await this.colyseus.join(() => {
+            this.readyButton.show();
+        });
+
         // sm.playBgm('bgm_battle');
+        this.effectManager.fadeIn();
+
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     }
 
@@ -106,6 +113,7 @@ export class BattleScene extends Phaser.Scene {
             this.sendSkillSet();
             this.readyButton.hide();
         });
+        this.readyButton.hide();
 
         this.effectManager = new EffectManager(this);
         this.turnIndicator = new TurnIndicator(this);
@@ -172,6 +180,8 @@ export class BattleScene extends Phaser.Scene {
 
     handleRound(round) {
         console.log(round);
+        this.effectManager.shakeCamera();
+        this.effectManager.flashColor();
         new WipeAppearDisappearText(this, this.centerX, this.centerY, `Round ${round}!`, {
             textStyle: {
                 fontSize: '36px',
@@ -197,6 +207,10 @@ export class BattleScene extends Phaser.Scene {
         const logText = `${isEnemy.skill} を唱えた!`;
         const view = isEnemy.isEnemy ? this.enemyView : this.playerView;
         view.showSkillLog(logText);
+        if (!isEnemy.isEnemy) {
+            this.effectManager.shakeCamera();
+        }
+
         await this.battleManager.startTurn(isEnemy.isEnemy);
     }
 
