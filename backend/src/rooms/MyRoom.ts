@@ -37,7 +37,7 @@ export class MyRoom extends Room {
             if (this.gameState === 'endgame') return;
             console.log(skills);
             const player = this.state.players.get(client.sessionId);
-            const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
+            const [[sessionId1, player1]] = Array.from(this.state.players);
             const skillSets = new ArraySchema<Skill>();
             skills.forEach((item) => {
                 const skillSet = new Skill();
@@ -54,21 +54,14 @@ export class MyRoom extends Room {
             });
             const skillSetId = this.extractIds([...skillSets]);
             if (
-                client.sessionId === sessionId1 &&
                 skillSetId.every((item) =>
                     this.extractIds(
-                        this.mergeSkills(this.initialSkill, this.player1SkillState),
-                    ).includes(item),
-                )
-            ) {
-                player.skill = skillSets;
-                player.ready = true;
-            }
-            if (
-                client.sessionId === sessionId2 &&
-                skillSetId.every((item) =>
-                    this.extractIds(
-                        this.mergeSkills(this.initialSkill, this.player2SkillState),
+                        this.mergeSkills(
+                            this.initialSkill,
+                            client.sessionId === sessionId1
+                                ? this.player1SkillState
+                                : this.player2SkillState,
+                        ),
                     ).includes(item),
                 )
             ) {
