@@ -11,6 +11,8 @@ import { WipeAppearDisappearText } from '@/effects/WipeAppearDisappearText.js';
 import { TurnIndicator } from '@/effects/TurnIndicator';
 import { BattleManager } from '../core/BattleManager';
 import { sm } from '../core/SoundManager';
+import { BgmManager } from '@/core/BgmManager';
+import { bgmMap } from '@/core/sounds/bgmMap';
 
 const PLAYER_CONFIG = {
     hp: 100,
@@ -28,7 +30,7 @@ export class BattleScene extends Phaser.Scene {
         this.loadAssets();
     }
 
-    create() {
+    async create() {
         this.anims.create({
             key: 'cast_anim',
             frames: this.anims.generateFrameNumbers('cast_effect', { start: 0, end: 16 }),
@@ -45,7 +47,7 @@ export class BattleScene extends Phaser.Scene {
 
         phaserEvents.emit('scene-changed', 'BattleScene');
         this.scale.resize(1440, 258);
-        this.colyseus.join();
+
         this.initLayout();
         this.createPlayers();
         this.setupUI();
@@ -54,12 +56,23 @@ export class BattleScene extends Phaser.Scene {
         phaserEvents.on('scene-changed', (sceneName, data) => {
             this.scene.start(sceneName, data); // ← ResultScene に遷移
         });
+
+        this.bgmManager = new BgmManager(this);
+        this.bgmManager.play(this.scene.key, bgmMap);
+
+        await this.colyseus.join(() => {
+            this.readyButton.show();
+        });
+
         // sm.playBgm('bgm_battle');
+        this.effectManager.fadeIn();
+
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     }
 
     shutdown() {
         // クリーンアップ（イベントの重複登録防止）
+        this.bgmManager.fadeOut();
         phaserEvents.removeAllListeners('scene-changed');
     }
 
@@ -100,6 +113,7 @@ export class BattleScene extends Phaser.Scene {
             this.sendSkillSet();
             this.readyButton.hide();
         });
+        this.readyButton.hide();
 
         this.effectManager = new EffectManager(this);
         this.turnIndicator = new TurnIndicator(this);
@@ -155,7 +169,9 @@ export class BattleScene extends Phaser.Scene {
     }
 
     handleSceneChanged(data) {
-        this.scene.start('ResultScene', data); // ← ResultScene に遷移
+        this.bgmManager.fadeOut(500, () => {
+            this.scene.start('ResultScene', data); // ← ResultScene に遷移
+        });
     }
 
     handleTurn(turn) {
@@ -164,6 +180,8 @@ export class BattleScene extends Phaser.Scene {
 
     handleRound(round) {
         console.log(round);
+        this.effectManager.shakeCamera();
+        this.effectManager.flashColor();
         new WipeAppearDisappearText(this, this.centerX, this.centerY, `Round ${round}!`, {
             textStyle: {
                 fontSize: '36px',
@@ -189,6 +207,10 @@ export class BattleScene extends Phaser.Scene {
         const logText = `${isEnemy.skill} を唱えた!`;
         const view = isEnemy.isEnemy ? this.enemyView : this.playerView;
         view.showSkillLog(logText);
+        if (!isEnemy.isEnemy) {
+            this.effectManager.shakeCamera();
+        }
+
         await this.battleManager.startTurn(isEnemy.isEnemy);
     }
 

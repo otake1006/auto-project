@@ -1,4 +1,6 @@
 import { phaserEvents } from '@/events/EventCenter';
+import { BgmManager } from '@/core/BgmManager';
+import { bgmMap } from '@/core/sounds/bgmMap';
 // scenes/TitleScene.js
 export class StartScene extends Phaser.Scene {
     constructor() {
@@ -15,6 +17,8 @@ export class StartScene extends Phaser.Scene {
 
     create() {
         phaserEvents.emit('scene-changed', 'StartScene');
+        this.bgmManager = new BgmManager(this);
+        this.bgmManager.play(this.scene.key, bgmMap);
 
         this.anims.create({
             key: 'bg-loop',
@@ -45,6 +49,10 @@ export class StartScene extends Phaser.Scene {
             .on('pointerup', () => {
                 bg.setScale(1);
                 this.scene.start('BattleScene');
+                this.bgmManager.fadeOut(500, () => {
+                    this.scene.start('BattleScene');
+                });
+                // this.scene.switch('BattleScene'); // ゲーム画面に遷移
             });
     }
 

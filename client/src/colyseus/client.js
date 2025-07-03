@@ -21,12 +21,17 @@ export class ColyseusClient {
     /**
      * Colyseusルームに参加して初期化処理を行う
      */
-    async join() {
+    async join(onJoinedCallback) {
         try {
             this.room = await this.client.joinOrCreate(this.roomName);
             this.mySessionId = this.room.sessionId;
             console.log('[Colyseus] Joined Room:', this.roomName, 'Session ID:', this.mySessionId);
+
             this.initialize();
+
+            if (onJoinedCallback) {
+                onJoinedCallback();
+            }
         } catch (e) {
             console.error('[Colyseus] Failed to join room:', e);
         }

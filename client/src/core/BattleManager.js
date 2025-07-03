@@ -15,14 +15,14 @@ export class BattleManager {
 
         const queue = new AnimationQueue();
 
-        if (isEnemy) {
+        if (!isEnemy) {
             queue.add(
                 new CastEffectAnimation(
                     this.scene,
                     this.enemy.getPosition().x - 80,
                     this.enemy.getPosition().y + 20,
-                    'cast_air',
-                    'cast_anim_air',
+                    'cast_effect',
+                    'cast_anim',
                 ),
             );
         } else {
@@ -31,8 +31,8 @@ export class BattleManager {
                     this.scene,
                     this.player.getPosition().x + 80,
                     this.player.getPosition().y + 20,
-                    'cast_air',
-                    'cast_anim_air',
+                    'cast_effect',
+                    'cast_anim',
                 ),
             );
         }
