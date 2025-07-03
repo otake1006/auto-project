@@ -28,7 +28,7 @@ export class BattleScene extends Phaser.Scene {
         this.loadAssets();
     }
 
-    create() {
+    async create() {
         this.anims.create({
             key: 'cast_anim',
             frames: this.anims.generateFrameNumbers('cast_effect', { start: 0, end: 16 }),
@@ -45,7 +45,7 @@ export class BattleScene extends Phaser.Scene {
 
         phaserEvents.emit('scene-changed', 'BattleScene');
         this.scale.resize(1440, 258);
-        this.colyseus.join();
+
         this.initLayout();
         this.createPlayers();
         this.setupUI();
@@ -53,6 +53,10 @@ export class BattleScene extends Phaser.Scene {
         this.battleManager = new BattleManager(this, this.playerView, this.enemyView);
         phaserEvents.on('scene-changed', (sceneName, data) => {
             this.scene.start(sceneName, data); // ← ResultScene に遷移
+        });
+
+        await this.colyseus.join(() => {
+            this.readyButton.show();
         });
         // sm.playBgm('bgm_battle');
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
@@ -100,6 +104,7 @@ export class BattleScene extends Phaser.Scene {
             this.sendSkillSet();
             this.readyButton.hide();
         });
+        this.readyButton.hide();
 
         this.effectManager = new EffectManager(this);
         this.turnIndicator = new TurnIndicator(this);
