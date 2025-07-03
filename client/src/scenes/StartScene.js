@@ -1,6 +1,7 @@
 import { phaserEvents } from '@/events/EventCenter';
 import { BgmManager } from '@/core/BgmManager';
 import { bgmMap } from '@/core/sounds/bgmMap';
+import { VERSION } from '@/constants/version';
 // scenes/TitleScene.js
 export class StartScene extends Phaser.Scene {
     constructor() {
@@ -54,6 +55,27 @@ export class StartScene extends Phaser.Scene {
                 });
                 // this.scene.switch('BattleScene'); // ゲーム画面に遷移
             });
+
+        const versionText = this.add
+            .text(10, this.scale.height - 20, `v${VERSION}`, {
+                fontSize: '20px',
+                fontFamily: 'DotGothic16',
+                color: '#ffffff',
+            })
+            .setOrigin(0, 1); // 左下基準
+
+        const copyrightText = this.add
+            .text(
+                this.scale.width - 10,
+                this.scale.height - 20,
+                '© 2025 Au-Ta. Do not distribute!',
+                {
+                    fontSize: '20px',
+                    fontFamily: 'DotGothic16',
+                    color: '#ffffff',
+                },
+            )
+            .setOrigin(1, 1);
     }
 
     shutdown() {
