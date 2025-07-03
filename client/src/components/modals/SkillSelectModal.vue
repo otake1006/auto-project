@@ -3,7 +3,7 @@
         <h2 class="text-lg font-bold">Select a Skill</h2>
         <div class="grid grid-cols-3 gap-2">
             <div v-for="card in cards" :key="card.id" class="p-4 border rounded cursor-pointer hover:bg-blue-100"
-                :class="{ 'bg-blue-200': selected === card.id }" @click="select(card.id)">
+                :class="{ 'bg-blue-200': selected?.id === card.id }" @click="select(card)">
                 <h3 class="font-semibold">{{ card.name }}</h3>
                 <p class="text-sm text-gray-600">{{ card.description }}</p>
             </div>
@@ -21,8 +21,8 @@ const props = defineProps({ cards: Array });
 const emit = defineEmits(['confirm', 'cancel']);
 const selected = ref(null);
 
-function select(id) {
-    selected.value = id;
+function select(card) {
+    selected.value = card;
 }
 function confirm() {
     emit('confirm', selected.value);

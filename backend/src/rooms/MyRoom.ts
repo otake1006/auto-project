@@ -156,11 +156,9 @@ export class MyRoom extends Room {
                 if (this.round >= 6) {
                     if (this.winCount1 > this.winCount2) {
                         this.winner = 'player1';
-                        this.broadcast('winner', sessionId1);
                     }
                     if (this.winCount1 < this.winCount2) {
                         this.winner = 'player2';
-                        this.broadcast('winner', sessionId2);
                     }
                     this.broadcast('winner', this.winner);
                     this.gameState = 'endgame';

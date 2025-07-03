@@ -1,33 +1,29 @@
+```js
 <script setup>
-	defineProps({
-    cards: Object
-		
-	});
-  const tailwindScript = document.createElement('script')
-  tailwindScript.setAttribute('src', 'https://cdn.tailwindcss.com')
-  document.head.appendChild(tailwindScript)
+    defineProps({
+        cards: Object,
+    });
+    const tailwindScript = document.createElement('script');
+    tailwindScript.setAttribute('src', 'https://cdn.tailwindcss.com');
+    document.head.appendChild(tailwindScript);
 </script>
 
 <template>
-  <div class="flex-shrink-0 w-48 h-20 border border-gray-300 rounded-xl p-4 shadow-sm bg-white ">
-    
-    <div class="flex items-center justify-between">
+    <div class="h-20 w-48 flex-shrink-0 p-4" style="background-image: url('skillCard.png')">
+        <div class="flex items-center justify-between">
+            <img :src="cards.imgSrc" class="h-12 w-12 object-contain" />
 
-      <img
-       :src="cards.imgSrc"
-       class="w-12 h-12 object-contain"
-      />
+            <!-- 中央：名前と能力 -->
+            <div class="flex flex-col items-center text-center">
+                <h2 class="text-lg text-white">{{ cards.name }}</h2>
+                <p class="text-sm text-gray-500">{{ cards.ability }}</p>
+                <p v-show="cards.value" class="text-lg">{{ cards.value }} 以上</p>
+            </div>
 
-    <!-- 中央：名前と能力 -->
-     <div class="flex flex-col items-center text-center">
-       <h2 class="text-lg font-semibold">{{cards.name}}</h2>
-       <p class="text-sm text-gray-500">{{cards.ability}}</p>
-     </div>
-
-     <!-- 右：数値 -->
-     <div class="text-sm text-gray-700 font-bold">{{cards.energy}}</div>
-     
-   </div>
-  </div>
-
+            <!-- 右：数値 -->
+            <div class="text-sm font-bold text-gray-700">{{ cards.energy }}</div>
+        </div>
+    </div>
 </template>
+
+```

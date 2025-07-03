@@ -4,12 +4,15 @@ import CharacterView from '@/core/CharacterView.js';
 import { useSkillStore } from '@/stores/skillStore';
 import { ColyseusClient } from '@/colyseus/client';
 import { phaserEvents, Event } from '@/events/EventCenter';
-
 import { ReadyButton } from '@/ui/ReadyButton';
 import { EffectManager } from '@/core/EffectManager.js';
 import { RoundStatusUI } from '@/ui/RoundStatus.js';
 import { WipeAppearDisappearText } from '@/effects/WipeAppearDisappearText.js';
 import { TurnIndicator } from '@/effects/TurnIndicator';
+import { BattleManager } from '../core/BattleManager';
+import { sm } from '../core/SoundManager';
+import { BgmManager } from '@/core/BgmManager';
+import { bgmMap } from '@/core/sounds/bgmMap';
 
 const PLAYER_CONFIG = {
     hp: 100,
@@ -27,12 +30,50 @@ export class BattleScene extends Phaser.Scene {
         this.loadAssets();
     }
 
-    create() {
-        this.colyseus.join();
+    async create() {
+        this.anims.create({
+            key: 'cast_anim',
+            frames: this.anims.generateFrameNumbers('cast_effect', { start: 0, end: 16 }),
+            frameRate: 10,
+            repeat: 0,
+        });
+
+        this.anims.create({
+            key: 'cast_anim_air',
+            frames: this.anims.generateFrameNumbers('cast_air', { start: 0, end: 6 }),
+            frameRate: 12,
+            repeat: 0,
+        });
+
+        phaserEvents.emit('scene-changed', 'BattleScene');
+        this.scale.resize(1440, 258);
+
         this.initLayout();
         this.createPlayers();
         this.setupUI();
         this.setupNetworkHandlers();
+        this.battleManager = new BattleManager(this, this.playerView, this.enemyView);
+        phaserEvents.on('scene-changed', (sceneName, data) => {
+            this.scene.start(sceneName, data); // ← ResultScene に遷移
+        });
+
+        this.bgmManager = new BgmManager(this);
+        this.bgmManager.play(this.scene.key, bgmMap);
+
+        await this.colyseus.join(() => {
+            this.readyButton.show();
+        });
+
+        // sm.playBgm('bgm_battle');
+        this.effectManager.fadeIn();
+
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
+    }
+
+    shutdown() {
+        // クリーンアップ（イベントの重複登録防止）
+        this.bgmManager.fadeOut();
+        phaserEvents.removeAllListeners('scene-changed');
     }
 
     loadAssets() {
@@ -41,16 +82,23 @@ export class BattleScene extends Phaser.Scene {
             frameHeight: 32,
         });
         this.load.audio('sfx_attack', 'assets/sfx/attack.mp3');
-        this.load.image('background', 'assets/background.jpg');
+        this.load.image('background', 'battleback.png');
         this.load.image('winIcon', 'assets/3302.png');
+        this.load.image('shield', 'fc2151.png');
+        this.load.spritesheet('cast_effect', '674.png', {
+            frameWidth: 64,
+            frameHeight: 64,
+        });
+        this.load.spritesheet('cast_air', 'Air_Burst.png', {
+            frameWidth: 64,
+            frameHeight: 64,
+        });
+        this.load.audio('bgm_battle', 'Future_1.mp3');
     }
 
     initLayout() {
         this.cameras.main.setBackgroundColor('#000');
-        this.add
-            .image(0, 0, 'background')
-            .setOrigin(0)
-            .setDisplaySize(this.sys.game.config.width, this.sys.game.config.height);
+        this.add.image(0, 0, 'background').setOrigin(0);
 
         this.centerX = this.cameras.main.centerX;
         this.centerY = this.cameras.main.centerY - 10;
@@ -62,21 +110,14 @@ export class BattleScene extends Phaser.Scene {
 
     setupUI() {
         this.readyButton = new ReadyButton(this, this.centerX, this.centerY + 30, () => {
-            // this.sendSkillSet();
+            this.sendSkillSet();
             this.readyButton.hide();
         });
+        this.readyButton.hide();
 
         this.effectManager = new EffectManager(this);
-        new WipeAppearDisappearText(this, this.centerX, this.centerY, 'Round 1!', {
-            textStyle: {
-                fontSize: '36px',
-                fontFamily: 'Arial',
-                color: '#ffcc00',
-            },
-            bgColor: 0x333333,
-        });
         this.turnIndicator = new TurnIndicator(this);
-        this.turnIndicator.showTurn(2);
+
         // UIの将来的な拡張用
         // this.roundUI = new RoundStatusUI(this, this.centerX, 20);
     }
@@ -120,21 +161,61 @@ export class BattleScene extends Phaser.Scene {
         this.colyseus.onEnemyUpdated(
             this.handlePlayerUpdate.bind(this, this.enemy, this.enemyView),
         );
-        this.colyseus.onSkillLog(this.handleSkillLog.bind(this));
+        this.colyseus.onSkillLog(this.handleSkillLog, this);
+        this.colyseus.onShowReady(() => this.handleShowReady());
+        this.colyseus.onTurn(this.handleTurn, this);
+        this.colyseus.onRound(this.handleRound, this);
+        this.colyseus.onSceneChanged(this.handleSceneChanged, this);
     }
 
-    handlePlayerUpdate(character, view, field) {
-        console.log(field);
-        character.updatePlayer(field);
-        view.setReady(field.ready);
+    handleSceneChanged(data) {
+        this.bgmManager.fadeOut(500, () => {
+            this.scene.start('ResultScene', data); // ← ResultScene に遷移
+        });
+    }
+
+    handleTurn(turn) {
+        this.turnIndicator.showTurn(turn);
+    }
+
+    handleRound(round) {
+        console.log(round);
+        this.effectManager.shakeCamera();
+        this.effectManager.flashColor();
+        new WipeAppearDisappearText(this, this.centerX, this.centerY, `Round ${round}!`, {
+            textStyle: {
+                fontSize: '36px',
+                fontFamily: 'Arial',
+                color: '#ffcc00',
+            },
+            bgColor: 0x333333,
+        });
+    }
+
+    handlePlayerUpdate(character, view, player) {
+        character.updatePlayer(player);
+        if (view?.setReady) {
+            view.setReady(player.ready);
+        }
         view.updateBars();
+        view.updateCount(player.shield);
     }
 
-    handleSkillLog(isEnemy, skill) {
-        if (!skill) return;
-        const logText = `Used ${skill}`;
-        const view = isEnemy ? this.enemyView : this.playerView;
+    async handleSkillLog(isEnemy) {
+        if (!isEnemy) return;
+        if (!isEnemy.skill) return;
+        const logText = `${isEnemy.skill} を唱えた!`;
+        const view = isEnemy.isEnemy ? this.enemyView : this.playerView;
         view.showSkillLog(logText);
+        if (!isEnemy.isEnemy) {
+            this.effectManager.shakeCamera();
+        }
+
+        await this.battleManager.startTurn(isEnemy.isEnemy);
+    }
+
+    async handleShowReady() {
+        this.readyButton.show();
     }
 
     sendSkillSet() {
@@ -143,7 +224,9 @@ export class BattleScene extends Phaser.Scene {
             .filter((set) => set.skill)
             .map((set) => ({
                 skill: set.skill.id,
-                conditions: set.conditions.map((c) => c.id),
+                conditions: set.conditions.map((c) => {
+                    return { id: c.id, value: c.value };
+                }),
             }));
 
         this.colyseus.sendSkillSet(payload);
@@ -154,5 +237,40 @@ export class BattleScene extends Phaser.Scene {
             fontSize: '32px',
             color: '#ff0000',
         });
+    }
+
+    cleanup() {
+        console.log('[BattleScene] Cleaning up scene.');
+        const skillStore = useSkillStore();
+        skillStore.reset();
+        // Colyseusのイベント解除とleave
+        this.colyseus?.leave?.();
+        this.colyseus?.removeAllListeners?.();
+
+        // Phaser EventCenterのリスナー解除
+        phaserEvents.removeAllListeners();
+
+        // 各UI要素・オブジェクト破棄
+        this.readyButton?.destroy?.();
+        this.effectManager?.destroy?.();
+        this.turnIndicator?.destroy?.();
+
+        this.playerView?.destroy?.();
+        this.enemyView?.destroy?.();
+
+        this.player?.destroy?.();
+        this.enemy?.destroy?.();
+
+        // メモリリーク防止
+        this.readyButton = null;
+        this.effectManager = null;
+        this.turnIndicator = null;
+        this.playerView = null;
+        this.enemyView = null;
+        this.player = null;
+        this.enemy = null;
+
+        // Phaserが保持しているDisplayObjectも削除（念のため）
+        this.children.removeAll(true);
     }
 }

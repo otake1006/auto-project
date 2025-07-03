@@ -16,13 +16,9 @@ export const useSkillStore = defineStore('skill', () => {
         hp: 10,
     });
 
-    const categories = ['Attack', 'Defense', 'Magic'];
-    const currentCategory = ref('Attack');
     const currentTab = ref('スキル');
 
     const itemList = ref([[], [], [], [], []]);
-
-    const skills = ref([]);
 
     const skillSets = ref([
         {
@@ -32,9 +28,27 @@ export const useSkillStore = defineStore('skill', () => {
         },
     ]);
 
+    const selectCards = ref([]);
+
+    function setSelectCards(cards) {
+        selectCards.value = cards;
+    }
+
+    function clearSelectCards() {
+        selectCards.value = [];
+    }
+
+    const skills = ref([]);
+    const conditions = ref([]);
+    const relics = ref([]);
+
     function canMove(evt) {
         const draggedElement = evt.draggedContext.element;
         return draggedElement.skill !== null;
+    }
+
+    function handleConditionInput(id, inputValue, index) {
+        console.log(skillSets.value[index], skillSets.value, index);
     }
 
     function handleSkillAdd(event, index) {
@@ -62,9 +76,7 @@ export const useSkillStore = defineStore('skill', () => {
     }
 
     function handleSkillRemove(index) {
-        const card = skillSets.value[index];
-        card.skill = null;
-        card.conditions = [];
+        skillSets.value.splice(index, 1);
     }
 
     // 実際には type でフィルタする（例: 'skill', 'condition', 'relic' など）
@@ -73,8 +85,35 @@ export const useSkillStore = defineStore('skill', () => {
         if (type === 'skill') {
             return skills.value;
         }
+        if (type === 'condition') {
+            return getGroupedByKey(conditions.value).map((group) => group.items[0]);
+        }
         return cards.filter((card) => card.type === type);
     });
+
+    function loadConditionFromColyseus(data) {
+        conditions.value = data || [];
+    }
+
+    function getGroupedByKey(conditions) {
+        const groups = {};
+        for (const item of conditions) {
+            (groups[item.groupId] = groups[item.groupId] || []).push(item);
+        }
+        return Object.entries(groups).map(([groupId, items]) => ({
+            groupId,
+            items,
+            representative: items[0],
+        }));
+    }
+
+    function getItemsByGroupId(groupId) {
+        if (!groupId) return undefined;
+
+        const grouped = getGroupedByKey(conditions.value);
+        const group = grouped.find((group) => group.groupId === groupId);
+        return group ? group.items : [];
+    }
 
     function setSkills(value) {
         skills.value = value;
@@ -91,6 +130,18 @@ export const useSkillStore = defineStore('skill', () => {
         currentTab.value = tab;
     }
 
+    function reset() {
+        skillSets.value = [
+            {
+                id: 'set1',
+                skill: null,
+                conditions: [],
+            },
+        ];
+        skills.value = [];
+        conditions.value = [];
+    }
+
     return {
         player,
         itemList,
@@ -102,8 +153,15 @@ export const useSkillStore = defineStore('skill', () => {
         currentType,
         currentTab,
         filteredCards,
+        selectCards,
         handleSkillAdd,
         handleSkillRemove,
+        handleConditionInput,
+        loadConditionFromColyseus,
+        getItemsByGroupId,
         setTab,
+        clearSelectCards,
+        setSelectCards,
+        reset,
     };
 });

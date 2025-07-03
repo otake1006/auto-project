@@ -25,13 +25,13 @@ export const cards = [
     },
     {
         id: 3,
-        name: 'HP49より上',
+        name: 'HP',
         description: '次のターンから2ダメージ継続',
         ability: '',
         type: 'condition', // 👈 分類（条件）,
         conditionType: 'HP_ABOVE',
-        value: 49,
-        imgSrc: '/hitokage.png',
+        value: '0',
+        imgSrc: '/fc868.png',
     },
     {
         id: 4,

@@ -21,12 +21,17 @@ export class ColyseusClient {
     /**
      * Colyseusルームに参加して初期化処理を行う
      */
-    async join() {
+    async join(onJoinedCallback) {
         try {
             this.room = await this.client.joinOrCreate(this.roomName);
             this.mySessionId = this.room.sessionId;
             console.log('[Colyseus] Joined Room:', this.roomName, 'Session ID:', this.mySessionId);
+
             this.initialize();
+
+            if (onJoinedCallback) {
+                onJoinedCallback();
+            }
         } catch (e) {
             console.error('[Colyseus] Failed to join room:', e);
         }
@@ -38,7 +43,14 @@ export class ColyseusClient {
      */
     sendSkillSet(data) {
         if (this.room) {
+            console.log(data);
             this.room.send('ready', data);
+        }
+    }
+
+    sendSelectSkill(cardId) {
+        if (this.room) {
+            this.room.send('selectSkill', cardId);
         }
     }
 
@@ -59,16 +71,13 @@ export class ColyseusClient {
 
             // HP/MP/Ready状態が変更されたらPhaserに通知
             $(player).onChange(() => {
-                phaserEvents.emit(event, {
-                    hp: player.hp,
-                    mp: player.mp,
-                    ready: player.ready,
-                });
+                phaserEvents.emit(event, player);
             });
         });
 
         // メッセージハンドラを登録
         setupMessageHandlers(this.room);
+        phaserEvents.on('selectCard', this.sendSelectSkill);
     }
 
     /**
@@ -84,5 +93,21 @@ export class ColyseusClient {
 
     onSkillLog(callback, context) {
         phaserEvents.on('useSkill', callback, context);
+    }
+
+    onShowReady(callback) {
+        phaserEvents.on('showReady', callback);
+    }
+
+    onTurn(callback, context) {
+        phaserEvents.on('turn', callback, context);
+    }
+
+    onRound(callback, context) {
+        phaserEvents.on('round', callback, context);
+    }
+
+    onSceneChanged(callback, context) {
+        phaserEvents.on('resultScene', callback, context);
     }
 }
