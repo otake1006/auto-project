@@ -15,6 +15,8 @@ export class ResultScene extends Phaser.Scene {
     }
 
     create() {
+        phaserEvents.emit('scene-changed', this.scene.key);
+
         this.scale.resize(1440, 810);
 
         const displayText = this.winner === 'draw' ? '相打ち！' : `${this.winner}`;
