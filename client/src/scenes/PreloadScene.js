@@ -49,6 +49,13 @@ export class PreloadScene extends Phaser.Scene {
                 repeat: -1, // ループ
             });
 
+            this.anims.create({
+                key: 'match',
+                frames: this.anims.generateFrameNumbers('matching'),
+                frameRate: 8, // フレーム速度
+                repeat: -1, // ループ
+            });
+
             this.scene.start('StartScene');
         });
 
@@ -59,6 +66,10 @@ export class PreloadScene extends Phaser.Scene {
         this.load.spritesheet('player', 'assets/Slime_Blue.png', {
             frameWidth: 32,
             frameHeight: 32,
+        });
+        this.load.spritesheet('matching', 'matching.png', {
+            frameWidth: 1440,
+            frameHeight: 810,
         });
         this.load.audio('sfx_attack', 'assets/sfx/attack.mp3');
         this.load.image('background', 'battleback.png');
