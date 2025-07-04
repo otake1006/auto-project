@@ -26,25 +26,9 @@ export class BattleScene extends Phaser.Scene {
         this.colyseus = new ColyseusClient();
     }
 
-    preload() {
-        this.loadAssets();
-    }
+    preload() {}
 
     async create() {
-        this.anims.create({
-            key: 'cast_anim',
-            frames: this.anims.generateFrameNumbers('cast_effect', { start: 0, end: 16 }),
-            frameRate: 10,
-            repeat: 0,
-        });
-
-        this.anims.create({
-            key: 'cast_anim_air',
-            frames: this.anims.generateFrameNumbers('cast_air', { start: 0, end: 6 }),
-            frameRate: 12,
-            repeat: 0,
-        });
-
         phaserEvents.emit('scene-changed', 'BattleScene');
         this.scale.resize(1440, 258);
 
@@ -74,26 +58,6 @@ export class BattleScene extends Phaser.Scene {
         // クリーンアップ（イベントの重複登録防止）
         this.bgmManager.fadeOut();
         phaserEvents.removeAllListeners('scene-changed');
-    }
-
-    loadAssets() {
-        this.load.spritesheet('player', 'assets/Slime_Blue.png', {
-            frameWidth: 32,
-            frameHeight: 32,
-        });
-        this.load.audio('sfx_attack', 'assets/sfx/attack.mp3');
-        this.load.image('background', 'battleback.png');
-        this.load.image('winIcon', 'assets/3302.png');
-        this.load.image('shield', 'fc2151.png');
-        this.load.spritesheet('cast_effect', '674.png', {
-            frameWidth: 64,
-            frameHeight: 64,
-        });
-        this.load.spritesheet('cast_air', 'Air_Burst.png', {
-            frameWidth: 64,
-            frameHeight: 64,
-        });
-        this.load.audio('bgm_battle', 'Future_1.mp3');
     }
 
     initLayout() {

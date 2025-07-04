@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import PhaserGame from '@/components/PhaserGame.vue';
+import PhaserGame from '@/PhaserGame.vue';
 import TacticsBoard from './TacticsBoard.vue';
 import SkillSelection from './SkillSelection.vue';
 import ModalDispatcher from '@/components/modals/ModalDispatcher.vue';

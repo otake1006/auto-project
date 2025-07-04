@@ -3,12 +3,7 @@ export class ResultScene extends Phaser.Scene {
         super('ResultScene');
     }
 
-    preload() {
-        this.load.spritesheet('result', 'result2.png', {
-            frameWidth: 1440,
-            frameHeight: 810,
-        });
-    }
+    preload() {}
 
     init(data) {
         this.winner = data || '不明';
@@ -21,13 +16,6 @@ export class ResultScene extends Phaser.Scene {
 
         const displayText = this.winner === 'draw' ? '相打ち！' : `${this.winner}`;
         // 背景色などが必要であれば追加してください
-
-        this.anims.create({
-            key: 'loop',
-            frames: this.anims.generateFrameNumbers('result'),
-            frameRate: 8, // フレーム速度
-            repeat: -1, // ループ
-        });
 
         this.add.sprite(0, 0, 'result').setOrigin(0).setDisplaySize(1440, 810).play('loop');
 

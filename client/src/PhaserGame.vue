@@ -10,7 +10,8 @@ import { BattleScene } from '@/scenes/BattleScene';
 import { StartScene } from '@/scenes/StartScene';
 import { ResultScene } from '@/scenes/ResultScene';
 import { useModalStore } from '@/stores/modalStore';
-import { BootScene } from '../scenes/BootScene';
+import { BootScene } from '@/scenes/BootScene';
+import { PreloadScene } from '@/scenes/PreloadScene';
 
 const gameContainer = ref(null);
 let game = null;
@@ -21,11 +22,11 @@ onMounted(() => {
     const config = {
         type: Phaser.AUTO,
         mode: Phaser.Scale.ScaleModes.RESIZE,
-        backgroundColor: '#93cbee',
+        backgroundColor: '#191424',
         width: 1440,
         height: 810,
         parent: gameContainer.value,
-        scene: [BootScene, StartScene, BattleScene, ResultScene],
+        scene: [BootScene, PreloadScene, StartScene, BattleScene, ResultScene],
     };
 
     game = new Phaser.Game(config);

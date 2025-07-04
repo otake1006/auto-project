@@ -8,13 +8,7 @@ export class StartScene extends Phaser.Scene {
         super('StartScene');
     }
 
-    preload() {
-        this.load.spritesheet('bgAnim', 'UntitledArtwork2.png', {
-            frameWidth: 1440,
-            frameHeight: 810,
-        });
-        this.load.image('button_bg', 'batlestartbottan.png');
-    }
+    preload() {}
 
     create() {
         phaserEvents.emit('scene-changed', 'StartScene');
