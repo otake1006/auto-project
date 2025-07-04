@@ -7,10 +7,15 @@ export class MatchScene extends Phaser.Scene {
     }
 
     async create() {
-        const { centerX, centerY } = this.cameras.main;
+        const { centerX } = this.cameras.main;
+        const centerY = this.cameras.main.centerY + 150;
+        this.add.sprite(0, 0, 'matching').setOrigin(0).play('match');
 
         this.add
-            .text(centerX, centerY, 'Connecting to server...', { fontSize: '24px', color: '#fff' })
+            .text(centerX, centerY, 'Connecting to server...', {
+                fontSize: '24px',
+                color: '#fff',
+            })
             .setOrigin(0.5);
 
         try {
