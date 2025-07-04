@@ -1,6 +1,6 @@
-import Stat from './Stat.js';
+import Stat from '@/entities/Stat.js';
 import { evaluateAllConditions } from '@/utils/conditionEvaluator';
-import Skill from '@/core/Skill.js';
+import Skill from '@/entities/Skill.js';
 
 export default class Character extends Phaser.GameObjects.Sprite {
     /**
