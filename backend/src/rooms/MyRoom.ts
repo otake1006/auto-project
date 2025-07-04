@@ -75,6 +75,13 @@ export class MyRoom extends Room {
             }
         });
 
+        this.onMessage('requestPlayer', (client) => {
+            const player = this.state.players.get(client.sessionId);
+            player.reset();
+            this.broadcast('condition', conditionCards);
+            this.broadcast('action', this.initialSkill);
+        });
+
         this.onMessage('selectSkill', (client, id: any) => {
             const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
             if (id) {
@@ -104,10 +111,10 @@ export class MyRoom extends Room {
     // Called when a client joins the room
     onJoin(client: Client, options: any) {
         const joinPlayer = new Player();
-        client.send('action', this.initialSkill);
-        client.send('condition', conditionCards);
         this.state.players.set(client.sessionId, joinPlayer);
-        if (this.state.players.size === 2) this.broadcast('matching');
+        if (this.state.players.size === 2) {
+            this.broadcast('matching');
+        }
     }
 
     // Called when a client leaves the room
