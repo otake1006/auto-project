@@ -11,6 +11,7 @@ import { StartScene } from '@/scenes/StartScene';
 import { ResultScene } from '@/scenes/ResultScene';
 import { useModalStore } from '@/stores/modalStore';
 import { BootScene } from '../scenes/BootScene';
+import { MatchScene } from '@/scenes/MatchScene';
 
 const gameContainer = ref(null);
 let game = null;
@@ -25,7 +26,7 @@ onMounted(() => {
         width: 1440,
         height: 810,
         parent: gameContainer.value,
-        scene: [BootScene, StartScene, BattleScene, ResultScene],
+        scene: [BootScene, StartScene, MatchScene, BattleScene, ResultScene],
     };
 
     game = new Phaser.Game(config);
