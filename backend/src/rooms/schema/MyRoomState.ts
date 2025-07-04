@@ -15,7 +15,6 @@ export class Player extends Schema {
     @type('number') ratiomp: number = 100;
     @type('boolean') ready: boolean = false;
     @type([Skill]) skill = new ArraySchema<Skill>();
-    @type([SkillCard]) skills = new ArraySchema<SkillCard>();
     @type(buff) buffs = new buff();
     reset() {
         this.hp = this.maxhp;
