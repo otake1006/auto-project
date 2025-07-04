@@ -1,6 +1,6 @@
 // BattleScene.js
-import Character from '@/core/Character.js';
-import CharacterView from '@/core/CharacterView.js';
+import Character from '@/entities/Character.js';
+import CharacterView from '@/entities/CharacterView.js';
 import { useSkillStore } from '@/stores/skillStore';
 import { ColyseusClient } from '@/colyseus/client';
 import { phaserEvents, Event } from '@/events/EventCenter';
@@ -8,7 +8,7 @@ import { ReadyButton } from '@/ui/ReadyButton';
 import { EffectManager } from '@/core/EffectManager.js';
 import { RoundStatusUI } from '@/ui/RoundStatus.js';
 import { WipeAppearDisappearText } from '@/effects/WipeAppearDisappearText.js';
-import { TurnIndicator } from '@/effects/TurnIndicator';
+import { TurnIndicator } from '@/ui/TurnIndicator';
 import { BattleManager } from '../core/BattleManager';
 import { sm } from '../core/SoundManager';
 import { BgmManager } from '@/core/BgmManager';

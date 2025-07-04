@@ -3,6 +3,7 @@ import * as Colyseus from 'colyseus.js';
 import { getStateCallbacks } from 'colyseus.js';
 import { setupMessageHandlers } from './messageHandlers';
 import { phaserEvents, Event } from '@/events/EventCenter';
+import { networkManager } from '@/core/NetworkManager';
 
 export class ColyseusClient {
     client;
@@ -23,7 +24,7 @@ export class ColyseusClient {
      */
     async join(onJoinedCallback) {
         try {
-            this.room = await this.client.joinOrCreate(this.roomName);
+            this.room = await networkManager.getRoom();
             this.mySessionId = this.room.sessionId;
             console.log('[Colyseus] Joined Room:', this.roomName, 'Session ID:', this.mySessionId);
 
