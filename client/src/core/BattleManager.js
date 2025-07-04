@@ -10,6 +10,14 @@ export class BattleManager {
         this.turnCount = 0;
     }
 
+    async handleSkillLog(skillData) {
+        const targetView = skillData.isEnemy
+            ? this.playerManager.enemyView
+            : this.playerManager.playerView;
+        targetView.showSkillLog(`${skillData.skill} を使った！`);
+        await startTurn(skillData.isEnemy);
+    }
+
     async startTurn(isEnemy) {
         this.turnCount++;
 

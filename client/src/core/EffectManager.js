@@ -19,6 +19,23 @@ export class EffectManager {
         });
     }
 
+    showRoundStart(round) {
+        const text = this.scene.add
+            .text(
+                this.scene.cameras.main.centerX,
+                this.scene.cameras.main.centerY,
+                `Round ${round}!`,
+                { fontSize: '48px', color: '#fff' },
+            )
+            .setOrigin(0.5);
+        this.scene.tweens.add({
+            targets: text,
+            alpha: 0,
+            duration: 2000,
+            onComplete: () => text.destroy(),
+        });
+    }
+
     fadeIn(duration = 500) {
         this.scene.cameras.main.fadeIn(duration, 0, 0, 0);
     }
