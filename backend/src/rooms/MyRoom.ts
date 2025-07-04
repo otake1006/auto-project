@@ -107,6 +107,7 @@ export class MyRoom extends Room {
         client.send('action', this.initialSkill);
         client.send('condition', conditionCards);
         this.state.players.set(client.sessionId, joinPlayer);
+        if (this.state.players.size === 2) this.broadcast('matching');
     }
 
     // Called when a client leaves the room
