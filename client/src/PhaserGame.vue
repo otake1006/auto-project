@@ -11,7 +11,7 @@
     import { ResultScene } from '@/scenes/ResultScene';
     import { useModalStore } from '@/stores/modalStore';
     import { PreloadScene } from '@/scenes/PreloadScene';
-    import { BootScene } from '../scenes/BootScene';
+    import { BootScene } from '@/scenes/BootScene';
     import { MatchScene } from '@/scenes/MatchScene';
 
     const gameContainer = ref(null);
