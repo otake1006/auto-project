@@ -57,7 +57,7 @@ export class StartScene extends Phaser.Scene {
             });
 
         const versionText = this.add
-            .text(10, this.scale.height - 20, `v${VERSION}`, {
+            .text(10, this.scale.height - 20, `version: ${VERSION}`, {
                 fontSize: '20px',
                 fontFamily: 'DotGothic16',
                 color: '#ffffff',
