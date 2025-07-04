@@ -13,5 +13,8 @@ export default defineConfig({
     },
     server: {
         allowedHosts: ['.ngrok-free.app'],
-    }
+    },
+    define: {
+        'import.meta.env.RENDER_GIT_COMMIT': JSON.stringify(process.env.RENDER_GIT_COMMIT || 'dev'),
+    },
 });
