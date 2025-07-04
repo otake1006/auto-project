@@ -43,9 +43,8 @@ export class StartScene extends Phaser.Scene {
             })
             .on('pointerup', () => {
                 bg.setScale(1);
-                this.scene.start('BattleScene');
                 this.bgmManager.fadeOut(500, () => {
-                    this.scene.start('BattleScene');
+                    this.scene.start('MatchScene');
                 });
                 // this.scene.switch('BattleScene'); // ゲーム画面に遷移
             });
