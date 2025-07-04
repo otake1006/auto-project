@@ -34,7 +34,7 @@ export class MatchScene extends Phaser.Scene {
                 .setOrigin(0.5);
 
             // 相手が接続してゲーム開始する通知
-            room.onMessage('start_game', () => {
+            room.onMessage('matching', () => {
                 this.scene.start('BattleScene', { room });
             });
         } catch (error) {
