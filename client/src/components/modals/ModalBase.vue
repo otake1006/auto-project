@@ -5,6 +5,9 @@
 </template>
 
 <script setup>
+import { onMounted, onUnmounted } from 'vue';
+import { phaserEvents } from '@/events/EventCenter';
+
 const props = defineProps({
     visible: Boolean,
 });
@@ -13,4 +16,14 @@ const emit = defineEmits(['close']);
 function close() {
     emit('close');
 }
+
+onMounted(() => {
+    if (props.visible) {
+        phaserEvents.emit('ui-opened');
+    }
+});
+
+onUnmounted(() => {
+    phaserEvents.emit('ui-closed');
+});
 </script>
