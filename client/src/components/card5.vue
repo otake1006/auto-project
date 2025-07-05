@@ -91,10 +91,8 @@ async function onDropped(data, index) {
                             <card3 :cards="condition"></card3>
                         </template>
                         <template #footer>
-                            <div v-if="element.conditions.length < 2 && element.skill"
-                                class="flex h-20 w-48 items-center justify-center rounded border-2 border-dashed border-gray-400 bg-gray-50 text-gray-500 italic">
-                                + ここにカードを追加
-                            </div>
+                            <img v-if="element.conditions.length < 2 && element.skill" src="/add-card-placeholder.png"
+                                alt="Click Button" class="h-20 w-48" />
                         </template>
                     </draggable>
                 </div>
