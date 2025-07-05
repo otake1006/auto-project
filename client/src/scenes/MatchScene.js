@@ -1,5 +1,5 @@
-// scenes/MatchScene.js
 import { networkManager } from '@/core/NetworkManager';
+import { StatusIndicator } from '@/ui/StatusIndicator';
 
 export class MatchScene extends Phaser.Scene {
     constructor() {
@@ -7,41 +7,32 @@ export class MatchScene extends Phaser.Scene {
     }
 
     async create() {
-        const { centerX } = this.cameras.main;
+        const centerX = this.cameras.main.centerX;
         const centerY = this.cameras.main.centerY + 150;
+
         this.add.sprite(0, 0, 'matching').setOrigin(0).play('match');
 
-        this.add
-            .text(centerX, centerY, 'Connecting to server...', {
-                fontSize: '24px',
-                color: '#fff',
-            })
-            .setOrigin(0.5);
+        const indicator = new StatusIndicator(this, centerX, centerY);
 
+        const connectCheck = indicator.addStatus('Connecting to server...');
         try {
             await networkManager.connect();
+            indicator.markDone(0); // 接続成功
 
-            this.add
-                .text(centerX, centerY + 20, 'Joining room...', { fontSize: '18px' })
-                .setOrigin(0.5);
-
+            const joinCheck = indicator.addStatus('Joining room...');
             const room = await networkManager.joinOrCreateRoom('my_room');
+            indicator.markDone(1); // ルーム参加成功
 
-            this.add
-                .text(centerX, centerY + 40, 'Waiting for opponent...', {
-                    fontSize: '18px',
-                })
-                .setOrigin(0.5);
+            const waitCheck = indicator.addStatus('Waiting for opponent...');
 
-            // 相手が接続してゲーム開始する通知
             room.onMessage('matching', () => {
+                indicator.markDone(2); // 相手見つかった
                 this.scene.start('BattleScene', { room });
             });
         } catch (error) {
             console.error('[MatchScene] Connection failed:', error);
-            this.add
-                .text(400, 240, 'Connection Failed', { fontSize: '20px', color: '#f00' })
-                .setOrigin(0.5);
+            indicator.addStatus('Connection Failed');
+            // エラー時に失敗アイコンにしてもよい（markFailedなど）
         }
     }
 }
