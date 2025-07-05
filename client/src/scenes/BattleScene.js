@@ -37,19 +37,16 @@ export class BattleScene extends Phaser.Scene {
         this.setupUI();
         this.setupNetworkHandlers();
         this.battleManager = new BattleManager(this, this.playerView, this.enemyView);
-        phaserEvents.on('scene-changed', (sceneName, data) => {
-            this.scene.start(sceneName, data); // ← ResultScene に遷移
-        });
-
         this.bgmManager = new BgmManager(this);
         this.bgmManager.play(this.scene.key, bgmMap);
+
+        this.effectManager.fadeIn();
 
         await this.colyseus.join(() => {
             this.readyButton.show();
         });
 
         // sm.playBgm('bgm_battle');
-        this.effectManager.fadeIn();
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
 
