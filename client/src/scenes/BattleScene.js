@@ -61,7 +61,6 @@ export class BattleScene extends Phaser.Scene {
     shutdown() {
         // クリーンアップ（イベントの重複登録防止）
         this.bgmManager.fadeOut();
-        phaserEvents.removeAllListeners('scene-changed');
     }
 
     initLayout() {
@@ -224,9 +223,12 @@ export class BattleScene extends Phaser.Scene {
         this.colyseus?.removeAllListeners?.();
 
         // Phaser EventCenterのリスナー解除
-        phaserEvents.off('ui-opened', this.disableInput, this);
-        phaserEvents.off('ui-closed', this.enableInput, this);
-        // phaserEvents.removeAllListeners();
+        
+        Object.entries(phaserEvents._events).forEach(([eventName, listeners]) => {
+            if (eventName !== 'scene-changed') {
+                phaserEvents.removeAllListeners(eventName);
+            }
+        });
 
         // 各UI要素・オブジェクト破棄
         this.readyButton?.destroy?.();
@@ -249,6 +251,6 @@ export class BattleScene extends Phaser.Scene {
         this.enemy = null;
 
         // Phaserが保持しているDisplayObjectも削除（念のため）
-        this.children.removeAll(true);
+        // this.children.removeAll(true);
     }
 }
