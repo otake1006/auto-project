@@ -52,6 +52,10 @@ export class BattleScene extends Phaser.Scene {
         this.effectManager.fadeIn();
 
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
+
+        // Listen for UI events to disable/enable scene input
+        phaserEvents.on('ui-opened', this.disableInput, this);
+        phaserEvents.on('ui-closed', this.enableInput, this);
     }
 
     shutdown() {
@@ -203,6 +207,14 @@ export class BattleScene extends Phaser.Scene {
         });
     }
 
+    disableInput() {
+        this.input.enabled = false;
+    }
+
+    enableInput() {
+        this.input.enabled = true;
+    }
+
     cleanup() {
         console.log('[BattleScene] Cleaning up scene.');
         const skillStore = useSkillStore();
@@ -212,6 +224,8 @@ export class BattleScene extends Phaser.Scene {
         this.colyseus?.removeAllListeners?.();
 
         // Phaser EventCenterのリスナー解除
+        phaserEvents.off('ui-opened', this.disableInput, this);
+        phaserEvents.off('ui-closed', this.enableInput, this);
         phaserEvents.removeAllListeners();
 
         // 各UI要素・オブジェクト破棄
