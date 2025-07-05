@@ -37,10 +37,6 @@ export class BattleScene extends Phaser.Scene {
         this.setupUI();
         this.setupNetworkHandlers();
         this.battleManager = new BattleManager(this, this.playerView, this.enemyView);
-        phaserEvents.on('scene-changed', (sceneName, data) => {
-            this.scene.start(sceneName, data); // ← ResultScene に遷移
-        });
-
         this.bgmManager = new BgmManager(this);
         this.bgmManager.play(this.scene.key, bgmMap);
 
@@ -212,7 +208,7 @@ export class BattleScene extends Phaser.Scene {
         this.colyseus?.removeAllListeners?.();
 
         // Phaser EventCenterのリスナー解除
-        phaserEvents.removeAllListeners();
+        //phaserEvents.removeAllListeners();
 
         // 各UI要素・オブジェクト破棄
         this.readyButton?.destroy?.();
