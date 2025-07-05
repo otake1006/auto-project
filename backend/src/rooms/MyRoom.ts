@@ -78,9 +78,9 @@ export class MyRoom extends Room {
         this.onMessage('requestPlayer', (client) => {
             // const player = this.state.players.get(client.sessionId);
             // player.reset();
-            const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
-            player1.reset();
-            player2.reset();
+            for (const [sessionId, player] of this.state.players) {
+                player.reset();
+            }
             this.broadcast('condition', conditionCards);
             this.broadcast('action', this.initialSkill);
         });
