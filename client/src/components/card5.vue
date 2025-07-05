@@ -63,8 +63,7 @@ async function onDropped(data, index) {
 </script>
 
 <template>
-    <div class="space-y-15 rounded-xl border border-gray-300 bg-white p-4 shadow-sm" ref="dropArea"
-        style="background-image: url('battleboard.png')">
+    <div class="space-y-15 rounded-xl p-4 shadow-sm" ref="dropArea" style="background-image: url('battleboard.png')">
         <draggable v-model="skillStore.skillSets" item-key="id" :group="{ name: 'skillSets' }" :move="canMove"
             :ghost-class="'no-opacity'" :animation="200" handle=".drag-handle">
             <template #item="{ element, index }">
