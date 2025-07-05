@@ -1,4 +1,4 @@
-import { phaserEvents, Event } from '@/events/EventCenter';
+import { phaserEvents } from '@/events/EventCenter';
 
 export class ResultScene extends Phaser.Scene {
     constructor() {

@@ -5,8 +5,8 @@ import { getSkillCard, getCondition, SkillCard, skillCards } from '../../data/ca
 
 export class Player extends Schema {
     @type('string') name: string = 'player';
-    @type('number') hp: number = 100;
-    @type('number') mp: number = 50;
+    @type('number') hp: number = 0;
+    @type('number') mp: number = 0;
     @type('number') shield: number = 0;
     @type('number') maxhp: number = 100;
     @type('number') maxmp: number = 50;

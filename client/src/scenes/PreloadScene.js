@@ -95,6 +95,7 @@ export class PreloadScene extends Phaser.Scene {
             frameHeight: 810,
         });
         this.load.image('button_bg', 'batlestartbottan.png');
+        this.load.image('check-icon', 'check-icon.png');
     }
 
     create() {}
