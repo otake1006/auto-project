@@ -226,7 +226,7 @@ export class BattleScene extends Phaser.Scene {
         // Phaser EventCenterのリスナー解除
         phaserEvents.off('ui-opened', this.disableInput, this);
         phaserEvents.off('ui-closed', this.enableInput, this);
-        phaserEvents.removeAllListeners();
+        // phaserEvents.removeAllListeners();
 
         // 各UI要素・オブジェクト破棄
         this.readyButton?.destroy?.();

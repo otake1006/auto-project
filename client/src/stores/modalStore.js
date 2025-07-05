@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { phaserEvents } from '@/events/EventCenter';
 
 export const useModalStore = defineStore('modal', () => {
     const isOpen = ref(false);
@@ -12,6 +13,7 @@ export const useModalStore = defineStore('modal', () => {
         isOpen.value = true;
         modalType.value = type;
         modalPayload.value = payload;
+        phaserEvents.emit('ui-opened');
 
         return new Promise((res) => {
             resolve = res;
@@ -22,6 +24,9 @@ export const useModalStore = defineStore('modal', () => {
         isOpen.value = false;
         modalType.value = null;
         modalPayload.value = null;
+
+        phaserEvents.emit('ui-closed');
+
         if (resolve) {
             resolve(result);
             resolve = null;

@@ -16,14 +16,4 @@ const emit = defineEmits(['close']);
 function close() {
     emit('close');
 }
-
-onMounted(() => {
-    if (props.visible) {
-        phaserEvents.emit('ui-opened');
-    }
-});
-
-onUnmounted(() => {
-    phaserEvents.emit('ui-closed');
-});
 </script>
