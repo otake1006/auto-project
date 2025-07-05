@@ -6,7 +6,6 @@ import { phaserEvents, Event } from '@/events/EventCenter';
 import { networkManager } from '@/core/NetworkManager';
 
 export class ColyseusClient {
-    client;
     room;
     mySessionId;
 
@@ -14,7 +13,7 @@ export class ColyseusClient {
         endpoint = import.meta.env.VITE_COLYSEUS_URL,
         roomName = import.meta.env.VITE_COLYSEUS_ROOM_NAME,
     ) {
-        this.client = new Colyseus.Client(endpoint);
+        // this.client = new Colyseus.Client(endpoint);
         this.room = null;
         this.roomName = roomName;
     }

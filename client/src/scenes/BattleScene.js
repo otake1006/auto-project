@@ -13,6 +13,7 @@ import { BattleManager } from '../core/BattleManager';
 import { sm } from '../core/SoundManager';
 import { BgmManager } from '@/core/BgmManager';
 import { bgmMap } from '@/core/sounds/bgmMap';
+import { networkManager } from '../core/NetworkManager';
 
 const PLAYER_CONFIG = {
     hp: 100,
@@ -31,6 +32,8 @@ export class BattleScene extends Phaser.Scene {
     async create() {
         phaserEvents.emit('scene-changed', 'BattleScene');
         this.scale.resize(1440, 258);
+
+        networkManager.send('requestPlayer', '');
 
         this.initLayout();
         this.createPlayers();
