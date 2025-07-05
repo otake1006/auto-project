@@ -122,7 +122,7 @@ export class MyRoom extends Room {
 
     // Called when a client leaves the room
     onLeave(client: Client, options: any) {
-        this.onDispose();
+        this.disconnect();
     }
 
     // Called when the room is disposed
