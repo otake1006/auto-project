@@ -11,6 +11,7 @@ export class StartScene extends Phaser.Scene {
     preload() {}
 
     create() {
+        this.buttonPressed = false;
         phaserEvents.emit('scene-changed', 'StartScene');
         this.bgmManager = new BgmManager(this);
         this.bgmManager.play(this.scene.key, bgmMap);
@@ -42,6 +43,9 @@ export class StartScene extends Phaser.Scene {
                 bg.setScale(0.95);
             })
             .on('pointerup', () => {
+                if (this.buttonPressed) return; // ← 追加：すでに押されてたら何もしない
+                this.buttonPressed = true; // ← 追加：フラグを立てる
+
                 bg.setScale(1);
                 this.bgmManager.fadeOut(500, () => {
                     this.scene.start('MatchScene');
@@ -72,6 +76,7 @@ export class StartScene extends Phaser.Scene {
     }
 
     shutdown() {
+        this.buttonPressed = false;
         // クリーンアップ（イベントの重複登録防止）
         phaserEvents.removeAllListeners('scene-changed');
     }
