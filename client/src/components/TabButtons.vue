@@ -1,11 +1,19 @@
 <template>
     <div class="flex space-x-2 pt-2 pb-6">
-        <button v-for="tab in tabs" :key="tab" @click="setTab(tab)" :class="[
-            'flex-1 border-2 py-2 rounded text-white bg-black border-white',
+        <img @click="setTab('スキル')" src="/skill-button.png" alt="Skill Icon" :class="[
+            'flex-1 w-[225px] h-[48px]',
             selectedTab === tab ? 'text-xl' : 'text-sm'
         ]">
-            {{ tab }}
-        </button>
+        <img @click="setTab('条件')" src="/condition-button.png" alt="Condition Icon" :class="[
+            'flex-1 w-[225px] h-[48px]',
+            selectedTab === tab ? 'text-xl' : 'text-sm'
+        ]">
+
+        <img @click="setTab('レリック')" src="/relic-button.png" alt="Relic Icon" :class="[
+            'flex-1 w-[225px] h-[48px]',
+            selectedTab === tab ? 'text-xl' : 'text-sm'
+        ]">
+
     </div>
 </template>
 
