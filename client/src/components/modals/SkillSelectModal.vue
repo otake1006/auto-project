@@ -1,21 +1,18 @@
 <template>
-    <div class="relative bg-yellow-100 border-2 border-yellow-400 rounded-lg p-10">
-        <button class="absolute top-2 right-2 text-red-500" @click="$emit('cancel')">×</button>
-        <div class="space-y-4">
-            <h2 class="text-lg font-bold">Select a Skill</h2>
-            <div class="gap-2">
+    <div
+        class="min-h-screen flex items-center justify-center bg-[url('/select-skill.png')] bg-no-repeat bg-center bg-contain">
+        <div class="p-10 ">
+            <div>
                 <div v-for="card in cards" :key="card.id"
-                    class="w-full max-w-4xl p-4 border rounded cursor-pointer hover:bg-blue-100"
-                    :class="{ 'bg-blue-200': selected?.id === card.id }" @click="select(card)">
+                    class="w-full max-w-4xl p-4 rounded cursor-pointer hover:border hover:border-blue-300"
+                    :class="{ 'bg-blue-200': selected?.id === card.id }" @click="confirm(card)">
                     <Card :card="card" />
                 </div>
             </div>
-            <div class="flex justify-end space-x-2">
-                <button @click="$emit('cancel')" class="btn-secondary">Cancel</button>
-                <button @click="confirm" :disabled="!selected" class="btn-primary">Confirm</button>
-            </div>
         </div>
     </div>
+
+
 </template>
 
 <script setup>
@@ -32,7 +29,7 @@ const show = ref(true)
 function select(card) {
     selected.value = card
 }
-function confirm() {
-    emit('confirm', selected.value)
+function confirm(card) {
+    emit('confirm', card)
 }
 </script>
