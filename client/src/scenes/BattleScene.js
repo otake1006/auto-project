@@ -4,7 +4,7 @@ import CharacterView from '@/entities/CharacterView.js';
 import { useSkillStore } from '@/stores/skillStore';
 import { ColyseusClient } from '@/colyseus/client';
 import { phaserEvents, Event } from '@/events/EventCenter';
-import { ReadyButton } from '@/ui/ReadyButton';
+import { ReadyButton } from '@/ui/button/ReadyButton';
 import { EffectManager } from '@/core/EffectManager.js';
 import { RoundStatusUI } from '@/ui/RoundStatus.js';
 import { WipeAppearDisappearText } from '@/effects/WipeAppearDisappearText.js';
@@ -14,6 +14,7 @@ import { sm } from '../core/SoundManager';
 import { BgmManager } from '@/core/BgmManager';
 import { bgmMap } from '@/core/sounds/bgmMap';
 import { networkManager } from '../core/NetworkManager';
+import { bounceTween } from '@/ui/animations/bounceTween.js';
 
 const PLAYER_CONFIG = {
     hp: 100,
@@ -33,8 +34,6 @@ export class BattleScene extends Phaser.Scene {
         phaserEvents.emit('scene-changed', 'BattleScene');
         this.scale.resize(1440, 258);
 
-        networkManager.send('requestPlayer', '');
-
         this.initLayout();
         this.createPlayers();
         this.setupUI();
@@ -46,7 +45,7 @@ export class BattleScene extends Phaser.Scene {
         this.effectManager.fadeIn();
 
         await this.colyseus.join(() => {
-            this.readyButton.show();
+            networkManager.send('requestPlayer', '');
         });
 
         // sm.playBgm('bgm_battle');
@@ -76,11 +75,28 @@ export class BattleScene extends Phaser.Scene {
     }
 
     setupUI() {
-        this.readyButton = new ReadyButton(this, this.centerX, this.centerY + 30, () => {
-            this.sendSkillSet();
-            this.readyButton.hide();
-        });
-        this.readyButton.hide();
+        // this.readyButton = new ReadyButton(this, this.centerX, this.centerY + 30, () => {
+        //     this.sendSkillSet();
+        //     this.readyButton.hide();
+        // });
+
+        this.readyButton = new ReadyButton(
+            this,
+            this.centerX,
+            this.centerY + 30,
+            () => {
+                this.sendSkillSet(); // 既存ロジック
+            },
+            {
+                defaultKey: 'ready-button',
+                hoverImageKey: 'ready-button',
+                downImageKey: 'ready-button',
+                sounds: { click: 'click.mp3' },
+                tweens: [bounceTween],
+            },
+        );
+
+        // this.readyButton.hide();
 
         this.effectManager = new EffectManager(this);
         this.turnIndicator = new TurnIndicator(this);
@@ -160,6 +176,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     handlePlayerUpdate(character, view, player) {
+        console.table(player);
         character.updatePlayer(player);
         if (view?.setReady) {
             view.setReady(player.ready);
@@ -223,7 +240,7 @@ export class BattleScene extends Phaser.Scene {
         this.colyseus?.removeAllListeners?.();
 
         // Phaser EventCenterのリスナー解除
-        
+
         Object.entries(phaserEvents._events).forEach(([eventName, listeners]) => {
             if (eventName !== 'scene-changed') {
                 phaserEvents.removeAllListeners(eventName);
