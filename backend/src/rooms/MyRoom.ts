@@ -79,6 +79,7 @@ export class MyRoom extends Room {
             // const player = this.state.players.get(client.sessionId);
             // player.reset();
             for (const [sessionId, player] of this.state.players) {
+                player.delete();
                 player.reset();
             }
             this.broadcast('condition', conditionCards);

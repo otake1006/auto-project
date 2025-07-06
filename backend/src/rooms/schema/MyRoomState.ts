@@ -21,6 +21,11 @@ export class Player extends Schema {
         this.mp = this.maxmp;
         this.shield = 0;
     }
+    delete() {
+        this.hp = 0;
+        this.mp = 0;
+        this.shield = 0;
+    }
 
     resetMp() {
         this.mp = this.maxmp;
