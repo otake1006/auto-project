@@ -15,6 +15,7 @@ export class StartScene extends Phaser.Scene {
     preload() {}
 
     create() {
+        this.scale.resize(1440, 810);
         this.buttonPressed = false;
         phaserEvents.emit('scene-changed', 'StartScene');
         this.bgmManager = new BgmManager(this);
