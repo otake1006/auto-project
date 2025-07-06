@@ -15,6 +15,7 @@ import { BgmManager } from '@/core/BgmManager';
 import { bgmMap } from '@/core/sounds/bgmMap';
 import { networkManager } from '../core/NetworkManager';
 import { bounceTween } from '@/ui/animations/bounceTween.js';
+import { useModalStore } from '@/stores/modalStore';
 
 const PLAYER_CONFIG = {
     hp: 100,
@@ -234,7 +235,9 @@ export class BattleScene extends Phaser.Scene {
     cleanup() {
         console.log('[BattleScene] Cleaning up scene.');
         const skillStore = useSkillStore();
+        const modalStore = useModalStore();
         skillStore.reset();
+        modalStore.close();
         // Colyseusのイベント解除とleave
         this.colyseus?.leave?.();
         this.colyseus?.removeAllListeners?.();
