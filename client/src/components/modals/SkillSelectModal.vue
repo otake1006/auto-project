@@ -1,7 +1,6 @@
 <template>
-    <div
-        class="min-h-screen flex items-center justify-center bg-[url('/select-skill.png')] bg-no-repeat bg-center bg-contain">
-        <div class="p-10 ">
+    <div class="flex items-center justify-center bg-[url('/select-skill.png')] bg-no-repeat bg-center bg-contain">
+        <div class="p-25">
             <div>
                 <div v-for="card in cards" :key="card.id"
                     class="w-full max-w-4xl p-4 rounded cursor-pointer hover:border hover:border-blue-300"
