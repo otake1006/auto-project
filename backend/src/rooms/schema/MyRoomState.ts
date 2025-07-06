@@ -52,15 +52,16 @@ export class Player extends Schema {
     useSkill(skillId: number, target: Player) {
         if (!skillId) return;
         const skill = getSkillCard(skillId);
+        const damage = skill.damage * skill.Count;
         if (skill.battleType === 'attack') {
             this.mp -= skill.energy;
-            const damage = Math.max(0, skill.damage - target.shield);
-            target.shield = Math.max(0, target.shield - skill.damage);
-            target.hp = Math.max(0, target.hp - damage);
+            const HPdamage = Math.max(0, damage - target.shield);
+            target.shield = Math.max(0, target.shield - damage);
+            target.hp = Math.max(0, target.hp - HPdamage);
         }
         if (skill.battleType === 'defense') {
             this.mp -= skill.energy;
-            this.shield = Math.min(this.maxshield, this.shield + skill.damage);
+            this.shield = Math.min(this.maxshield, this.shield + damage);
         }
     }
 
