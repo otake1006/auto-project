@@ -25,4 +25,7 @@ export function setupMessageHandlers(room) {
     room.onMessage('turn', (data) => onTurn(data));
     room.onMessage('round', (data) => onRound(data));
     room.onMessage('condition', (data) => onCondition(data));
+    room.onMessage('leave', () => {
+        phaserEvents.emit('leave'); // ← scene変更イベントを送る
+    });
 }

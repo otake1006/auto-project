@@ -149,6 +149,13 @@ export class BattleScene extends Phaser.Scene {
         this.colyseus.onTurn(this.handleTurn, this);
         this.colyseus.onRound(this.handleRound, this);
         this.colyseus.onSceneChanged(this.handleSceneChanged, this);
+        this.colyseus.onOpponentDisconnect(() => this.handleStartScene());
+    }
+
+    handleStartScene() {
+        this.bgmManager.fadeOut(500, () => {
+            this.scene.start('StartScene'); // ← ResultScene に遷移
+        });
     }
 
     handleSceneChanged(data) {

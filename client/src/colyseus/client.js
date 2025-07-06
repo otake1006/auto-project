@@ -110,4 +110,8 @@ export class ColyseusClient {
     onSceneChanged(callback, context) {
         phaserEvents.on('resultScene', callback, context);
     }
+
+    onOpponentDisconnect(callback) {
+        phaserEvents.on('leave', callback);
+    }
 }
