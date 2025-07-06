@@ -4,7 +4,7 @@ import CharacterView from '@/entities/CharacterView.js';
 import { useSkillStore } from '@/stores/skillStore';
 import { ColyseusClient } from '@/colyseus/client';
 import { phaserEvents, Event } from '@/events/EventCenter';
-import { ReadyButton } from '@/ui/ReadyButton';
+import { ReadyButton } from '@/ui/button/ReadyButton';
 import { EffectManager } from '@/core/EffectManager.js';
 import { RoundStatusUI } from '@/ui/RoundStatus.js';
 import { WipeAppearDisappearText } from '@/effects/WipeAppearDisappearText.js';
@@ -14,6 +14,7 @@ import { sm } from '../core/SoundManager';
 import { BgmManager } from '@/core/BgmManager';
 import { bgmMap } from '@/core/sounds/bgmMap';
 import { networkManager } from '../core/NetworkManager';
+import { bounceTween } from '@/ui/animations/bounceTween.js';
 
 const PLAYER_CONFIG = {
     hp: 100,
@@ -76,11 +77,23 @@ export class BattleScene extends Phaser.Scene {
     }
 
     setupUI() {
+        // this.readyButton = new ReadyButton(this, this.centerX, this.centerY + 30, () => {
+        //     this.sendSkillSet();
+        //     this.readyButton.hide();
+        // });
+
         this.readyButton = new ReadyButton(this, this.centerX, this.centerY + 30, () => {
-            this.sendSkillSet();
-            this.readyButton.hide();
+            this.sendSkillSet();      // 既存ロジック
+        }, {
+            defaultKey: 'button_bg',
+            hoverImageKey: 'button_bg',
+            downImageKey: 'button_bg',
+            sounds: { click: 'click.mp3' },
+            tweens: [bounceTween],
+            startHidden: true,
         });
-        this.readyButton.hide();
+        
+        // this.readyButton.hide();
 
         this.effectManager = new EffectManager(this);
         this.turnIndicator = new TurnIndicator(this);
