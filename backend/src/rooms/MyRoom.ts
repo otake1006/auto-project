@@ -123,6 +123,7 @@ export class MyRoom extends Room {
 
     // Called when a client leaves the room
     onLeave(client: Client, options: any) {
+        this.broadcast('leave');
         this.disconnect();
     }
 
