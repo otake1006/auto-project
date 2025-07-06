@@ -96,6 +96,7 @@ export class PreloadScene extends Phaser.Scene {
         });
         this.load.image('button_bg', 'batlestartbottan.png');
         this.load.image('check-icon', 'check-icon.png');
+        this.load.image('ready-button', 'ready-button.png');
     }
 
     create() {}

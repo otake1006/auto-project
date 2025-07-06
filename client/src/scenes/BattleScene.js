@@ -34,8 +34,6 @@ export class BattleScene extends Phaser.Scene {
         phaserEvents.emit('scene-changed', 'BattleScene');
         this.scale.resize(1440, 258);
 
-        networkManager.send('requestPlayer', '');
-
         this.initLayout();
         this.createPlayers();
         this.setupUI();
@@ -47,7 +45,7 @@ export class BattleScene extends Phaser.Scene {
         this.effectManager.fadeIn();
 
         await this.colyseus.join(() => {
-            this.readyButton.show();
+            networkManager.send('requestPlayer', '');
         });
 
         // sm.playBgm('bgm_battle');
@@ -82,17 +80,22 @@ export class BattleScene extends Phaser.Scene {
         //     this.readyButton.hide();
         // });
 
-        this.readyButton = new ReadyButton(this, this.centerX, this.centerY + 30, () => {
-            this.sendSkillSet();      // 既存ロジック
-        }, {
-            defaultKey: 'button_bg',
-            hoverImageKey: 'button_bg',
-            downImageKey: 'button_bg',
-            sounds: { click: 'click.mp3' },
-            tweens: [bounceTween],
-            startHidden: true,
-        });
-        
+        this.readyButton = new ReadyButton(
+            this,
+            this.centerX,
+            this.centerY + 30,
+            () => {
+                this.sendSkillSet(); // 既存ロジック
+            },
+            {
+                defaultKey: 'ready-button',
+                hoverImageKey: 'ready-button',
+                downImageKey: 'ready-button',
+                sounds: { click: 'click.mp3' },
+                tweens: [bounceTween],
+            },
+        );
+
         // this.readyButton.hide();
 
         this.effectManager = new EffectManager(this);
@@ -173,6 +176,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     handlePlayerUpdate(character, view, player) {
+        console.table(player);
         character.updatePlayer(player);
         if (view?.setReady) {
             view.setReady(player.ready);
@@ -236,7 +240,7 @@ export class BattleScene extends Phaser.Scene {
         this.colyseus?.removeAllListeners?.();
 
         // Phaser EventCenterのリスナー解除
-        
+
         Object.entries(phaserEvents._events).forEach(([eventName, listeners]) => {
             if (eventName !== 'scene-changed') {
                 phaserEvents.removeAllListeners(eventName);
