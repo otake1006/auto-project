@@ -2,6 +2,10 @@ import { phaserEvents } from '@/events/EventCenter';
 import { BgmManager } from '@/core/BgmManager';
 import { bgmMap } from '@/core/sounds/bgmMap';
 import { VERSION } from '@/constants/version';
+import { HideShowMixin } from '@/ui/button/HideShowMixin';
+import { ImageButton } from '@/ui/button/ImageButton';
+
+class CustomSceneButton extends HideShowMixin(ImageButton) {}
 // scenes/TitleScene.js
 export class StartScene extends Phaser.Scene {
     constructor() {
@@ -25,33 +29,61 @@ export class StartScene extends Phaser.Scene {
 
         this.add.sprite(0, 0, 'bgAnim').setOrigin(0).setDisplaySize(1440, 810).play('bg-loop');
 
-        // ① 背景画像の追加（ボタン画像）
-        const bg = this.add.image(750, 450, 'button_bg').setOrigin(0.5);
+        const matchButton = new CustomSceneButton(this, 750, 450, 'button_bg', {
+            onHover: (btn) => {
+                btn.setAlpha(0.6);
+            },
+            onOut: (btn) => {
+                btn.setAlpha(1);
+                btn.setScale(1);
+            },
+            onClick: (btn) => {
+                if (this.buttonPressed) return;
 
-        // ③ インタラクティブ処理を背景に設定（画像をボタンとして使う）
-        bg.setInteractive({ useHandCursor: true })
-            .on('pointerover', () => {
-                bg.setAlpha(0.6);
-            })
+                this.buttonPressed = true;
+                btn.setScale(1); // スケールを戻す
 
-            // ⚪ ホバー解除で元に戻す
-            .on('pointerout', () => {
-                bg.setAlpha(1);
-                bg.setScale(1);
-            })
-            .on('pointerdown', () => {
-                bg.setScale(0.95);
-            })
-            .on('pointerup', () => {
-                if (this.buttonPressed) return; // ← 追加：すでに押されてたら何もしない
-                this.buttonPressed = true; // ← 追加：フラグを立てる
-
-                bg.setScale(1);
                 this.bgmManager.fadeOut(500, () => {
                     this.scene.start('MatchScene');
                 });
-                // this.scene.switch('BattleScene'); // ゲーム画面に遷移
-            });
+            },
+            tweens: [
+                {
+                    scale: 0.95,
+                    duration: 80,
+                    ease: 'Quad.easeOut',
+                    yoyo: true,
+                },
+            ],
+        });
+
+        // ① 背景画像の追加（ボタン画像）
+        // const bg = this.add.image(750, 450, 'button_bg').setOrigin(0.5);
+
+        // ③ インタラクティブ処理を背景に設定（画像をボタンとして使う）
+        // bg.setInteractive({ useHandCursor: true })
+        //     .on('pointerover', () => {
+        //         bg.setAlpha(0.6);
+        //     })
+
+        //     // ⚪ ホバー解除で元に戻す
+        //     .on('pointerout', () => {
+        //         bg.setAlpha(1);
+        //         bg.setScale(1);
+        //     })
+        //     .on('pointerdown', () => {
+        //         bg.setScale(0.95);
+        //     })
+        //     .on('pointerup', () => {
+        //         if (this.buttonPressed) return; // ← 追加：すでに押されてたら何もしない
+        //         this.buttonPressed = true; // ← 追加：フラグを立てる
+
+        //         bg.setScale(1);
+        //         this.bgmManager.fadeOut(500, () => {
+        //             this.scene.start('MatchScene');
+        //         });
+        //         // this.scene.switch('BattleScene'); // ゲーム画面に遷移
+        //     });
 
         const versionText = this.add
             .text(10, this.scale.height - 20, `version: ${VERSION}`, {
