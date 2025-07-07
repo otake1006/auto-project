@@ -1,5 +1,5 @@
 <template>
-    <div class="relative w-full rounded-xl border-2 border-white bg-neutral-900 p-4 text-white shadow-2xl">
+    <div class="relative max-w-sm w-full rounded-xl border-2 border-white bg-neutral-900 p-4 text-white shadow-2xl">
         <div class="mb-4 text-center text-lg font-bold">任意の値を入力</div>
 
         <!-- ターン入力セクション -->
