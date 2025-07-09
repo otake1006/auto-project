@@ -6,7 +6,6 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import Phaser from 'phaser';
-import { BattleScene } from '@/scenes/BattleScene';
 import { StartScene } from '@/scenes/StartScene';
 import { ResultScene } from '@/scenes/ResultScene';
 import { useModalStore } from '@/stores/modalStore';
@@ -14,6 +13,8 @@ import { PreloadScene } from '@/scenes/PreloadScene';
 import { BootScene } from '@/scenes/BootScene';
 import { MatchScene } from '@/scenes/MatchScene';
 import { GameScene } from '@/scenes/GameScene';
+import { HudScene } from '@/scenes/HudScene';
+import { BackgroundScene } from './scenes/BackgroundScene';
 
 
 const gameContainer = ref(null);
@@ -29,7 +30,7 @@ onMounted(() => {
         width: 1440,
         height: 810,
         parent: gameContainer.value,
-        scene: [BootScene, PreloadScene, StartScene, MatchScene, BattleScene, ResultScene],
+        scene: [BootScene, PreloadScene, StartScene, MatchScene, HudScene, BackgroundScene, GameScene, ResultScene],
     };
 
     game = new Phaser.Game(config);
