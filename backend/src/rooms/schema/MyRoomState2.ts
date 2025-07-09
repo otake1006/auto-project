@@ -1,7 +1,7 @@
 import { Schema, MapSchema, type, ArraySchema } from '@colyseus/schema';
 import { Skill } from './Skill';
 import { buff } from './buff';
-import { GameConfig } from '../../confug/game';
+import { GameConfig } from '../../config/game';
 import { SkillCard } from '../../data/card';
 
 export class Player extends Schema {
@@ -15,7 +15,7 @@ export class Player extends Schema {
     @type('number') ratiohp: number = GameConfig.PLAYER_RATIO_HP;
     @type('number') ratiomp: number = GameConfig.PLAYER_RATIO_MP;
     @type('boolean') ready: boolean = false;
-    @type([Skill]) skill = new ArraySchema<Skill>();
+    @type([Skill]) skill = new ArraySchema<Skill>(); //作戦ボード内のスキル
     @type(buff) buffs = new buff();
     reset() {
         this.hp = this.maxhp;
@@ -38,7 +38,7 @@ export class Player extends Schema {
 }
 export class MyRoomState extends Schema {
     @type({ map: Player }) players = new MapSchema<Player>();
-    @type('string') gameState: string = 'waiting';
+    @type('string') gameState: string = 'ready';
     @type('string') winner: string = 'draw';
     @type('number') winCount1: number = 0;
     @type('number') winCount2: number = 0;
