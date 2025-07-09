@@ -6,15 +6,15 @@
             <PhaserGame class="flex-1" />
 
             <!-- 下部：作戦＆カード選択 -->
-            <div v-show="currentScene === 'BattleScene'"
+            <div v-show="sceneStore.current === 'GameScene'"
                 class="flex flex-[2] overflow-hidden border-t-2 border-gray-300 bg-neutral-700 p-4">
                 <TacticsBoard class="w-1/2 overflow-y-auto pr-2" />
                 <SkillSelection class="flex w-1/2 flex-col pl-2" :tabs="tabs" :cards="filteredCards" />
             </div>
-            <button v-show="currentScene === 'BattleScene'" @click="openSkillModal" class="btn">
+            <button v-show="sceneStore.current === 'GameScene'" @click="openSkillModal" class="btn">
                 Open Skill Modal
             </button>
-            <ModalDispatcher v-show="currentScene === 'BattleScene'" />
+            <ModalDispatcher v-show="sceneStore.current === 'GameScene'" />
         </div>
     </div>
 </template>
@@ -26,6 +26,7 @@ import SkillSelection from './SkillSelection.vue';
 import ModalDispatcher from '@/components/modals/ModalDispatcher.vue';
 import { useModalStore } from '@/stores/modalStore';
 import { useSkillStore } from '@/stores/skillStore';
+import { useSceneStore } from '@/stores/sceneStore';
 
 import SpriteButton from './SpriteButton.vue';
 import { phaserEvents, Event } from '@/events/EventCenter';
@@ -35,6 +36,7 @@ phaserEvents.on('scene-changed', onSceneChanged);
 
 const skillStore = useSkillStore();
 const modalStore = useModalStore();
+const sceneStore = useSceneStore();
 
 function onSceneChanged(newSceneName) {
     currentScene.value = newSceneName;
