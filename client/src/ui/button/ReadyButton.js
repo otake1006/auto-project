@@ -25,13 +25,13 @@ export class ReadyButton extends HideShowImageButton {
             y,
             options.defaultKey || 'ready_default', // 基本画像キー
             {
-                hoverImageKey:  options.hoverImageKey  || 'ready_hover',
-                downImageKey:   options.downImageKey   || 'ready_pressed',
-                sounds:         options.sounds,        // { click: 'se-click' } 等
-                tweens:         options.tweens,        // bounceTween など
+                hoverImageKey: options.hoverImageKey || 'ready_hover',
+                downImageKey: options.downImageKey || 'ready_pressed',
+                sounds: options.sounds, // { click: 'se-click' } 等
+                tweens: options.tweens, // bounceTween など
                 onClick: () => {
-                    this.hide();      // 自動で非表示
-                    onReady?.();      // 呼び出し元の処理を実行
+                    this.hide(); // 自動で非表示
+                    onReady?.(); // 呼び出し元の処理を実行
                 },
             },
         );
