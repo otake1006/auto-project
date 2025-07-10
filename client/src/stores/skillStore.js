@@ -1,7 +1,6 @@
 // stores/skillStore.js
 import { defineStore } from 'pinia';
 import { ref, computed, reactive } from 'vue';
-import { cards } from '@/data/cards.js';
 
 export const useSkillStore = defineStore('skill', () => {
     const tabs = ['スキル', '条件', 'レリック'];
@@ -88,7 +87,7 @@ export const useSkillStore = defineStore('skill', () => {
         if (type === 'condition') {
             return getGroupedByKey(conditions.value).map((group) => group.items[0]);
         }
-        return cards.filter((card) => card.type === type);
+        return [];
     });
 
     function loadConditionFromColyseus(data) {
@@ -148,7 +147,6 @@ export const useSkillStore = defineStore('skill', () => {
         skillSets,
         setSkills,
         addSkills,
-        cards,
         tabs,
         currentType,
         currentTab,
