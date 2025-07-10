@@ -1,4 +1,5 @@
 import { bgmMap } from '@/core/sounds/bgmMap';
+import { networkManager } from '../core/NetworkManager';
 
 export class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -56,7 +57,7 @@ export class PreloadScene extends Phaser.Scene {
                 repeat: -1, // ループ
             });
 
-            this.scene.start('StartScene');
+            // this.scene.start('StartScene');
         });
 
         Object.values(bgmMap).forEach(({ key, file }) => {
@@ -99,5 +100,12 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('ready-button', 'ready-button.png');
     }
 
-    create() {}
+    async create() {
+        try {
+            this.scene.start('StartScene');
+        } catch (err) {
+            console.error('Colyseus connect error:', err);
+            this.add.text(20, 20, 'サーバ接続に失敗しました', { color: '#ff4444' });
+        }
+    }
 }
