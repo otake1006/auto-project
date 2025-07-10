@@ -22,7 +22,7 @@ export class MatchScene extends Phaser.Scene {
             const joinCheck = indicator.addStatus('Joining room...');
             const room = await networkManager.joinOrCreateRoom('my_room');
             indicator.markDone(1); // ルーム参加成功
-
+            console.log('[MatchScene] Joined room:', room.sessionId);
             const waitCheck = indicator.addStatus('Waiting for opponent...');
 
             room.onMessage('matching', () => {
