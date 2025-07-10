@@ -14,6 +14,7 @@ export class SkillLogSystem extends System {
     }
     async showLog(log) {
         log.forEach(async ({ sessionId, skill }) => {
+            if (!skill) return;
             const isEnemy = this.room.sessionId !== sessionId;
             const view = isEnemy ? this.views.enemy : this.views.player;
             view.showSkillLog(`${skill} を唱えた!`);
