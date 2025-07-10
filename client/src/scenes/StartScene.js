@@ -4,6 +4,7 @@ import { bgmMap } from '@/core/sounds/bgmMap';
 import { VERSION } from '@/constants/version';
 import { HideShowMixin } from '@/ui/button/HideShowMixin';
 import { ImageButton } from '@/ui/button/ImageButton';
+import { useSceneStore } from '@/stores/sceneStore';
 
 class CustomSceneButton extends HideShowMixin(ImageButton) {}
 // scenes/TitleScene.js
@@ -15,6 +16,8 @@ export class StartScene extends Phaser.Scene {
     preload() {}
 
     create() {
+        useSceneStore().set(this.scene.key);
+
         this.scale.resize(1440, 810);
         this.buttonPressed = false;
         phaserEvents.emit('scene-changed', 'StartScene');
