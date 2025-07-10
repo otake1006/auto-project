@@ -27,7 +27,9 @@ export class MatchScene extends Phaser.Scene {
 
             room.onMessage('matching', () => {
                 indicator.markDone(2); // 相手見つかった
-                this.scene.start('BattleScene', { room });
+                this.scene.launch('HudScene');
+                this.scene.launch('BackgroundScene');
+                this.scene.start('GameScene', { room });
             });
         } catch (error) {
             console.error('[MatchScene] Connection failed:', error);
