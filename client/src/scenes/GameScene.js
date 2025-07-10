@@ -23,6 +23,8 @@ import { bgmMap } from '@/core/sounds/bgmMap.js';
 import Character from '@/entities/Character.js';
 import CharacterView from '@/entities/CharacterView.js';
 import { useSceneStore } from '@/stores/sceneStore';
+import { useSkillStore } from '@/stores/skillStore';
+import { useModalStore } from '@/stores/modalStore';
 import { StateWatchSystem } from '../systems/StateWatchSystem';
 import { ReadyButton } from '@/ui/button/ReadyButton';
 import { bounceTween } from '@/ui/animations/bounceTween.js';
@@ -49,7 +51,6 @@ export class GameScene extends Phaser.Scene {
 
     async create() {
         useSceneStore().set(this.scene.key);
-        /* 1. レイアウト ---------------------------------------------------- */
         this.scale.resize(1440, 258);
         const cx = this.cameras.main.centerX;
         const cy = this.cameras.main.centerY - 10;
@@ -61,7 +62,6 @@ export class GameScene extends Phaser.Scene {
             { x: this.centerX + 300, y: this.centerY },
         ];
 
-        /* 2. エンティティ -------------------------------------------------- */
         this.createPlayers();
 
         this.readyButton = new ReadyButton(
@@ -112,8 +112,19 @@ export class GameScene extends Phaser.Scene {
         networkManager.send('requestPlayer');
 
         /* 4. クリーンアップ ------------------------------------------------ */
-        // this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.world.destory());
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.shutdown());
     }
+
+    shutdown() {
+        const skillStore = useSkillStore();
+        const modalStore = useModalStore();
+        skillStore.reset();
+        modalStore.close();
+        this.world.destroy();
+        this.scene.stop('HudScene');
+        this.scene.stop('BackgroundScene');
+    }
+
     update(_, dt) {
         this.world.update(dt);
     }
