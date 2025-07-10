@@ -25,4 +25,6 @@ export class HudSyncSystem extends System {
             UiState.enemy.name = e.get(Name).value;
         }
     }
+
+    destroy() {}
 }

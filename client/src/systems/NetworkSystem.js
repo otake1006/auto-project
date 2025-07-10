@@ -3,6 +3,7 @@ import { System } from '@/core/System.js';
 import { phaserEvents } from '@/events/EventCenter';
 import { useSkillStore } from '@/stores/skillStore';
 import { useModalStore } from '@/stores/modalStore';
+import { networkManager } from '../core/NetworkManager';
 
 export class NetworkSystem extends System {
     /**
@@ -59,7 +60,7 @@ export class NetworkSystem extends System {
         phaserEvents.emit('show-ready');
     }
     onWinner(data) {
-        phaserEvents.emit('phase-change', 'result', data);
+        phaserEvents.emit('phase-change', data);
     }
     onTurn(t) {
         phaserEvents.emit('turn', t);
@@ -82,8 +83,12 @@ export class NetworkSystem extends System {
 
     /* ----- cleanup ----- */
     destroy() {
-        this.listeners.forEach(([ev, fn]) => this.room.off(ev, fn));
+        //this.listeners.forEach(([ev, fn]) => this.room.off(ev, fn));
         this.listeners.length = 0;
+        // this.room.leave().catch((err) => {
+        //     console.error('Failed to leave room:', err);
+        // });
+        networkManager.leave();
     }
 }
 

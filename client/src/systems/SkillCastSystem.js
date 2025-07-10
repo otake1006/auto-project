@@ -27,4 +27,6 @@ export class SkillCastSystem extends System {
             e.remove(SkillCast);
         }
     }
+
+    destroy() {}
 }

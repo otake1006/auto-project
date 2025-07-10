@@ -14,4 +14,6 @@ export class InputLockSystem extends System {
     update() {
         this.scene.input.enabled = !this.ui.isOpen;
     }
+
+    destroy() {}
 }

@@ -13,4 +13,6 @@ export class RenderSystem extends System {
             rend.sprite.setPosition(pos.x, pos.y);
         }
     }
+
+    destroy() {}
 }

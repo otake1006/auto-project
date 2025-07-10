@@ -19,4 +19,6 @@ export class AnimationSystem extends System {
             }
         }
     }
+
+    destroy() {}
 }

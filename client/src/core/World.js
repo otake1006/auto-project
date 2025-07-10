@@ -23,4 +23,12 @@ export class World {
             sys.update(dt, targets);
         }
     }
+
+    destroy() {
+        for (const sys of this.systems) {
+            sys.destroy();
+        }
+        this.systems = [];
+        this.entities = [];
+    }
 }

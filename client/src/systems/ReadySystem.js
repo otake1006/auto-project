@@ -26,6 +26,6 @@ export class ReadySystem extends System {
     update() {}
     destroy() {
         phaserEvents.off('show-ready');
-        this.btn.removeAllListeners();
+        // this.btn.removeAllListeners();
     }
 }

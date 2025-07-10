@@ -5,4 +5,6 @@ export class System {
     }
     /** @param {number} dt deltaTime(ms) */
     update(dt, entities) {}
+
+    destory() {}
 }

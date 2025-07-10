@@ -14,4 +14,6 @@ export class ScemeSystem extends System {
     applyScene(scene) {
         if (UiState.scene === phase) return;
     }
+
+    destroy() {}
 }

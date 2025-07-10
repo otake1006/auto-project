@@ -6,11 +6,12 @@ export class ScenePhaseSystem extends System {
         super();
         this.scene = scene;
         this.bgm = bgm;
-        phaserEvents.on('scene-change', (d) => this._toResult(d));
+        phaserEvents.on('phase-change', (d) => this._toResult(d));
         phaserEvents.on('leave-room', () => this._toStart());
     }
 
     _toResult(data) {
+        console.log(data);
         this.bgm.fadeOut(500, () => this.scene.start('ResultScene', data));
     }
 

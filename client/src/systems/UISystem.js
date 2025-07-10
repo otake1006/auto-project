@@ -82,4 +82,6 @@ export class UISystem extends System {
             }
         }
     }
+
+    destroy() {}
 }
