@@ -27,6 +27,7 @@ import { StateWatchSystem } from '../systems/StateWatchSystem';
 import { ReadyButton } from '@/ui/button/ReadyButton';
 import { bounceTween } from '@/ui/animations/bounceTween.js';
 import { phaserEvents, Event } from '@/events/EventCenter';
+import { InputLockSystem } from '../systems/InputLockSystem';
 
 const PLAYER_CFG = { hp: 100, mp: 50, key: 'player' };
 const GAP = 300; // 左右の距離
@@ -105,15 +106,16 @@ export class GameScene extends Phaser.Scene {
             //.addSystem(new TurnSystem(this, this.effectMgr))
             .addSystem(new ReadySystem(this.readyButton, this.room))
             .addSystem(new StateWatchSystem(this.room))
-            .addSystem(new ScenePhaseSystem(this.scene, this.bgmMgr));
+            .addSystem(new ScenePhaseSystem(this.scene, this.bgmMgr))
+            .addSystem(new InputLockSystem(this));
 
         networkManager.send('requestPlayer');
 
         /* 4. クリーンアップ ------------------------------------------------ */
-        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.world.destory());
+        // this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.world.destory());
     }
     update(_, dt) {
-        // this.world.update(dt);
+        this.world.update(dt);
     }
 
     createPlayers() {
