@@ -1,117 +1,150 @@
-import { GameMessageHandler } from '@/handlers/GameMessageHandler';
-import { networkManager } from '@/core/NetworkManager';
-import { PlayerManager } from '@/core/PlayerManager';
-import { UIManager } from '@/core/UIManager';
-import { EffectManager } from '@/core/EffectManager';
-import { AudioManager } from '@/core/AudioManager';
-import { BattleManager } from '@/core/BattleManager';
-import { phaserEvents } from '@/events/EventCenter';
+// scenes/BattleScene.js
+import Phaser from 'phaser';
 
-import { useSkillStore } from '@/stores/skillStore';
+import { World } from '@/core/World.js';
+import { RenderSystem } from '@/systems/RenderSystem.js';
+import { NetworkSystem } from '@/systems/NetworkSystem.js';
+import { PlayerSyncSystem } from '@/systems/PlayerSyncSystem.js';
+import { SkillLogSystem } from '@/systems/SkillLogSystem.js';
+import { RoundSystem } from '@/systems/RoundSystem.js';
+import { TurnSystem } from '@/systems/TurnSystem.js';
+import { ReadySystem } from '@/systems/ReadySystem.js';
+import { ScenePhaseSystem } from '@/systems/ScenePhaseSystem.js';
+
+import { composeCharacter } from '@/core/EntityComposer.js';
+import { networkManager } from '@/core/NetworkManager.js';
+
+import { HudScene } from '@/scenes/HudScene.js';
+import { EffectManager } from '@/core/EffectManager.js';
+import { BgmManager } from '@/core/BgmManager';
+import { BattleManager } from '../core/BattleManager';
+import { bgmMap } from '@/core/sounds/bgmMap.js';
+
+import Character from '@/entities/Character.js';
+import CharacterView from '@/entities/CharacterView.js';
+import { useSceneStore } from '@/stores/sceneStore';
+import { StateWatchSystem } from '../systems/StateWatchSystem';
+import { ReadyButton } from '@/ui/button/ReadyButton';
+import { bounceTween } from '@/ui/animations/bounceTween.js';
+import { phaserEvents, Event } from '@/events/EventCenter';
+
+const PLAYER_CFG = { hp: 100, mp: 50, key: 'player' };
+const GAP = 300; // 左右の距離
+
+const PLAYER_CONFIG = {
+    hp: 100,
+    mp: 50,
+    spriteKey: 'player',
+};
 
 export class GameScene extends Phaser.Scene {
     constructor() {
         super('GameScene');
     }
 
+    init() {
+        this.room = networkManager.getRoom();
+    }
+
     async create() {
-        phaserEvents.emit('scene-changed', 'GameScene');
+        useSceneStore().set(this.scene.key);
+        /* 1. レイアウト ---------------------------------------------------- */
         this.scale.resize(1440, 258);
-        this.initManagers();
-        this.setupSceneEvents();
+        const cx = this.cameras.main.centerX;
+        const cy = this.cameras.main.centerY - 10;
 
-        const room = await networkManager.getRoom();
-        this.messageHandler = new GameMessageHandler(this, room);
+        this.centerX = this.cameras.main.centerX;
+        this.centerY = this.cameras.main.centerY - 10;
+        this.positions = [
+            { x: this.centerX - 300, y: this.centerY },
+            { x: this.centerX + 300, y: this.centerY },
+        ];
 
-        this.events.on('action', this.onBattleEnded, this);
-        this.events.on('randomSkill', this.onBattleEnded, this);
-        this.events.on('skillLogs', this.onBattleEnded, this);
-        this.events.on('giveCards', this.onBattleEnded, this);
-        this.events.on('showReady', this.onBattleEnded, this);
-        this.events.on('winner', this.onBattleEnded, this);
-        this.events.on('turn', this.onBattleEnded, this);
-        this.events.on('round', this.onBattleEnded, this);
-        this.events.on('condition', this.onBattleEnded, this);
+        /* 2. エンティティ -------------------------------------------------- */
+        this.createPlayers();
 
-        this.uiManager.showReadyButton();
+        this.readyButton = new ReadyButton(
+            this,
+            this.centerX,
+            this.centerY + 30,
+            () => {
+                phaserEvents.emit('ready');
+            },
+            {
+                defaultKey: 'ready-button',
+                hoverImageKey: 'ready-button',
+                downImageKey: 'ready-button',
+                sounds: { click: 'click.mp3' },
+                tweens: [bounceTween],
+            },
+        );
 
-        // this.effectManager.fadeIn();
-        // this.audioManager.playBgm('battle');
+        this.scene.bringToTop('HudScene');
+
+        this.battleManager = new BattleManager(this, this.playerView, this.enemyView);
+        this.effectMgr = new EffectManager(this);
+        this.bgmMgr = new BgmManager(this);
+        this.bgmMgr.play(this.scene.key, bgmMap);
+
+        this.world = new World()
+            .addSystem(new RenderSystem(this))
+            .addSystem(new NetworkSystem(this.room))
+            .addSystem(
+                new PlayerSyncSystem(this.player, this.playerView, this.enemy, this.enemyView),
+            )
+            .addSystem(
+                new SkillLogSystem(
+                    this.playerView,
+                    this.enemyView,
+                    this.effectMgr,
+                    this.battleManager,
+                    this.room,
+                ),
+            )
+            .addSystem(new RoundSystem(this, this.effectMgr))
+            //.addSystem(new TurnSystem(this, this.effectMgr))
+            .addSystem(new ReadySystem(this.readyButton, this.room))
+            .addSystem(new StateWatchSystem(this.room))
+            .addSystem(new ScenePhaseSystem(this.scene, this.bgmMgr));
+
+        networkManager.send('requestPlayer');
+
+        /* 4. クリーンアップ ------------------------------------------------ */
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.world.destory());
+    }
+    update(_, dt) {
+        // this.world.update(dt);
     }
 
-    initManagers() {
-        this.playerManager = new PlayerManager(this);
-        this.uiManager = new UIManager(this);
-        this.effectManager = new EffectManager(this);
-        this.audioManager = new AudioManager(this);
-        this.battleManager = new BattleManager(this, this.playerManager);
+    createPlayers() {
+        this.player = this.createCharacter(this.positions[0], true, 'player');
+        this.enemy = this.createCharacter(this.positions[1], false, 'enemy');
+
+        this.playerView = new CharacterView(
+            this,
+            this.player,
+            this.positions[0].x,
+            this.positions[0].y,
+        );
+        this.enemyView = new CharacterView(
+            this,
+            this.enemy,
+            this.positions[1].x,
+            this.positions[1].y,
+            true,
+        );
     }
 
-    setupSceneEvents() {
-        phaserEvents.on('scene-changed', (sceneName, data) => {
-            // this.audioManager.fadeOutBgm();
-            this.scene.start(sceneName, data);
-        });
-
-        this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
-    }
-
-    cleanup() {
-        this.playerManager.cleanup();
-        this.uiManager.cleanup();
-        this.audioManager.cleanup();
-        phaserEvents.removeAllListeners();
-    }
-
-    onAction(payload) {
-        const skillStore = useSkillStore();
-        skillStore.setSkills(payload);
-    }
-
-    onCondition(payload) {
-        const skillStore = useSkillStore();
-        skillStore.loadConditionFromColyseus(payload);
-    }
-
-    onRandomSkill(_room, skills) {
-        const skillStore = useSkillStore();
-        skillStore.addSkills(skills);
-    }
-
-    onRound(round) {}
-
-    onShowReady() {}
-
-    onSkillLogs(room, logs) {
-        logs.forEach(({ sessionId, skill }) => {
-            const isEnemy = room.sessionId !== sessionId;
-            phaserEvents.emit('useSkill', { isEnemy, skill });
-        });
-    }
-
-    async onSkillSelectModal(room, cards) {
-        const modalStore = useModalStore();
-        const skillStore = useSkillStore();
-        skillStore.setSelectCards(cards);
-
-        const selected = await modalStore.open('skillSelect', { cards });
-
-        if (selected) {
-            room.send('selectSkill', selected.id);
-            skillStore.addSkills([selected]);
-            skillStore.clearSelectCards();
-        }
-    }
-
-    onTurn(turn) {
-        phaserEvents.emit('turn', turn);
-    }
-
-    onBattleEnded(payload) {
-        this.scene.start('ResultScene', payload);
-    }
-
-    shutdown() {
-        this.messageHandler.unregisterAll();
+    createCharacter(position, isPlayer, id) {
+        return new Character(
+            this,
+            position.x,
+            position.y,
+            PLAYER_CONFIG.spriteKey,
+            id,
+            PLAYER_CONFIG.hp,
+            PLAYER_CONFIG.mp,
+            isPlayer,
+        );
     }
 }
