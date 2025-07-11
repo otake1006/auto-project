@@ -2,7 +2,7 @@ import { Schema, MapSchema, type, ArraySchema } from '@colyseus/schema';
 import { Skill } from './Skill';
 import { buff } from './buff';
 import { GameConfig } from '../../config/game';
-import { SkillCard } from '../../data/card';
+import { SkillCard } from '../../data/skill';
 
 export class Player extends Schema {
     @type('string') name: string = 'player';
