@@ -31,6 +31,53 @@ export class SkillCard extends Schema {
     }
 }
 
+export function getSkillCard(id: number): SkillCard | undefined {
+    let Skill = new SkillCard(skillCards.find((card) => card.id === id));
+    return Skill;
+}
+
+export function getInitialSkill() {
+    const initialSkill = new ArraySchema<SkillCard>();
+    const shuffleCard = shuffle(skillCards);
+
+    for (let i = 0; i < 3; i++) {
+        // 新しいインスタンスを作る（コピー）
+        const card = shuffleCard[i];
+        initialSkill.push(new SkillCard({ ...card }));
+    }
+
+    return initialSkill;
+}
+
+export function getRandomSkill() {
+    const shuffleCard = shuffle(skillCards);
+    return shuffleCard[1];
+}
+
+export function selectRandomSkills(arraySkills: SkillCard[]): SkillCard[] {
+    const xIds = new Set(arraySkills.map((card) => card.id));
+
+    // Card から x に含まれていないカードを抽出
+    const missing = skillCards.filter((card) => !xIds.has(card.id));
+
+    // シャッフル
+    const shuffledCards = shuffle(missing);
+
+    // 最初の3つを返す（足りなければ全部）
+    return shuffledCards.slice(0, 3);
+}
+
+export function shuffle<T>(array: T[]) {
+    const out = Array.from(array);
+    for (let i = out.length - 1; i > 0; i--) {
+        const r = Math.floor(Math.random() * (i + 1));
+        const tmp = out[i];
+        out[i] = out[r];
+        out[r] = tmp;
+    }
+    return out;
+}
+
 export const skillCards: SkillCard[] = [
     new SkillCard({
         id: 1,
