@@ -1,7 +1,7 @@
 import { Schema, type, ArraySchema } from '@colyseus/schema';
 import { Condition, Skill } from '../rooms/schema/Skill';
-export type BattleType = 'attack' | 'defense' | 'support'; // 必要に応じて拡張
-export type ConditionType = 'HP_ABOVE' | 'HP_BELOW' | 'MP_ABOVE' | 'MP_BELOW'; // 例
+export type BattleType = 'attack' | 'defense' | 'support';
+export type ConditionType = 'HP_ABOVE' | 'HP_BELOW' | 'MP_ABOVE' | 'MP_BELOW';
 
 // Skillカード
 export class SkillCard extends Schema {
@@ -97,11 +97,6 @@ export function getRandomSkill() {
     const shuffleCard = shuffle(skillCards);
     return shuffleCard[1];
 }
-
-// export function selectRandomSkills(): SkillCard[] {
-//     const shuffledCards = shuffle(skillCards);
-//     return shuffledCards.slice(0, 3); // 最初の3つを返す
-// }
 
 export function selectRandomSkills(arraySkills: SkillCard[]): SkillCard[] {
     const xIds = new Set(arraySkills.map((card) => card.id));
