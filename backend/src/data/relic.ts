@@ -15,3 +15,13 @@ export class RelicCard extends Schema {
         Object.assign(this, init);
     }
 }
+
+export const relicCards: RelicCard[] = [
+    new RelicCard({
+        id: 1,
+        type: 'permanent',
+        name: '聖なる指輪',
+        description: 'ラウンド終了時HPを10回復',
+        imgSrc: '/hitokage.png',
+    }),
+];
