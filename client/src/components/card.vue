@@ -1,11 +1,11 @@
 ```js
 <script setup>
-    defineProps({
-        cards: Object,
-    });
-    const tailwindScript = document.createElement('script');
-    tailwindScript.setAttribute('src', 'https://cdn.tailwindcss.com');
-    document.head.appendChild(tailwindScript);
+defineProps({
+    cards: Object,
+});
+const tailwindScript = document.createElement('script');
+tailwindScript.setAttribute('src', 'https://cdn.tailwindcss.com');
+document.head.appendChild(tailwindScript);
 </script>
 
 <template>
@@ -16,12 +16,12 @@
             <!-- 中央：名前と能力 -->
             <div class="flex flex-col items-center text-center">
                 <h2 class="text-lg text-white">{{ cards.name }}</h2>
-                <p class="text-sm text-gray-500">{{ cards.ability }}</p>
-                <p v-show="cards.value" class="text-lg">{{ cards.value }} 以上</p>
+                <p class="text-sm text-neutral-400">{{ cards.ability }}</p>
+                <p v-show="cards.value" class="text-sm text-neutral-400">{{ cards.value }}</p>
             </div>
 
             <!-- 右：数値 -->
-            <div class="text-sm font-bold text-gray-700">{{ cards.energy }}</div>
+            <div class="text-sm font-bold text-sky-400">{{ cards.energy }}</div>
         </div>
     </div>
 </template>
