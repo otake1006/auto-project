@@ -3,11 +3,15 @@ import { Condition, Skill } from '../rooms/schema/Skill';
 import { getSkillCard, getCondition } from '../data/card';
 import { MyRoomState, Player } from '../rooms/schema/MyRoomState2';
 import { Client } from '@colyseus/core';
+import { MyRoom } from '../rooms/Room';
 
 export class SkillService {
     private state: MyRoomState;
-    constructor(state: MyRoomState) {
-        this.state = state;
+    private room: MyRoom;
+
+    constructor(room: MyRoom) {
+        this.room = room;
+        this.state = room.state;
     }
     selectSkill(sessionId: string) {
         const player = this.state.players.get(sessionId);
@@ -30,8 +34,10 @@ export class SkillService {
         const player1skill = this.selectSkill(sessionId1);
         const player2skill = this.selectSkill(sessionId2);
         skills.push(player1skill, player2skill);
+        console.log(skills);
         return skills;
     }
+
     useSkill(skillId: number, player: Player, target: Player) {
         if (!skillId) return;
         const skill = getSkillCard(skillId);
@@ -55,11 +61,23 @@ export class SkillService {
         const player2skill = skills[1];
         const skill = getSkillCard(player2skill);
         if (skill.battleType === 'defense') {
-            this.useSkill(player2skill, player1, player2);
-            this.useSkill(player1skill, player2, player1);
+            this.useSkill(player2skill, player2, player1);
+            this.useSkill(player1skill, player1, player2);
         } else {
-            this.useSkill(player1skill, player2, player1);
-            this.useSkill(player2skill, player1, player2);
+            this.useSkill(player1skill, player1, player2);
+            this.useSkill(player2skill, player2, player1);
+        }
+        this.room.broadcast('skillLogs', [
+            { sessionId: sessionId1, skill: getSkillCard(player1skill)?.name },
+            { sessionId: sessionId2, skill: getSkillCard(player2skill)?.name },
+        ]);
+        if (!player1skill && !player2skill) {
+            player1.resetMp();
+            player2.resetMp();
+            player1.resetShield();
+            player2.resetShield();
+            this.state.turn++;
+            this.room.broadcast('turn', this.state.turn);
         }
     }
 
