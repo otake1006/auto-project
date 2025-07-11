@@ -3,17 +3,10 @@ import { Client } from 'colyseus';
 import { MyRoomState } from '../rooms/schema/MyRoomState2';
 import { Skill, Condition } from '../rooms/schema/Skill';
 import { ArraySchema } from '@colyseus/schema';
-import { Player } from '../rooms/schema/MyRoomState';
 import { GameConfig } from '../config/game';
 import { GameLogic } from '../services/GameLogic';
-import {
-    SkillCard,
-    conditionCards,
-    ConditionCard,
-    getInitialSkill,
-    getSkillCard,
-    selectRandomSkills,
-} from '../data/card';
+import { SkillCard, getSkillCard } from '../data/skill';
+import { conditionCards } from '../data/condition';
 
 export class ActionHandler {
     private state: MyRoomState;
