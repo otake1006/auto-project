@@ -1,9 +1,9 @@
 // systems/NetworkSystem.js
 import { System } from '@/core/System.js';
 import { phaserEvents } from '@/events/EventCenter';
-import { useSkillStore } from '@/stores/skillStore';
-import { useModalStore } from '@/stores/modalStore';
-import { networkManager } from '../core/NetworkManager';
+import { useSkillStore } from '@/ui/stores/skillStore';
+import { useModalStore } from '@/ui/stores/modalStore';
+import { networkManager } from '@/core/NetworkManager';
 
 export class NetworkSystem extends System {
     /**

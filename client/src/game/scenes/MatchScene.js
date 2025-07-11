@@ -1,5 +1,5 @@
 import { networkManager } from '@/core/NetworkManager';
-import { StatusIndicator } from '@/ui/StatusIndicator';
+import { StatusIndicator } from '@/game//ui/StatusIndicator';
 
 export class MatchScene extends Phaser.Scene {
     constructor() {

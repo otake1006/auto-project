@@ -23,12 +23,11 @@
 import PhaserGame from '@/PhaserGame.vue';
 import TacticsBoard from './TacticsBoard.vue';
 import SkillSelection from './SkillSelection.vue';
-import ModalDispatcher from '@/components/modals/ModalDispatcher.vue';
-import { useModalStore } from '@/stores/modalStore';
-import { useSkillStore } from '@/stores/skillStore';
-import { useSceneStore } from '@/stores/sceneStore';
+import ModalDispatcher from '@/ui/components/modals/ModalDispatcher.vue';
+import { useModalStore } from '@/ui/stores/modalStore';
+import { useSkillStore } from '@/ui/stores/skillStore';
+import { useSceneStore } from '@/ui/stores/sceneStore';
 
-import SpriteButton from './SpriteButton.vue';
 import { phaserEvents, Event } from '@/events/EventCenter';
 import { ref } from 'vue';
 

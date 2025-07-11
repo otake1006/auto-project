@@ -1,5 +1,5 @@
 import { phaserEvents } from '@/events/EventCenter';
-import { useSceneStore } from '@/stores/sceneStore';
+import { useSceneStore } from '@/ui/stores/sceneStore';
 
 export class ResultScene extends Phaser.Scene {
     constructor() {

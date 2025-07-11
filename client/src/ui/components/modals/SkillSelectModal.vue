@@ -17,8 +17,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import BaseModal from '@/components/modals/ModalBase.vue'
-import Card from '@/components/CardItem.vue'
+import Card from '@/ui/components/CardItem.vue'
 
 const props = defineProps({ cards: Array })
 const emit = defineEmits(['confirm', 'cancel'])
