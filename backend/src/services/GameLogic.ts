@@ -1,19 +1,8 @@
 import { MyRoom } from '../rooms/Room';
-import { Client } from 'colyseus';
 import { MyRoomState } from '../rooms/schema/MyRoomState2';
-import { Skill, Condition } from '../rooms/schema/Skill';
 import { ArraySchema } from '@colyseus/schema';
-import { Player } from '../rooms/schema/MyRoomState';
-import { GameConfig } from '../config/game';
 import { SkillService } from '../services/SkillService';
-import {
-    SkillCard,
-    conditionCards,
-    ConditionCard,
-    getInitialSkill,
-    getSkillCard,
-    selectRandomSkills,
-} from '../data/card';
+import { SkillCard, selectRandomSkills } from '../data/skill';
 
 export class GameLogic {
     private state: MyRoomState;
