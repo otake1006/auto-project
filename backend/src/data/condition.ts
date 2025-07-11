@@ -19,6 +19,10 @@ export class ConditionCard extends Schema {
     }
 }
 
+export function getCondition(condition: Condition): ConditionCard | undefined {
+    return conditionCards.find((card) => card.id === condition.id);
+}
+
 export const conditionCards: ConditionCard[] = [
     new ConditionCard({
         id: 1,
