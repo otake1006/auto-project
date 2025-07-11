@@ -1,0 +1,44 @@
+{
+    "images": [
+        { "key": "background", "url": "assets/images/battleback.png" },
+        { "key": "winIcon", "url": "assets/images/3302.png" },
+        { "key": "shield", "url": "assets/images/fc2151.png" },
+        { "key": "button_bg", "url": "assets/images/batlestartbottan.png" },
+        { "key": "check-icon", "url": "assets/images/check-icon.png" },
+        { "key": "ready-button", "url": "assets/images/ready-button.png" }
+    ],
+    "spritesheets": [
+        {
+            "key": "cast_effect",
+            "url": "assets/sheets/674.png",
+            "frameWidth": 64,
+            "frameHeight": 64
+        },
+        {
+            "key": "result",
+            "url": "assets/sheets/result2.png",
+            "frameWidth": 1440,
+            "frameHeight": 810
+        },
+        {
+            "key": "bgAnim",
+            "url": "assets/sheets/UntitledArtwork2.png",
+            "frameWidth": 1440,
+            "frameHeight": 810
+        },
+        {
+            "key": "player",
+            "url": "assets/sheets/Slime_Blue.png",
+            "frameWidth": 32,
+            "frameHeight": 32
+        },
+        {
+            "key": "matching",
+            "url": "assets/sheets/matching.png",
+            "frameWidth": 1440,
+            "frameHeight": 810
+        }
+    ],
+    "audio": [{ "key": "bgm_battle", "urls": "assets/sounds/Future_1.mp3" }],
+    "version": 1720690000000
+}
