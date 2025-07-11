@@ -88,7 +88,7 @@ export class NetworkSystem extends System {
         // this.room.leave().catch((err) => {
         //     console.error('Failed to leave room:', err);
         // });
-        networkManager.leave();
+        // networkManager.leave();
     }
 }
 
