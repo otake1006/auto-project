@@ -69,8 +69,9 @@ async function onDropped(data, index) {
             :ghost-class="'no-opacity'" :animation="200" handle=".drag-handle">
             <template #item="{ element, index }">
                 <div v-show="index === 0 ? true : skillStore.skillSets[index - 1]?.skill"
-                    class="flex h-25 w-full flex-row gap-6 p-4 py-2">
-                    <h3 class="drag-handle font-semibold">{{ index + 1 }}</h3>
+                    class="flex h-25 w-full flex-row gap-2 p-4 py-2">
+                    <h3 class="drag-handle font-black stroke-text flex items-center text-white text-2xl">{{ index + 1 }}
+                    </h3>
                     <draggable :list="element.skill ? [element.skill] : []" :group="{ name: 'skill', pull: false }"
                         item-key="id" chosen-class="'ghost'" @add="(e) => skillStore.handleSkillAdd(e, index)"
                         @end="(e) => onDragEnd(e, index)" @remove="(e) => skillStore.handleSkillRemove(index)"
@@ -86,7 +87,7 @@ async function onDropped(data, index) {
 
                     <draggable v-model="element.conditions" :ghost-class="'ghost'" :group="{ name: 'condition' }"
                         data-group="condition" :data-index="index" @add="(e) => onDropped(e, index)" item-key="id"
-                        class="flex gap-6" :move="canMove">
+                        class="flex gap-2" :move="canMove">
                         <template #item="{ element: condition }">
                             <card3 :cards="condition"></card3>
                         </template>
@@ -105,5 +106,12 @@ async function onDropped(data, index) {
 .ghost {
     opacity: 0;
     display: none !important;
+}
+
+.stroke-text {
+    -webkit-text-stroke: 1px rgb(255, 255, 255);
+    /* 縁の太さと色 */
+    text-shadow: 0 1px 1px rgb(252, 252, 252);
+    /* 影も追加したい場合 */
 }
 </style>
