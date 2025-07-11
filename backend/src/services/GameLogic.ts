@@ -1,5 +1,5 @@
 import { MyRoom } from '../rooms/Room';
-import { MyRoomState } from '../rooms/schema/MyRoomState2';
+import { MyRoomState } from '../rooms/schema/MyRoomState';
 import { ArraySchema } from '@colyseus/schema';
 import { SkillService } from '../services/SkillService';
 import { SkillCard, selectRandomSkills } from '../data/skill';
