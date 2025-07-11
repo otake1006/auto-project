@@ -13,7 +13,7 @@ export class SkillService {
         this.room = room;
         this.state = room.state;
     }
-    selectSkill(sessionId: string) {
+    private selectSkill(sessionId: string) {
         const player = this.state.players.get(sessionId);
         const context = { hp: player.hp, mp: player.mp };
         for (const set of player.skill) {
@@ -28,7 +28,7 @@ export class SkillService {
         return null;
     }
 
-    selectAllSkills() {
+    private selectAllSkills() {
         const skills: number[] = [];
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
         const player1skill = this.selectSkill(sessionId1);
@@ -38,23 +38,24 @@ export class SkillService {
         return skills;
     }
 
-    useSkill(skillId: number, player: Player, target: Player) {
+    private useSkill(skillId: number, player: Player, target: Player) {
         if (!skillId) return;
         const skill = getSkillCard(skillId);
         const damage = skill.damage * skill.Count;
+        player.mp -= skill.energy;
         if (skill.battleType === 'attack') {
-            player.mp -= skill.energy;
             const HPdamage = Math.max(0, damage - target.shield);
             target.shield = Math.max(0, target.shield - damage);
             target.hp = Math.max(0, target.hp - HPdamage);
         }
         if (skill.battleType === 'defense') {
-            player.mp -= skill.energy;
             player.shield = Math.min(player.maxshield, player.shield + damage);
+        }
+        if (skill.battleType === 'debuff') {
         }
     }
 
-    useAllSkill() {
+    public useAllSkill() {
         const skills = this.selectAllSkills();
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
         const player1skill = skills[0];
@@ -81,7 +82,7 @@ export class SkillService {
         }
     }
 
-    evaluateCondition(condition: Condition, context: any) {
+    private evaluateCondition(condition: Condition, context: any) {
         if (!getCondition(condition)) return true;
 
         const Condition = getCondition(condition);
@@ -101,7 +102,7 @@ export class SkillService {
         }
     }
 
-    evaluateAllConditions(conditions: ArraySchema, context: any) {
+    private evaluateAllConditions(conditions: ArraySchema, context: any) {
         return conditions.every((cond) => this.evaluateCondition(cond, context));
     }
 }
