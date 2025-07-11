@@ -1,4 +1,4 @@
-import { ScrambleText } from '@/effects/ScrambleText';
+import { ScrambleText } from '@/core/effects/ScrambleText';
 
 export class TurnIndicator {
     constructor(scene) {

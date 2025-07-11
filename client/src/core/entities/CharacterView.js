@@ -1,7 +1,7 @@
 // core/CharacterView.js
-import StatusBar from '@/ui/StatusBar.js';
-import SkillLog from '@/ui/SkillLog.js'; // 追加
-import { StatusIcon } from '@/ui/StatusIcon';
+import StatusBar from '@/game/ui/StatusBar.js';
+import SkillLog from '@/game/ui/SkillLog.js'; // 追加
+import { StatusIcon } from '@/game/ui/StatusIcon';
 
 export default class CharacterView {
     constructor(scene, character, x, y, isRight = false) {

@@ -13,7 +13,7 @@
 import { defineProps } from 'vue'
 import Card from './CardItem.vue'
 import draggable from 'vuedraggable'
-import { useSkillStore } from '@/stores/skillStore'
+import { useSkillStore } from '@/ui/stores/skillStore'
 
 const skill = useSkillStore();
 

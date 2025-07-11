@@ -1,5 +1,5 @@
 <script setup>
-import BoardSection from './components/BoardSection.vue'
+import BoardSection from '@/ui/components/BoardSection.vue'
 </script>
 
 <template>

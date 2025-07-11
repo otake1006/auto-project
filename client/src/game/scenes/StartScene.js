@@ -2,9 +2,9 @@ import { phaserEvents } from '@/events/EventCenter';
 import { BgmManager } from '@/core/BgmManager';
 import { bgmMap } from '@/core/sounds/bgmMap';
 import { VERSION } from '@/constants/version';
-import { HideShowMixin } from '@/ui/button/HideShowMixin';
-import { ImageButton } from '@/ui/button/ImageButton';
-import { useSceneStore } from '@/stores/sceneStore';
+import { HideShowMixin } from '@/game/ui/button/HideShowMixin';
+import { ImageButton } from '@/game/ui/button/ImageButton';
+import { useSceneStore } from '@/ui/stores/sceneStore';
 
 class CustomSceneButton extends HideShowMixin(ImageButton) {}
 // scenes/TitleScene.js

@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import HighlightText from '@/components/HighlightText.vue'
+import HighlightText from '@/ui/components/HighlightText.vue'
 
 defineProps(['card']);
 </script>
