@@ -1,6 +1,6 @@
 import { MyRoom } from '../rooms/Room';
 import { Client } from 'colyseus';
-import { MyRoomState } from '../rooms/schema/MyRoomState2';
+import { MyRoomState } from '../rooms/schema/MyRoomState';
 import { Skill, Condition } from '../rooms/schema/Skill';
 import { ArraySchema } from '@colyseus/schema';
 import { GameConfig } from '../config/game';
