@@ -1,7 +1,7 @@
 import { Room, Client } from '@colyseus/core';
 import { MyRoomState, Player } from './schema/MyRoomState2';
 import { ActionHandler } from '../services/ActionHandler';
-import { getInitialSkill } from '../data/card';
+import { getInitialSkill } from '../data/skill';
 import { GameConfig } from '../config/game';
 
 export class MyRoom extends Room {
