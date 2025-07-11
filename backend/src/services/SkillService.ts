@@ -1,8 +1,8 @@
-import { Schema, MapSchema, type, ArraySchema } from '@colyseus/schema';
+import { ArraySchema } from '@colyseus/schema';
 import { Condition, Skill } from '../rooms/schema/Skill';
-import { getSkillCard, getCondition } from '../data/card';
+import { getSkillCard } from '../data/skill';
+import { getCondition } from '../data/condition';
 import { MyRoomState, Player } from '../rooms/schema/MyRoomState2';
-import { Client } from '@colyseus/core';
 import { MyRoom } from '../rooms/Room';
 
 export class SkillService {
