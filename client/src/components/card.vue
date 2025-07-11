@@ -9,9 +9,9 @@ document.head.appendChild(tailwindScript);
 </script>
 
 <template>
-    <div class="h-20 w-48 flex-shrink-0 p-4" style="background-image: url('skillCard.png')">
+    <div class="h-20 w-48 flex-shrink-0 p-4" style="background-image: url('/assets/images/skillCard.png')">
         <div class="flex items-center justify-between">
-            <img :src="cards.imgSrc" class="h-12 w-12 object-contain" />
+            <img :src="`/assets/images/${cards.imgSrc}`" class="h-12 w-12 object-contain" />
 
             <!-- 中央：名前と能力 -->
             <div class="flex flex-col items-center text-center">

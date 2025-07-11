@@ -1,5 +1,6 @@
 <template>
-    <div class="flex items-center justify-center bg-[url('/select-skill.png')] bg-no-repeat bg-center bg-contain">
+    <div
+        class="flex items-center justify-center bg-[url('assets/images/select-skill.png')] bg-no-repeat bg-center bg-contain">
         <div class="p-25">
             <div>
                 <div v-for="card in cards" :key="card.id"

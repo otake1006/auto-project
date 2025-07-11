@@ -1,0 +1,9 @@
+[
+    {
+        "key": "loop",
+        "sheet": "result",
+        "type": "sheetNumbers",
+        "frameRate": 8,
+        "repeat": -1
+    }
+]
