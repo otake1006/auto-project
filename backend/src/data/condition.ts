@@ -18,3 +18,46 @@ export class ConditionCard extends Schema {
         Object.assign(this, init);
     }
 }
+
+export const conditionCards: ConditionCard[] = [
+    new ConditionCard({
+        id: 1,
+        name: 'HP以上',
+        description: '次のターンから2ダメージ継続',
+        conditionType: 'HP_ABOVE',
+        value: 0,
+        imgSrc: '/fc868.png',
+        ability: '',
+        groupId: 'hp',
+    }),
+    new ConditionCard({
+        id: 2,
+        name: 'HP以下',
+        description: '次のターンから2ダメージ継続',
+        conditionType: 'HP_BELOW',
+        value: 0,
+        imgSrc: '/fc868.png',
+        ability: '',
+        groupId: 'hp',
+    }),
+    new ConditionCard({
+        id: 3,
+        name: 'MP以上',
+        description: '次のターンから2ダメージ継続',
+        conditionType: 'MP_ABOVE',
+        value: 0,
+        imgSrc: '/fc868.png',
+        ability: '',
+        groupId: 'mp',
+    }),
+    new ConditionCard({
+        id: 4,
+        name: 'MP以下',
+        description: '次のターンから2ダメージ継続',
+        conditionType: 'MP_BELOW',
+        value: 0,
+        imgSrc: '/fc868.png',
+        ability: '',
+        groupId: 'mp',
+    }),
+];
