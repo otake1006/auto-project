@@ -2,7 +2,7 @@ import { ArraySchema } from '@colyseus/schema';
 import { Condition, Skill } from '../rooms/schema/Skill';
 import { getSkillCard } from '../data/skill';
 import { getCondition } from '../data/condition';
-import { MyRoomState, Player } from '../rooms/schema/MyRoomState2';
+import { MyRoomState, Player } from '../rooms/schema/MyRoomState';
 import { MyRoom } from '../rooms/Room';
 
 export class SkillService {
