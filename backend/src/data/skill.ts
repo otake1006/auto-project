@@ -1,6 +1,5 @@
 import { Schema, type, ArraySchema } from '@colyseus/schema';
-import { Condition, Skill } from '../rooms/schema/Skill';
-export type BattleType = 'attack' | 'defense' | 'support';
+export type BattleType = 'attack' | 'defense' | 'debuff' | 'buff';
 
 export class SkillCard extends Schema {
     @type('number') id: number;
@@ -194,7 +193,7 @@ export const skillCards: SkillCard[] = [
         name: '連続ガード',
         energy: 15,
         description: '連続でガードを行う',
-        ability: 'シールド 20',
+        ability: 'シールド 10',
         damage: 2,
         battleType: 'defense',
         Count: 5,
