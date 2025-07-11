@@ -16,6 +16,10 @@ export class RelicCard extends Schema {
     }
 }
 
+export function getRelic(id: number): RelicCard | undefined {
+    return relicCards.find((card) => card.id === id);
+}
+
 export const relicCards: RelicCard[] = [
     new RelicCard({
         id: 1,
