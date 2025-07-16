@@ -1,5 +1,5 @@
 import { Schema, type, ArraySchema } from '@colyseus/schema';
-export type BattleType = 'attack' | 'defense' | 'debuff' | 'buff';
+export type BattleType = 'attack' | 'defense' | 'effect';
 
 export class SkillCard extends Schema {
     @type('number') id: number;
