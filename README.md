@@ -1,0 +1,56 @@
+# 🎮 AU-TA
+
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/b96c9c7f-9e76-4a22-9bbf-51f6aa6525cc" />
+
+
+## 📌 概要 / Overview
+
+このゲームは、対戦型ビジュアルプログラミングゲームで、[Phaser / Vue / Colyseusなど] を用いて開発した作品です。  
+技術力・設計力・UXを意識し、**保守性・拡張性** を重視して実装しました。
+
+## 🚀 デモ / Demo
+
+- 🎮 [プレイ動画（YouTube）](https://...)
+- 💻 [オンラインで遊べるURL](https://...)
+
+## 🧩 特徴 / Features
+
+- ✅ [特徴1（例：マルチプレイ対応 / 状態異常管理システム）]
+- ✅ [特徴2（例：エフェクト演出の共通管理）]
+- ✅ [特徴3（例：ピンチ時のBGM切り替えやアニメーション演出）]
+
+## 🛠️ 技術スタック / Tech Stack
+
+| 技術          | 用途                  |
+|---------------|-----------------------|
+| Vue.js        | UI構築               |
+| Phaser        | ゲームエンジン        |
+| Colyseus      | マルチプレイ通信      |
+| Pinia         | 状態管理              |
+| TypeScript    | 型安全・保守性向上    |
+
+## 🔍 開発で工夫した点 / Key Points
+
+- ### 🎯 責務分離と保守性
+  - ゲームロジック、描画、エフェクト演出を**独立したクラス構成**で管理
+  - 例：`Character.ts`・`EffectManager.ts`・`BattleSystem.ts` など
+
+- ### 🎲 拡張可能なゲーム設計
+  - スキル・バフ・レリックなどを**データ駆動で実装**（JSON or データベース）
+  - 「〇〇の条件で□□が発動」のような複雑な挙動を**汎用的に記述可能**
+
+- ### 🌐 マルチプレイ対応
+  - Colyseusを使ってリアルタイム同期
+  - 再接続・観戦・セッション管理にも対応
+
+## 🗂️ ディレクトリ構成 / Project Structure
+
+```bash
+├── src/
+│   ├── core/              # ゲームのロジック層
+│   ├── components/        # Vueコンポーネント
+│   ├── stores/            # 状態管理 (Pinia)
+│   ├── scenes/            # Phaserのシーン管理
+│   └── assets/            # 画像や音声
+├── server/                # Colyseusサーバー
+└── README.md              # このファイル
