@@ -1,0 +1,10 @@
+export const GameConfig = {
+    MAX_CLIENTS: 2,
+    MAX_TURN: 10,
+    MAX_ROUND: 5,
+    PLAYER_MAX_HP: 100,
+    PLAYER_MAX_MP: 50,
+    PLAYER_MAX_SHIELD: 100,
+    PLAYER_RATIO_HP: 100,
+    PLAYER_RATIO_MP: 100,
+};

@@ -1,0 +1,10 @@
+[
+    {
+        "key": "cast_effect",
+        "sheet": "cast_effect",
+        "type": "sheetNumbers",
+        "numbers": { "start": 0, "end": 7 },
+        "frameRate": 10,
+        "repeat": 0
+    }
+]
