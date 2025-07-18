@@ -1,6 +1,6 @@
 import { ArraySchema } from '@colyseus/schema';
 import { Condition, Skill } from '../rooms/schema/Skill';
-import { getSkillCard } from '../data/skill';
+import { getSkillCard, SkillCard } from '../data/skill';
 import { getCondition } from '../data/condition';
 import { MyRoomState, Player } from '../rooms/schema/MyRoomState';
 import { MyRoom } from '../rooms/Room';
@@ -51,7 +51,7 @@ export class SkillService {
         if (skill.battleType === 'defense') {
             player.shield = Math.min(player.maxshield, player.shield + damage);
         }
-        if (skill.battleType === 'debuff') {
+        if (skill.battleType === 'effect') {
         }
     }
 
@@ -81,6 +81,8 @@ export class SkillService {
             this.room.broadcast('turn', this.state.turn);
         }
     }
+
+    private useDebuff(debuffskill: SkillCard) {}
 
     private evaluateCondition(condition: Condition, context: any) {
         if (!getCondition(condition)) return true;
