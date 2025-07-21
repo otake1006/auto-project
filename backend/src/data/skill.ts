@@ -199,4 +199,15 @@ export const skillCards: SkillCard[] = [
         Count: 5,
         imgSrc: '/fc290.png',
     }),
+    new SkillCard({
+        id: 12,
+        name: '吹き矢',
+        energy: 2,
+        description: 'ちょっぴり痛い',
+        ability: 'ダメージ 2',
+        damage: 2,
+        battleType: 'attack',
+        Count: 1,
+        imgSrc: '/fc290.png',
+    }),
 ];
