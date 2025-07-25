@@ -1,5 +1,5 @@
 import { System } from '@/core/System.js';
-import { useSkillStore } from '@/stores/skillStore';
+import { useSkillStore } from '@/ui/stores/skillStore';
 import { phaserEvents, Event } from '@/events/EventCenter';
 
 export class ReadySystem extends System {

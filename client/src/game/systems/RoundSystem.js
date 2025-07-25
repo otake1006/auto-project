@@ -1,6 +1,6 @@
 import { System } from '@/core/System.js';
 import { phaserEvents, Event } from '@/events/EventCenter';
-import { WipeAppearDisappearText } from '@/effects/WipeAppearDisappearText.js';
+import { WipeAppearDisappearText } from '@/core/effects/WipeAppearDisappearText.js';
 
 export class RoundSystem extends System {
     constructor(scene, effectMgr) {

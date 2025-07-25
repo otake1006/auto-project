@@ -1,10 +1,10 @@
 // scenes/HudScene.js
 import Phaser from 'phaser';
 import { phaserEvents, Event } from '@/events/EventCenter';
-import { ReadyButton } from '@/ui/button/ReadyButton.js';
-import { TurnIndicator } from '@/ui/TurnIndicator.js';
-import CharacterView from '@/entities/CharacterView.js';
-import { bounceTween } from '@/ui/animations/bounceTween.js';
+import { ReadyButton } from '@/game/ui/button/ReadyButton.js';
+import { TurnIndicator } from '@/game/ui/TurnIndicator.js';
+import CharacterView from '@/core/entities/CharacterView.js';
+import { bounceTween } from '@/game/ui/animations/bounceTween.js';
 
 export class HudScene extends Phaser.Scene {
     constructor() {

@@ -1,5 +1,5 @@
 import { System } from '@/core/System.js';
-import { useModalStore } from '@/stores/modalStore';
+import { useModalStore } from '@/ui/stores/modalStore';
 
 export class InputLockSystem extends System {
     constructor(scene) {

@@ -1,5 +1,5 @@
 import { bgmMap } from '@/core/sounds/bgmMap';
-import { networkManager } from '../core/NetworkManager';
+import { networkManager } from '../../core/NetworkManager';
 
 export class PreloadScene extends Phaser.Scene {
     constructor() {

@@ -2,8 +2,8 @@
 import { ref } from 'vue';
 import card3 from './card.vue';
 import draggable from 'vuedraggable';
-import { useSkillStore } from '@/stores/skillStore';
-import { useModalStore } from '@/stores/modalStore';
+import { useSkillStore } from '@/ui/stores/skillStore';
+import { useModalStore } from '@/ui/stores/modalStore';
 
 const skillStore = useSkillStore();
 const props = defineProps({

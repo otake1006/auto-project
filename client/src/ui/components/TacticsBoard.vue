@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-import card from '@/components/card5.vue'
+import card from '@/ui/components/card5.vue'
 </script>

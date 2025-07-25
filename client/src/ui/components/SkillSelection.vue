@@ -8,7 +8,7 @@
 <script setup lang="js">
 import TabButtons from './TabButtons.vue'
 import CardList from './CardList.vue'
-import { useSkillStore } from '@/stores/skillStore'
+import { useSkillStore } from '@/ui/stores/skillStore'
 
 const skill = useSkillStore();
 

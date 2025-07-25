@@ -7,11 +7,11 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useModalStore } from '@/stores/modalStore';
+import { useModalStore } from '@/ui/stores/modalStore';
 
-import ModalBase from '@/components/modals/ModalBase.vue';
-import SkillSelectModal from '@/components/modals/SkillSelectModal.vue';
-import ConditionInputModal from '@/components/modals/ConditionInputModal.vue';
+import ModalBase from '@/ui/components/modals/ModalBase.vue';
+import SkillSelectModal from '@/ui/components/modals/SkillSelectModal.vue';
+import ConditionInputModal from '@/ui/components/modals/ConditionInputModal.vue';
 
 const modalStore = useModalStore();
 

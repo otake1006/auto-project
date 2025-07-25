@@ -2,34 +2,31 @@
 import Phaser from 'phaser';
 
 import { World } from '@/core/World.js';
-import { RenderSystem } from '@/systems/RenderSystem.js';
-import { NetworkSystem } from '@/systems/NetworkSystem.js';
-import { PlayerSyncSystem } from '@/systems/PlayerSyncSystem.js';
-import { SkillLogSystem } from '@/systems/SkillLogSystem.js';
-import { RoundSystem } from '@/systems/RoundSystem.js';
-import { TurnSystem } from '@/systems/TurnSystem.js';
-import { ReadySystem } from '@/systems/ReadySystem.js';
-import { ScenePhaseSystem } from '@/systems/ScenePhaseSystem.js';
+import { RenderSystem } from '@/game/systems/RenderSystem.js';
+import { NetworkSystem } from '@/game/systems/NetworkSystem.js';
+import { PlayerSyncSystem } from '@/game/systems/PlayerSyncSystem.js';
+import { SkillLogSystem } from '@/game/systems/SkillLogSystem.js';
+import { RoundSystem } from '@/game/systems/RoundSystem.js';
+import { ReadySystem } from '@/game/systems/ReadySystem.js';
+import { ScenePhaseSystem } from '@/game/systems/ScenePhaseSystem.js';
 
-import { composeCharacter } from '@/core/EntityComposer.js';
 import { networkManager } from '@/core/NetworkManager.js';
 
-import { HudScene } from '@/scenes/HudScene.js';
 import { EffectManager } from '@/core/EffectManager.js';
 import { BgmManager } from '@/core/BgmManager';
-import { BattleManager } from '../core/BattleManager';
+import { BattleManager } from '../../core/BattleManager';
 import { bgmMap } from '@/core/sounds/bgmMap.js';
 
-import Character from '@/entities/Character.js';
-import CharacterView from '@/entities/CharacterView.js';
-import { useSceneStore } from '@/stores/sceneStore';
-import { useSkillStore } from '@/stores/skillStore';
-import { useModalStore } from '@/stores/modalStore';
-import { StateWatchSystem } from '../systems/StateWatchSystem';
-import { ReadyButton } from '@/ui/button/ReadyButton';
-import { bounceTween } from '@/ui/animations/bounceTween.js';
+import Character from '@/core/entities/Character.js';
+import CharacterView from '@/core/entities/CharacterView.js';
+import { useSceneStore } from '@/ui/stores/sceneStore';
+import { useSkillStore } from '@/ui/stores/skillStore';
+import { useModalStore } from '@/ui/stores/modalStore';
+import { StateWatchSystem } from '@/game/systems/StateWatchSystem';
+import { ReadyButton } from '@/game/ui/button/ReadyButton';
+import { bounceTween } from '@/game/ui/animations/bounceTween.js';
 import { phaserEvents, Event } from '@/events/EventCenter';
-import { InputLockSystem } from '../systems/InputLockSystem';
+import { InputLockSystem } from '@/game/systems/InputLockSystem';
 
 const PLAYER_CFG = { hp: 100, mp: 50, key: 'player' };
 const GAP = 300; // 左右の距離
