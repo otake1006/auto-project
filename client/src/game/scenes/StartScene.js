@@ -51,10 +51,7 @@ export class StartScene extends Phaser.Scene {
                     this.scene.start('MatchScene');
                 });
             },
-<<<<<<< HEAD
             sounds: { click: 'assets/sounds/click.mp3' },
-=======
->>>>>>> origin/development
             tweens: [
                 {
                     scale: 0.95,
