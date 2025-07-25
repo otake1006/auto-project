@@ -49,12 +49,80 @@ export class NetworkSystem extends System {
         const skill = useSkillStore();
         skill.setSelectCards(cards);
 
+        // 進行中の演出がある場合は待機
+        await this.waitForCurrentAnimations();
+
         const selected = await modal.open('skillSelect', { cards });
         if (selected) {
             this.room.send('selectSkill', selected.id);
             skill.addSkills([selected]);
             skill.clearSelectCards();
         }
+    }
+
+    /**
+     * 現在進行中のアニメーションやエフェクトの完了を待つ
+     */
+    async waitForCurrentAnimations() {
+        return new Promise((resolve) => {
+            // BattleManagerのAnimationQueueを直接チェック
+            const battleManager = this.getBattleManager();
+            
+            if (battleManager && battleManager.isAnimationPlaying) {
+                // BattleManagerがアニメーション中の場合は完了イベントを待つ
+                const checkInterval = setInterval(() => {
+                    if (!battleManager.isAnimationPlaying) {
+                        clearInterval(checkInterval);
+                        resolve();
+                    }
+                }, 50); // 50ms間隔でチェック
+                
+                // 安全のため5秒でタイムアウト
+                setTimeout(() => {
+                    clearInterval(checkInterval);
+                    resolve();
+                }, 5000);
+                
+                return;
+            }
+
+            // 軽量チェック：主要なエフェクトのみ
+            const scene = phaserEvents.getScene?.() || window.currentPhaserScene;
+            if (!scene) {
+                resolve();
+                return;
+            }
+
+            // アクティブなTweenの数のみチェック
+            const activeTweens = scene.tweens.getAllTweens()
+                .filter(tween => tween.state === Phaser.Tweens.TWEEN_ACTIVE);
+            
+            if (activeTweens.length === 0) {
+                resolve();
+                return;
+            }
+
+            // 最短のTween完了時間を基準にする
+            let minWaitTime = Math.min(
+                ...activeTweens.map(tween => tween.duration - tween.elapsed)
+            );
+            
+            // 最小100ms、最大2秒に制限
+            minWaitTime = Math.max(Math.min(minWaitTime + 100, 2000), 100);
+
+            setTimeout(() => {
+                resolve();
+            }, minWaitTime);
+        });
+    }
+
+    /**
+     * BattleManagerインスタンスを取得
+     */
+    getBattleManager() {
+        // グローバルまたはシーンからBattleManagerを取得する実装
+        const scene = phaserEvents.getScene?.() || window.currentPhaserScene;
+        return scene?.battleManager || window.battleManager;
     }
     onShowReady() {
         phaserEvents.emit('show-ready');

@@ -39,6 +39,10 @@
             "frameHeight": 810
         }
     ],
-    "audio": [{ "key": "bgm_battle", "urls": "assets/sounds/Future_1.mp3" }],
+    "audio": [
+        { "key": "bgm_battle", "urls": "assets/sounds/Future_1.mp3" },
+        { "key": "impact_energy_hit", "urls": "assets/sounds/cast/damage.mp3" },
+        { "key": "impact_dark_boom", "urls": "assets/sounds/cast/damage.mp3" }
+    ],
     "version": 1720690000000
 }
