@@ -15,6 +15,7 @@ import { MatchScene } from '@/scenes/MatchScene';
 import { GameScene } from '@/scenes/GameScene';
 import { HudScene } from '@/scenes/HudScene';
 import { BackgroundScene } from './scenes/BackgroundScene';
+import { AssetLoader } from '@/plugins/AssetLoader';
 
 
 const gameContainer = ref(null);
@@ -31,6 +32,9 @@ onMounted(() => {
         height: 810,
         parent: gameContainer.value,
         scene: [BootScene, PreloadScene, StartScene, MatchScene, HudScene, BackgroundScene, GameScene, ResultScene],
+        plugins: {
+            global: [{ key: 'AssetLoader', plugin: AssetLoader, start: true }],
+        }
     };
 
     game = new Phaser.Game(config);

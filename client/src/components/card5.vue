@@ -63,7 +63,8 @@ async function onDropped(data, index) {
 </script>
 
 <template>
-    <div class="space-y-15 rounded-xl p-4 shadow-sm" ref="dropArea" style="background-image: url('battleboard.png')">
+    <div class="space-y-15 rounded-xl p-4 shadow-sm" ref="dropArea"
+        style="background-image: url('/assets/images/battleboard.png')">
         <draggable v-model="skillStore.skillSets" item-key="id" :group="{ name: 'skillSets' }" :move="canMove"
             :ghost-class="'no-opacity'" :animation="200" handle=".drag-handle">
             <template #item="{ element, index }">
@@ -79,7 +80,7 @@ async function onDropped(data, index) {
                             <card3 :cards="skill"></card3>
                         </template>
                         <template #footer>
-                            <img v-if="!element.skill" src="/add-card-placeholder.png" alt="Click Button"
+                            <img v-if="!element.skill" src="/assets/images/add-card-placeholder.png" alt="Click Button"
                                 class="h-20 w-48" />
                         </template>
                     </draggable>
@@ -91,8 +92,8 @@ async function onDropped(data, index) {
                             <card3 :cards="condition"></card3>
                         </template>
                         <template #footer>
-                            <img v-if="element.conditions.length < 2 && element.skill" src="/add-card-placeholder.png"
-                                alt="Click Button" class="h-20 w-48" />
+                            <img v-if="element.conditions.length < 2 && element.skill"
+                                src="/assets/images/add-card-placeholder.png" alt="Click Button" class="h-20 w-48" />
                         </template>
                     </draggable>
                 </div>

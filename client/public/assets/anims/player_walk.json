@@ -1,0 +1,10 @@
+[
+    {
+        "key": "player_walk",
+        "sheet": "player",
+        "type": "sheetNumbers",
+        "numbers": { "start": 0, "end": 3 },
+        "frameRate": 6,
+        "repeat": -1
+    }
+]
