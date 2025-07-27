@@ -145,7 +145,6 @@ export class StartScene extends Phaser.Scene {
             },
             onClick: (btn) => {
                 this.showTutorial();
-                this.creditsModal.show();
             },
             tweens: [
                 {
