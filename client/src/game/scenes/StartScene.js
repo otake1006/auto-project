@@ -5,6 +5,7 @@ import { VERSION } from '@/constants/version';
 import { HideShowMixin } from '@/game/ui/button/HideShowMixin';
 import { ImageButton } from '@/game/ui/button/ImageButton';
 import { useSceneStore } from '@/ui/stores/sceneStore';
+import { CreditsModal } from '@/game/ui/modal/CreditsModal';
 
 class CustomSceneButton extends HideShowMixin(ImageButton) {}
 // scenes/TitleScene.js
@@ -23,6 +24,7 @@ export class StartScene extends Phaser.Scene {
         phaserEvents.emit('scene-changed', 'StartScene');
         this.bgmManager = new BgmManager(this);
         this.bgmManager.play(this.scene.key, bgmMap);
+        this.creditsModal = new CreditsModal(this);
 
         this.anims.create({
             key: 'bg-loop',
@@ -109,10 +111,33 @@ export class StartScene extends Phaser.Scene {
                 },
             )
             .setOrigin(1, 1);
+
+        const creditsButton = new CustomSceneButton(this, this.scale.width - 100, 50, 'button_bg', {
+            onHover: (btn) => {
+                //btn.setAlpha(0.8);
+            },
+            onOut: (btn) => {
+                // btn.setAlpha(1);
+                // btn.setScale(1);
+            },
+            onClick: (btn) => {
+                this.creditsModal.show();
+            },
+            tweens: [
+                {
+                    scale: 0.95,
+                    duration: 80,
+                    ease: 'Quad.easeOut',
+                    yoyo: true,
+                },
+            ],
+        });
     }
+
 
     shutdown() {
         this.buttonPressed = false;
+        this.creditsModal.destroy();
         // クリーンアップ（イベントの重複登録防止）
         phaserEvents.removeAllListeners('scene-changed');
     }
