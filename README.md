@@ -1,7 +1,5 @@
 # 🎮 AU-TA
-
-<img width="720" alt="image" src="https://github.com/user-attachments/assets/b96c9c7f-9e76-4a22-9bbf-51f6aa6525cc" />
-
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/766d8327-d6f8-4cf2-b27b-c44c143fd8cc" />
 
 ## 📌 概要 / Overview
 
@@ -10,14 +8,7 @@
 
 ## 🚀 デモ / Demo
 
-- 🎮 [プレイ動画（YouTube）](https://...)
-- 💻 [オンラインで遊べるURL](https://...)
-
-## 🧩 特徴 / Features
-
-- ✅ [特徴1（例：マルチプレイ対応 / 状態異常管理システム）]
-- ✅ [特徴2（例：エフェクト演出の共通管理）]
-- ✅ [特徴3（例：ピンチ時のBGM切り替えやアニメーション演出）]
+- 💻 [オンラインで遊べるURL](https://auto-project-1.onrender.com/)
 
 ## 🛠️ 技術スタック / Tech Stack
 
