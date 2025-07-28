@@ -4,6 +4,7 @@ import { getSkillCard, SkillCard } from '../data/skill';
 import { getCondition } from '../data/condition';
 import { MyRoomState, Player } from '../rooms/schema/MyRoomState';
 import { MyRoom } from '../rooms/Room';
+import { buff } from '../rooms/schema/buff';
 
 export class SkillService {
     private state: MyRoomState;
@@ -41,19 +42,29 @@ export class SkillService {
     private useSkill(skillId: number, player: Player, target: Player) {
         if (!skillId) return;
         const skill = getSkillCard(skillId);
-        const damage = skill.damage * skill.Count;
         player.mp -= skill.energy;
         if (skill.battleType === 'attack') {
+            const damage =
+                (skill.damage + player.buffs.muscular) *
+                player.buffs.brittleCheck() *
+                target.buffs.weaknesCheck() *
+                skill.Count;
             const HPdamage = Math.max(0, damage - target.shield);
             target.shield = Math.max(0, target.shield - damage);
             target.hp = Math.max(0, target.hp - HPdamage);
         }
         if (skill.battleType === 'defense') {
-            player.shield = Math.min(player.maxshield, player.shield + damage);
+            const shield = skill.damage * skill.Count;
+            player.shield = Math.min(player.maxshield, player.shield + shield);
         }
         if (skill.battleType === 'effect') {
+            for (const effect of skill.effects) {
+                player.buffs.getBuff(player, target, effect);
+            }
         }
     }
+
+    public damageCalculation(skill: SkillCard, playerBuff: buff, targetBuff: buff) {}
 
     public useAllSkill() {
         const skills = this.selectAllSkills();
@@ -64,14 +75,18 @@ export class SkillService {
         if (skill.battleType === 'defense') {
             this.useSkill(player2skill, player2, player1);
             this.useSkill(player1skill, player1, player2);
+            this.room.broadcast('skillLogs', [
+                { sessionId: sessionId1, skill: getSkillCard(player1skill)?.name },
+                { sessionId: sessionId2, skill: getSkillCard(player2skill)?.name },
+            ]);
         } else {
             this.useSkill(player1skill, player1, player2);
             this.useSkill(player2skill, player2, player1);
+            this.room.broadcast('skillLogs', [
+                { sessionId: sessionId2, skill: getSkillCard(player2skill)?.name },
+                { sessionId: sessionId1, skill: getSkillCard(player1skill)?.name },
+            ]);
         }
-        this.room.broadcast('skillLogs', [
-            { sessionId: sessionId1, skill: getSkillCard(player1skill)?.name },
-            { sessionId: sessionId2, skill: getSkillCard(player2skill)?.name },
-        ]);
         if (!player1skill && !player2skill) {
             player1.resetMp();
             player2.resetMp();
