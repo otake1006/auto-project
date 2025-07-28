@@ -1,0 +1,18 @@
+[
+    {
+        "key": "idle",
+        "sheet": "player",
+        "type": "sheetNumbers",
+        "numbers": { "start": 0, "end": 0 },
+        "frameRate": 1,
+        "repeat": -1
+    },
+    {
+        "key": "attack",
+        "sheet": "player",
+        "type": "sheetNumbers",
+        "numbers": { "start": 1, "end": 2 },
+        "frameRate": 8,
+        "repeat": 0
+    }
+]
