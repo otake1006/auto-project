@@ -14,7 +14,8 @@
             <button v-show="sceneStore.current === 'GameScene'" @click="openSkillModal" class="btn">
                 Open Skill Modal
             </button>
-            <ModalDispatcher v-show="sceneStore.current === 'GameScene'" />
+            <!-- モーダルはすべてのシーンで表示 -->
+            <ModalDispatcher />
         </div>
     </div>
 </template>

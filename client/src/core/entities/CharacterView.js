@@ -2,6 +2,7 @@
 import StatusBar from '@/game/ui/StatusBar.js';
 import SkillLog from '@/game/ui/SkillLog.js'; // 追加
 import { StatusIcon } from '@/game/ui/StatusIcon';
+import { phaserEvents } from '@/events/EventCenter';
 
 export default class CharacterView {
     constructor(scene, character, x, y, isRight = false) {
@@ -9,6 +10,7 @@ export default class CharacterView {
         this.character = character;
         this.x = x;
         this.y = y;
+        this.isRight = isRight;
 
         // キャラ表示
         this.sprite = scene.add.sprite(x, y, character.textureKey);
@@ -36,6 +38,31 @@ export default class CharacterView {
             key: 'shield',
             count: 0,
         });
+
+        // プレイヤー名更新イベントを監視
+        phaserEvents.on('player-name-update', (data) => this.updatePlayerName(data));
+    }
+
+    updatePlayerName(data) {
+        // roomを取得（GameSceneから、またはnetworkManagerから）
+        const room = this.scene.room || this.scene.networkManager?.getRoom();
+        
+        if (!room) {
+            console.warn('[CharacterView] Room not available for player name update');
+            return;
+        }
+        
+        // 自分のキャラクターか敵のキャラクターかを判定
+        const isMyself = data.sessionId === room.sessionId;
+        const shouldUpdate = (isMyself && !this.isRight) || (!isMyself && this.isRight);
+        
+        console.log(`[CharacterView] Player name update - SessionId: ${data.sessionId}, MySessionId: ${room.sessionId}, IsMyself: ${isMyself}, IsRight: ${this.isRight}, ShouldUpdate: ${shouldUpdate}, Name: ${data.name}`);
+        
+        if (shouldUpdate) {
+            this.character.name = data.name;
+            this.nameText.setText(`${this.character.name}: 準備中`);
+            console.log(`[CharacterView] Updated player name to: ${this.character.name}`);
+        }
     }
 
     showSkillLog(text) {
@@ -55,7 +82,8 @@ export default class CharacterView {
     }
 
     setReady(isReady) {
-        this.nameText.setText(`${this.character.name}: ${isReady ? '準備完了' : '準備中'}`);
+        const displayName = this.character.name || 'プレイヤー';
+        this.nameText.setText(`${displayName}: ${isReady ? '準備完了' : '準備中'}`);
     }
 
     updateBars() {
@@ -72,6 +100,9 @@ export default class CharacterView {
         this.hpBar.destroy();
         this.mpBar.destroy();
         this.skillLog.destroy();
+        
+        // イベントリスナーを削除
+        phaserEvents.off('player-name-update', this.updatePlayerName);
     }
 
     getPosition() {

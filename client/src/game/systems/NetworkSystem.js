@@ -31,6 +31,7 @@ export class NetworkSystem extends System {
         reg('round', this.onRound);
         reg('condition', this.onCondition);
         reg('leave', this.onLeave);
+        reg('playerName', this.onPlayerName);
     }
 
     onAction(skills) {
@@ -121,6 +122,10 @@ export class NetworkSystem extends System {
     }
     onLeave() {
         phaserEvents.emit('leave-room');
+    }
+    
+    onPlayerName(data) {
+        phaserEvents.emit('player-name-update', data);
     }
 
     filter(e) {
