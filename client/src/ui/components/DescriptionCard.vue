@@ -13,10 +13,7 @@
         <!-- 右側: effect -->
         <div v-show="card.description">
             <!-- {{ card.description }} -->
-            <HighlightText :text=card.description :highlights="[
-                { match: '[雷弾]', class: 'text-yellow-200 font-bold' },
-                { match: '[0-9]{4} 年', class: 'text-green-600' }
-            ]" />
+            <HighlightText :text=card.description :highlights="[]" />
         </div>
     </div>
 </template>
