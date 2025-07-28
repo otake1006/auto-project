@@ -44,6 +44,7 @@ export class GameScene extends Phaser.Scene {
 
     init() {
         this.room = networkManager.getRoom();
+        this.networkManager = networkManager;
     }
 
     async create() {

@@ -24,6 +24,23 @@ export class StateWatchSystem extends System {
                     shield: player.shield,
                 });
             });
+
+            // プレイヤー名が変更されたら通知
+            if (player.name) {
+                phaserEvents.emit('player-name-update', {
+                    sessionId: sessionId,
+                    name: player.name
+                });
+            }
+
+            // プレイヤー名の変更を監視
+            $(player).listen('name', (value) => {
+                console.log(`[StateWatchSystem] Player name changed: ${sessionId} -> ${value}`);
+                phaserEvents.emit('player-name-update', {
+                    sessionId: sessionId,
+                    name: value
+                });
+            });
         });
     }
     filter() {

@@ -12,6 +12,7 @@ import { useModalStore } from '@/ui/stores/modalStore';
 import ModalBase from '@/ui/components/modals/ModalBase.vue';
 import SkillSelectModal from '@/ui/components/modals/SkillSelectModal.vue';
 import ConditionInputModal from '@/ui/components/modals/ConditionInputModal.vue';
+import PlayerNameInputModal from '@/ui/components/modals/PlayerNameInputModal.vue';
 
 const modalStore = useModalStore();
 
@@ -21,6 +22,8 @@ const modalComponent = computed(() => {
             return SkillSelectModal;
         case 'conditionInput':
             return ConditionInputModal;
+        case 'playerNameInput':
+            return PlayerNameInputModal;
         default:
             return null;
     }

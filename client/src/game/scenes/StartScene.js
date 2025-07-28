@@ -5,6 +5,8 @@ import { VERSION } from '@/constants/version';
 import { HideShowMixin } from '@/game/ui/button/HideShowMixin';
 import { ImageButton } from '@/game/ui/button/ImageButton';
 import { useSceneStore } from '@/ui/stores/sceneStore';
+import { useModalStore } from '@/ui/stores/modalStore';
+import { usePlayerStore } from '@/ui/stores/playerStore';
 
 class CustomSceneButton extends HideShowMixin(ImageButton) {}
 // scenes/TitleScene.js
@@ -47,6 +49,7 @@ export class StartScene extends Phaser.Scene {
                 this.buttonPressed = true;
                 btn.setScale(1); // スケールを戻す
 
+                // プレイヤー名は既に設定済みなので、そのままマッチングに進む
                 this.bgmManager.fadeOut(500, () => {
                     this.scene.start('MatchScene');
                 });
@@ -109,6 +112,31 @@ export class StartScene extends Phaser.Scene {
                 },
             )
             .setOrigin(1, 1);
+
+        // 初回起動時のプレイヤー名入力チェック
+        this.checkFirstTimePlayerName();
+    }
+
+    async checkFirstTimePlayerName() {
+        const playerStore = usePlayerStore();
+        
+        // プレイヤー名が設定されていない場合のみモーダルを表示
+        if (!playerStore.hasPlayerName) {
+            console.log('[StartScene] First time launch - requesting player name');
+            const modal = useModalStore();
+            const playerName = await modal.open('playerNameInput');
+            
+            if (playerName) {
+                playerStore.setPlayerName(playerName);
+                console.log('[StartScene] Player name set:', playerName);
+            } else {
+                // 名前が設定されなかった場合、デフォルト名を設定
+                playerStore.setPlayerName('プレイヤー');
+                console.log('[StartScene] Default player name set');
+            }
+        } else {
+            console.log('[StartScene] Player name already exists:', playerStore.getPlayerName());
+        }
     }
 
     shutdown() {

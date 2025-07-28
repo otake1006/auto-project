@@ -1,5 +1,6 @@
 import { networkManager } from '@/core/NetworkManager';
 import { StatusIndicator } from '@/game//ui/StatusIndicator';
+import { usePlayerStore } from '@/ui/stores/playerStore';
 
 export class MatchScene extends Phaser.Scene {
     constructor() {
@@ -23,6 +24,12 @@ export class MatchScene extends Phaser.Scene {
             const room = await networkManager.joinOrCreateRoom('my_room');
             indicator.markDone(1); // ルーム参加成功
             console.log('[MatchScene] Joined room:', room.sessionId);
+            
+            // プレイヤー名をサーバーに送信
+            const playerStore = usePlayerStore();
+            const playerName = playerStore.getPlayerName();
+            room.send('setPlayerName', { name: playerName });
+            console.log('[MatchScene] Player name sent:', playerName);
             const waitCheck = indicator.addStatus('Waiting for opponent...');
 
             room.onMessage('matching', () => {
