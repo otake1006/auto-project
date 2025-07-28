@@ -12,11 +12,9 @@ export default class CharacterView {
         this.y = y;
         this.isRight = isRight;
 
-        // キャラ表示
-        this.sprite = scene.add.sprite(x, y, character.textureKey);
-        
-        // デフォルトでアイドルアニメーションを開始
-        this.sprite.play('idle');
+        // キャラは既にCharacterクラスで管理されている
+        // CharacterViewではspriteへの参照のみ保持
+        this.sprite = character;
 
         // ステータスバー表示（HP/MP）
         this.hpBar = new StatusBar(scene, x - 50, y + 60, 100, 12, 0xff0000, 'HP');
@@ -46,18 +44,20 @@ export default class CharacterView {
     updatePlayerName(data) {
         // roomを取得（GameSceneから、またはnetworkManagerから）
         const room = this.scene.room || this.scene.networkManager?.getRoom();
-        
+
         if (!room) {
             console.warn('[CharacterView] Room not available for player name update');
             return;
         }
-        
+
         // 自分のキャラクターか敵のキャラクターかを判定
         const isMyself = data.sessionId === room.sessionId;
         const shouldUpdate = (isMyself && !this.isRight) || (!isMyself && this.isRight);
-        
-        console.log(`[CharacterView] Player name update - SessionId: ${data.sessionId}, MySessionId: ${room.sessionId}, IsMyself: ${isMyself}, IsRight: ${this.isRight}, ShouldUpdate: ${shouldUpdate}, Name: ${data.name}`);
-        
+
+        console.log(
+            `[CharacterView] Player name update - SessionId: ${data.sessionId}, MySessionId: ${room.sessionId}, IsMyself: ${isMyself}, IsRight: ${this.isRight}, ShouldUpdate: ${shouldUpdate}, Name: ${data.name}`,
+        );
+
         if (shouldUpdate) {
             this.character.name = data.name;
             this.nameText.setText(`${this.character.name}: 準備中`);
@@ -67,18 +67,8 @@ export default class CharacterView {
 
     showSkillLog(text) {
         this.skillLog.showLog(text);
-        // スキル使用時に攻撃アニメーションを再生
-        this.playAttackAnimation();
-    }
-
-    playAttackAnimation() {
-        // 攻撃アニメーションを再生
-        this.sprite.play('attack');
-        
-        // アニメーション完了後にidleアニメーションに戻す
-        this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-            this.sprite.play('idle');
-        });
+        // スキル使用時に攻撃アニメーションを再生（Characterクラスのメソッドを使用）
+        this.character.playAttackAnimation();
     }
 
     setReady(isReady) {
@@ -96,11 +86,12 @@ export default class CharacterView {
     }
 
     destroy() {
-        this.sprite.destroy();
+        // spriteはCharacterクラスで管理されているため、ここでは削除しない
+        // CharacterクラスのdestroyはGameSceneなどで呼び出される
         this.hpBar.destroy();
         this.mpBar.destroy();
         this.skillLog.destroy();
-        
+
         // イベントリスナーを削除
         phaserEvents.off('player-name-update', this.updatePlayerName);
     }

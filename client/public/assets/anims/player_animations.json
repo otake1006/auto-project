@@ -3,15 +3,15 @@
         "key": "idle",
         "sheet": "player",
         "type": "sheetNumbers",
-        "numbers": { "start": 0, "end": 0 },
-        "frameRate": 1,
+        "numbers": { "start": 0, "end": 3 },
+        "frameRate": 6,
         "repeat": -1
     },
     {
         "key": "attack",
         "sheet": "player",
         "type": "sheetNumbers",
-        "numbers": { "start": 1, "end": 2 },
+        "numbers": { "start": 21, "end": 28 },
         "frameRate": 8,
         "repeat": 0
     }

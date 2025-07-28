@@ -160,7 +160,7 @@ export class GameScene extends Phaser.Scene {
             id,
             PLAYER_CONFIG.hp,
             PLAYER_CONFIG.mp,
-            isPlayer,
+            !isPlayer, // flipX: プレイヤーは左向き(false)、敵は右向き(true)
         );
     }
 }
