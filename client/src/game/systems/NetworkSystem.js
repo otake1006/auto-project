@@ -13,6 +13,7 @@ export class NetworkSystem extends System {
         super();
         this.room = room;
         this.listeners = []; // 解除用に保存
+        this.scene = null; // シーンへの参照を保存
 
         const reg = (ev, fn) => {
             const bound = fn.bind(this);
@@ -30,6 +31,7 @@ export class NetworkSystem extends System {
         reg('round', this.onRound);
         reg('condition', this.onCondition);
         reg('leave', this.onLeave);
+        reg('playerName', this.onPlayerName);
     }
 
     onAction(skills) {
@@ -45,6 +47,9 @@ export class NetworkSystem extends System {
     }
 
     async onGiveCards(cards) {
+        // 演出が進行中の場合は待機
+        await this.waitForAnimationsToComplete();
+        
         const modal = useModalStore();
         const skill = useSkillStore();
         skill.setSelectCards(cards);
@@ -55,6 +60,50 @@ export class NetworkSystem extends System {
             skill.addSkills([selected]);
             skill.clearSelectCards();
         }
+    }
+
+    /**
+     * 演出が完了するまで待機
+     */
+    async waitForAnimationsToComplete() {
+        return new Promise((resolve) => {
+            const checkAnimations = () => {
+                // SkillLogSystemの演出状態を確認
+                const skillLogSystem = this.getSkillLogSystem();
+                
+                if (!skillLogSystem || (!skillLogSystem.isProcessing && skillLogSystem.pendingLogs.length === 0)) {
+                    resolve();
+                } else {
+                    // 100ms後に再チェック
+                    setTimeout(checkAnimations, 100);
+                }
+            };
+            
+            checkAnimations();
+        });
+    }
+
+    /**
+     * シーンを設定
+     */
+    setScene(scene) {
+        this.scene = scene;
+    }
+
+    /**
+     * SkillLogSystemインスタンスを取得
+     */
+    getSkillLogSystem() {
+        return this.scene?.skillLogSystem;
+    }
+
+    /**
+     * BattleManagerインスタンスを取得
+     */
+    getBattleManager() {
+        // グローバルまたはシーンからBattleManagerを取得する実装
+        const scene = phaserEvents.getScene?.() || window.currentPhaserScene;
+        return scene?.battleManager || window.battleManager;
     }
     onShowReady() {
         phaserEvents.emit('show-ready');
@@ -73,6 +122,10 @@ export class NetworkSystem extends System {
     }
     onLeave() {
         phaserEvents.emit('leave-room');
+    }
+    
+    onPlayerName(data) {
+        phaserEvents.emit('player-name-update', data);
     }
 
     filter(e) {

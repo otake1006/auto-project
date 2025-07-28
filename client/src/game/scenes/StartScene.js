@@ -5,6 +5,10 @@ import { VERSION } from '@/constants/version';
 import { HideShowMixin } from '@/game/ui/button/HideShowMixin';
 import { ImageButton } from '@/game/ui/button/ImageButton';
 import { useSceneStore } from '@/ui/stores/sceneStore';
+import { useModalStore } from '@/ui/stores/modalStore';
+import { usePlayerStore } from '@/ui/stores/playerStore';
+import { TutorialModal } from '@/game/ui/modal/TutorialModal';
+import { CreditsModal } from '@/game/ui/modal/CreditsModal';
 
 class CustomSceneButton extends HideShowMixin(ImageButton) {}
 // scenes/TitleScene.js
@@ -23,6 +27,8 @@ export class StartScene extends Phaser.Scene {
         phaserEvents.emit('scene-changed', 'StartScene');
         this.bgmManager = new BgmManager(this);
         this.bgmManager.play(this.scene.key, bgmMap);
+        this.tutorialModal = new TutorialModal(this);
+        this.creditsModal = new CreditsModal(this);
 
         this.anims.create({
             key: 'bg-loop',
@@ -47,10 +53,12 @@ export class StartScene extends Phaser.Scene {
                 this.buttonPressed = true;
                 btn.setScale(1); // スケールを戻す
 
+                // プレイヤー名は既に設定済みなので、そのままマッチングに進む
                 this.bgmManager.fadeOut(500, () => {
                     this.scene.start('MatchScene');
                 });
             },
+            sounds: { click: 'assets/sounds/click.mp3' },
             tweens: [
                 {
                     scale: 0.95,
@@ -109,10 +117,91 @@ export class StartScene extends Phaser.Scene {
                 },
             )
             .setOrigin(1, 1);
+
+        // 初回起動時のプレイヤー名入力チェック
+        this.checkFirstTimePlayerName();
+    }
+
+    async checkFirstTimePlayerName() {
+        const playerStore = usePlayerStore();
+
+        // プレイヤー名が設定されていない場合のみモーダルを表示
+        if (!playerStore.hasPlayerName) {
+            console.log('[StartScene] First time launch - requesting player name');
+            const modal = useModalStore();
+            const playerName = await modal.open('playerNameInput');
+
+            if (playerName) {
+                playerStore.setPlayerName(playerName);
+                console.log('[StartScene] Player name set:', playerName);
+            } else {
+                // 名前が設定されなかった場合、デフォルト名を設定
+                playerStore.setPlayerName('プレイヤー');
+                console.log('[StartScene] Default player name set');
+            }
+        } else {
+            console.log('[StartScene] Player name already exists:', playerStore.getPlayerName());
+        }
+
+        // テキストベースのチュートリアルボタン（copyrightTextの上に配置）
+        const tutorialText = this.add
+            .text(this.scale.width - 10, this.scale.height - 50, 'Tutorial', {
+                fontSize: '24px',
+                fontFamily: 'DotGothic16',
+                color: '#ffffff',
+                stroke: '#000000',
+                strokeThickness: 2,
+            })
+            .setOrigin(1, 1)
+            .setInteractive({ useHandCursor: true })
+            .on('pointerover', () => {
+                tutorialText.setStyle({ color: '#ffff99' }); // ホバー時の色変更
+            })
+            .on('pointerout', () => {
+                tutorialText.setStyle({ color: '#ffffff' }); // 元の色に戻す
+            })
+            .on('pointerdown', () => {
+                tutorialText.setScale(0.95); // クリック時のスケール
+            })
+            .on('pointerup', () => {
+                tutorialText.setScale(1); // スケールを戻す
+                this.showTutorial();
+            });
+
+        // テキストベースのクレジットボタン（チュートリアルの上に配置）
+        const creditsText = this.add
+            .text(this.scale.width - 10, this.scale.height - 80, 'Credits', {
+                fontSize: '24px',
+                fontFamily: 'DotGothic16',
+                color: '#ffffff',
+                stroke: '#000000',
+                strokeThickness: 2,
+            })
+            .setOrigin(1, 1)
+            .setInteractive({ useHandCursor: true })
+            .on('pointerover', () => {
+                creditsText.setStyle({ color: '#ffff99' }); // ホバー時の色変更
+            })
+            .on('pointerout', () => {
+                creditsText.setStyle({ color: '#ffffff' }); // 元の色に戻す
+            })
+            .on('pointerdown', () => {
+                creditsText.setScale(0.95); // クリック時のスケール
+            })
+            .on('pointerup', () => {
+                creditsText.setScale(1); // スケールを戻す
+                this.creditsModal.show();
+            });
+    }
+
+    showTutorial() {
+        this.tutorialModal.show();
     }
 
     shutdown() {
         this.buttonPressed = false;
+        this.creditsModal.destroy();
+        this.tutorialModal.destroy();
         // クリーンアップ（イベントの重複登録防止）
         phaserEvents.removeAllListeners('scene-changed');
     }

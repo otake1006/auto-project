@@ -23,7 +23,7 @@ export default class Character extends Phaser.GameObjects.Sprite {
         this.mp = new Stat('MP', maxMp);
 
         this.setScale(3);
-        this.setFlipX(flipX);
+        this.setFlipX(!flipX);
         this.initAnimations();
         this.skillSets = skillSets;
 
@@ -31,14 +31,53 @@ export default class Character extends Phaser.GameObjects.Sprite {
     }
 
     initAnimations() {
-        this.anims.create({
-            key: 'idle',
-            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 5 }),
-            frameRate: 9,
-            repeat: -1,
-        });
+        // アニメーションの初期化は外部のjsonファイルで管理されているため、
+        // ここではデフォルトのアイドルアニメーションを開始するのみ
+        this.playIdle();
+    }
 
+    /**
+     * アイドルアニメーションを再生
+     */
+    playIdle() {
         this.play('idle');
+    }
+
+    /**
+     * 攻撃アニメーションを再生し、完了後にアイドルに戻る
+     */
+    playAttackAnimation() {
+        this.play('attack');
+
+        // アニメーション完了後にidleアニメーションに戻す
+        this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            this.playIdle();
+        });
+    }
+
+    /**
+     * 指定されたアニメーションを再生
+     * @param {string} animKey - アニメーションキー
+     */
+    playAnimation(animKey) {
+        this.play(animKey);
+    }
+
+    /**
+     * 現在再生中のアニメーションキーを取得
+     * @returns {string|null} 現在のアニメーションキー
+     */
+    getCurrentAnimation() {
+        return this.anims.currentAnim?.key || null;
+    }
+
+    /**
+     * 指定されたアニメーションが再生中かどうかを判定
+     * @param {string} animKey - チェックするアニメーションキー
+     * @returns {boolean} 再生中かどうか
+     */
+    isPlayingAnimation(animKey) {
+        return this.getCurrentAnimation() === animKey;
     }
 
     selectSkill() {
