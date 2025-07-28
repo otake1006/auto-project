@@ -14,6 +14,9 @@ export default class CharacterView {
 
         // キャラ表示
         this.sprite = scene.add.sprite(x, y, character.textureKey);
+        
+        // デフォルトでアイドルアニメーションを開始
+        this.sprite.play('idle');
 
         // ステータスバー表示（HP/MP）
         this.hpBar = new StatusBar(scene, x - 50, y + 60, 100, 12, 0xff0000, 'HP');
@@ -64,6 +67,18 @@ export default class CharacterView {
 
     showSkillLog(text) {
         this.skillLog.showLog(text);
+        // スキル使用時に攻撃アニメーションを再生
+        this.playAttackAnimation();
+    }
+
+    playAttackAnimation() {
+        // 攻撃アニメーションを再生
+        this.sprite.play('attack');
+        
+        // アニメーション完了後にidleアニメーションに戻す
+        this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            this.sprite.play('idle');
+        });
     }
 
     setReady(isReady) {

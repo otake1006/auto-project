@@ -1,6 +1,7 @@
 import { System } from '@/core/System.js';
 import { phaserEvents, Event } from '@/events/EventCenter';
 import { getStateCallbacks } from 'colyseus.js';
+import { sm } from '@/core/SoundManager';
 
 export class StateWatchSystem extends System {
     /**
@@ -15,13 +16,37 @@ export class StateWatchSystem extends System {
 
             console.log(`[Colyseus] ${isMyself ? 'My' : 'Enemy'} player added`, player);
 
-            // HP/MP/Ready状態が変更されたらPhaserに通知
-            $(player).onChange(() => {
-                phaserEvents.emit(isMyself ? 'player-upd' : 'enemy-upd', {
-                    hp: player.hp,
-                    mp: player.mp,
-                    ready: player.ready,
-                    shield: player.shield,
+            // 相手の準備状態を追跡するための変数
+            if (!isMyself) {
+                let previousReady = player.ready;
+
+                // HP/MP/Ready状態が変更されたらPhaserに通知
+                $(player).onChange(() => {
+                    // 相手が準備完了した時に通知音を再生
+                    if (!isMyself && !previousReady && player.ready) {
+                        sm.play('assets/sounds/click.mp3');
+                        console.log(
+                            '[StateWatchSystem] Enemy is ready - playing notification sound',
+                        );
+                    }
+                    previousReady = player.ready;
+
+                    phaserEvents.emit(isMyself ? 'player-upd' : 'enemy-upd', {
+                        hp: player.hp,
+                        mp: player.mp,
+                        ready: player.ready,
+                        shield: player.shield,
+                    });
+                });
+            } else {
+                // 自分の場合は従来通り
+                $(player).onChange(() => {
+                    phaserEvents.emit('player-upd', {
+                        hp: player.hp,
+                        mp: player.mp,
+                        ready: player.ready,
+                        shield: player.shield,
+                    });
                 });
             });
 
@@ -41,6 +66,7 @@ export class StateWatchSystem extends System {
                     name: value
                 });
             });
+            }
         });
     }
     filter() {
