@@ -15,6 +15,7 @@ export class Player extends Schema {
     @type('number') ratiohp: number = GameConfig.PLAYER_RATIO_HP;
     @type('number') ratiomp: number = GameConfig.PLAYER_RATIO_MP;
     @type('boolean') ready: boolean = false;
+    @type(['number']) useSkills: number[] = [];
     @type([Skill]) skill = new ArraySchema<Skill>(); //作戦ボード内のスキル
     @type(buff) buffs = new buff();
     reset() {
