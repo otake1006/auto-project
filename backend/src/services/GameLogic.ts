@@ -38,6 +38,8 @@ export class GameLogic {
         this.state.round += 1;
         player1.reset();
         player2.reset();
+        player1.buffs.reset();
+        player2.buffs.reset();
         if (this.state.round >= 6) {
             this.room.broadcast('winner', this.checkWinner());
             this.state.gameState = 'endgame';
