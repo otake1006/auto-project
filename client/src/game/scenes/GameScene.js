@@ -84,21 +84,26 @@ export class GameScene extends Phaser.Scene {
         this.bgmMgr = new BgmManager(this);
         this.bgmMgr.play(this.scene.key, bgmMap);
 
+        // SkillLogSystemを保存して他のシステムからアクセス可能にする
+        this.skillLogSystem = new SkillLogSystem(
+            this.playerView,
+            this.enemyView,
+            this.effectMgr,
+            this.battleManager,
+            this.room,
+        );
+
+        // NetworkSystemを保存してシーン参照を設定
+        this.networkSystem = new NetworkSystem(this.room);
+        this.networkSystem.setScene(this);
+
         this.world = new World()
             .addSystem(new RenderSystem(this))
-            .addSystem(new NetworkSystem(this.room))
+            .addSystem(this.networkSystem)
             .addSystem(
                 new PlayerSyncSystem(this.player, this.playerView, this.enemy, this.enemyView),
             )
-            .addSystem(
-                new SkillLogSystem(
-                    this.playerView,
-                    this.enemyView,
-                    this.effectMgr,
-                    this.battleManager,
-                    this.room,
-                ),
-            )
+            .addSystem(this.skillLogSystem)
             .addSystem(new RoundSystem(this, this.effectMgr))
             //.addSystem(new TurnSystem(this, this.effectMgr))
             .addSystem(new ReadySystem(this.readyButton, this.room))

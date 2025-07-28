@@ -13,6 +13,7 @@ export class NetworkSystem extends System {
         super();
         this.room = room;
         this.listeners = []; // 解除用に保存
+        this.scene = null; // シーンへの参照を保存
 
         const reg = (ev, fn) => {
             const bound = fn.bind(this);
@@ -45,12 +46,12 @@ export class NetworkSystem extends System {
     }
 
     async onGiveCards(cards) {
+        // 演出が進行中の場合は待機
+        await this.waitForAnimationsToComplete();
+        
         const modal = useModalStore();
         const skill = useSkillStore();
         skill.setSelectCards(cards);
-
-        // 進行中の演出がある場合は待機
-        await this.waitForCurrentAnimations();
 
         const selected = await modal.open('skillSelect', { cards });
         if (selected) {
@@ -61,59 +62,38 @@ export class NetworkSystem extends System {
     }
 
     /**
-     * 現在進行中のアニメーションやエフェクトの完了を待つ
+     * 演出が完了するまで待機
      */
-    async waitForCurrentAnimations() {
+    async waitForAnimationsToComplete() {
         return new Promise((resolve) => {
-            // BattleManagerのAnimationQueueを直接チェック
-            const battleManager = this.getBattleManager();
-            
-            if (battleManager && battleManager.isAnimationPlaying) {
-                // BattleManagerがアニメーション中の場合は完了イベントを待つ
-                const checkInterval = setInterval(() => {
-                    if (!battleManager.isAnimationPlaying) {
-                        clearInterval(checkInterval);
-                        resolve();
-                    }
-                }, 50); // 50ms間隔でチェック
+            const checkAnimations = () => {
+                // SkillLogSystemの演出状態を確認
+                const skillLogSystem = this.getSkillLogSystem();
                 
-                // 安全のため5秒でタイムアウト
-                setTimeout(() => {
-                    clearInterval(checkInterval);
+                if (!skillLogSystem || (!skillLogSystem.isProcessing && skillLogSystem.pendingLogs.length === 0)) {
                     resolve();
-                }, 5000);
-                
-                return;
-            }
-
-            // 軽量チェック：主要なエフェクトのみ
-            const scene = phaserEvents.getScene?.() || window.currentPhaserScene;
-            if (!scene) {
-                resolve();
-                return;
-            }
-
-            // アクティブなTweenの数のみチェック
-            const activeTweens = scene.tweens.getAllTweens()
-                .filter(tween => tween.state === Phaser.Tweens.TWEEN_ACTIVE);
+                } else {
+                    // 100ms後に再チェック
+                    setTimeout(checkAnimations, 100);
+                }
+            };
             
-            if (activeTweens.length === 0) {
-                resolve();
-                return;
-            }
-
-            // 最短のTween完了時間を基準にする
-            let minWaitTime = Math.min(
-                ...activeTweens.map(tween => tween.duration - tween.elapsed)
-            );
-            
-            // 最小100ms、最大2秒に制限
-            minWaitTime = Math.max(Math.min(minWaitTime + 100, 2000), 100);
-
-            setTimeout(() => {
-                resolve();
-            }, minWaitTime);
+            checkAnimations();
         });
+    }
+
+    /**
+     * シーンを設定
+     */
+    setScene(scene) {
+        this.scene = scene;
+    }
+
+    /**
+     * SkillLogSystemインスタンスを取得
+     */
+    getSkillLogSystem() {
+        return this.scene?.skillLogSystem;
     }
 
     /**
