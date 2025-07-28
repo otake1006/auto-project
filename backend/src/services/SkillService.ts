@@ -14,14 +14,14 @@ export class SkillService {
         this.room = room;
         this.state = room.state;
     }
-    private selectSkill(sessionId: string) {
-        const player = this.state.players.get(sessionId);
-        const context = { hp: player.hp, mp: player.mp };
+    private selectSkill(playersessionId: string, enemySessionId: string) {
+        const player = this.state.players.get(playersessionId);
+        const enemy = this.state.players.get(enemySessionId);
         for (const set of player.skill) {
             if (
                 set.skill &&
-                context.mp >= getSkillCard(set.skill).energy &&
-                this.evaluateAllConditions(set.conditions, context)
+                player.mp >= getSkillCard(set.skill).energy &&
+                this.evaluateAllConditions(set.conditions, player, enemy, set.skill)
             ) {
                 return set.skill;
             }
@@ -32,8 +32,8 @@ export class SkillService {
     private selectAllSkills() {
         const skills: number[] = [];
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
-        const player1skill = this.selectSkill(sessionId1);
-        const player2skill = this.selectSkill(sessionId2);
+        const player1skill = this.selectSkill(sessionId1, sessionId2);
+        const player2skill = this.selectSkill(sessionId2, sessionId1);
         skills.push(player1skill, player2skill);
         console.log(skills);
         return skills;
@@ -42,6 +42,7 @@ export class SkillService {
     private useSkill(skillId: number, player: Player, target: Player) {
         if (!skillId) return;
         const skill = getSkillCard(skillId);
+        player.useSkills.push(skillId); //使用したスキルを記録
         player.mp -= skill.energy;
         if (skill.battleType === 'attack') {
             const damage = this.damageCalculation(skill, player.buffs, target.buffs);
@@ -96,33 +97,55 @@ export class SkillService {
             player1.resetShield();
             player2.resetShield();
             this.state.turn++;
+            player1.useSkills = [];
+            player2.useSkills = [];
             this.room.broadcast('turn', this.state.turn);
         }
     }
 
     private useDebuff(debuffskill: SkillCard) {}
 
-    private evaluateCondition(condition: Condition, context: any) {
+    private evaluateCondition(
+        condition: Condition,
+        player: Player,
+        enemy: Player,
+        skillId: number,
+    ) {
         if (!getCondition(condition)) return true;
 
         const Condition = getCondition(condition);
         Condition.value = condition.value;
         switch (Condition.conditionType) {
             case 'HP_ABOVE':
-                return context.hp >= Condition.value;
+                return player.hp >= Condition.value;
             case 'HP_BELOW':
-                return context.hp <= Condition.value;
+                return player.hp <= Condition.value;
             case 'MP_ABOVE':
-                return context.mp >= Condition.value;
+                return player.mp >= Condition.value;
             case 'MP_BELOW':
-                return context.mp <= Condition.value;
+                return player.mp <= Condition.value;
+            case 'USE_SKILL':
+                return !player.useSkills.includes(skillId);
+            case 'ENEMY_HP_ABOVE':
+                return enemy.hp >= Condition.value;
+            case 'ENEMY_HP_BELOW':
+                return enemy.hp <= Condition.value;
+            case 'ENEMY_MP_ABOVE':
+                return enemy.mp >= Condition.value;
+            case 'ENEMY_MP_BELOW':
+                return enemy.mp <= Condition.value;
             // 追加条件にも対応可能
             default:
                 return false;
         }
     }
 
-    private evaluateAllConditions(conditions: ArraySchema, context: any) {
-        return conditions.every((cond) => this.evaluateCondition(cond, context));
+    private evaluateAllConditions(
+        conditions: ArraySchema,
+        player: Player,
+        enemy: Player,
+        skillId: number,
+    ) {
+        return conditions.every((cond) => this.evaluateCondition(cond, player, enemy, skillId));
     }
 }
