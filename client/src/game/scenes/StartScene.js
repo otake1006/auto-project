@@ -143,47 +143,55 @@ export class StartScene extends Phaser.Scene {
             console.log('[StartScene] Player name already exists:', playerStore.getPlayerName());
         }
 
-        const creditsButton = new CustomSceneButton(this, this.scale.width - 100, 50, 'button_bg', {
-            onHover: (btn) => {
-                //btn.setAlpha(0.8);
-            },
-            onOut: (btn) => {
-                // btn.setAlpha(1);
-                // btn.setScale(1);
-            },
-            onClick: (btn) => {
-                this.creditsModal.show();
-            },
-            tweens: [
-                {
-                    scale: 0.95,
-                    duration: 80,
-                    ease: 'Quad.easeOut',
-                    yoyo: true,
-                },
-            ],
-        });
-
-        const tutorialButton = new CustomSceneButton(this, 100, 50, 'button_bg', {
-            onHover: (btn) => {
-                //btn.setAlpha(0.8);
-            },
-            onOut: (btn) => {
-                // btn.setAlpha(1);
-                // btn.setScale(1);
-            },
-            onClick: (btn) => {
+        // テキストベースのチュートリアルボタン（copyrightTextの上に配置）
+        const tutorialText = this.add
+            .text(this.scale.width - 10, this.scale.height - 50, 'Tutorial', {
+                fontSize: '24px',
+                fontFamily: 'DotGothic16',
+                color: '#ffffff',
+                stroke: '#000000',
+                strokeThickness: 2,
+            })
+            .setOrigin(1, 1)
+            .setInteractive({ useHandCursor: true })
+            .on('pointerover', () => {
+                tutorialText.setStyle({ color: '#ffff99' }); // ホバー時の色変更
+            })
+            .on('pointerout', () => {
+                tutorialText.setStyle({ color: '#ffffff' }); // 元の色に戻す
+            })
+            .on('pointerdown', () => {
+                tutorialText.setScale(0.95); // クリック時のスケール
+            })
+            .on('pointerup', () => {
+                tutorialText.setScale(1); // スケールを戻す
                 this.showTutorial();
-            },
-            tweens: [
-                {
-                    scale: 0.95,
-                    duration: 80,
-                    ease: 'Quad.easeOut',
-                    yoyo: true,
-                },
-            ],
-        });
+            });
+
+        // テキストベースのクレジットボタン（チュートリアルの上に配置）
+        const creditsText = this.add
+            .text(this.scale.width - 10, this.scale.height - 80, 'Credits', {
+                fontSize: '24px',
+                fontFamily: 'DotGothic16',
+                color: '#ffffff',
+                stroke: '#000000',
+                strokeThickness: 2,
+            })
+            .setOrigin(1, 1)
+            .setInteractive({ useHandCursor: true })
+            .on('pointerover', () => {
+                creditsText.setStyle({ color: '#ffff99' }); // ホバー時の色変更
+            })
+            .on('pointerout', () => {
+                creditsText.setStyle({ color: '#ffffff' }); // 元の色に戻す
+            })
+            .on('pointerdown', () => {
+                creditsText.setScale(0.95); // クリック時のスケール
+            })
+            .on('pointerup', () => {
+                creditsText.setScale(1); // スケールを戻す
+                this.creditsModal.show();
+            });
     }
 
     showTutorial() {
