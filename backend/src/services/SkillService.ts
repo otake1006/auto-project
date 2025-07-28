@@ -61,11 +61,11 @@ export class SkillService {
     }
 
     public damageCalculation(skill: SkillCard, playerBuff: buff, targetBuff: buff) {
-        return (
+        return Math.round(
             (skill.damage + playerBuff.muscular) *
-            playerBuff.brittleCheck() *
-            targetBuff.weaknesCheck() *
-            skill.Count
+                playerBuff.brittleCheck() *
+                targetBuff.weaknesCheck() *
+                skill.Count,
         );
     }
 
