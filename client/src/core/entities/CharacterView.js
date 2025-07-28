@@ -37,8 +37,9 @@ export default class CharacterView {
             count: 0,
         });
 
-        // プレイヤー名更新イベントを監視
-        phaserEvents.on('player-name-update', (data) => this.updatePlayerName(data));
+        // プレイヤー名更新イベントを監視（バインドされたメソッドを保存）
+        this.boundUpdatePlayerName = (data) => this.updatePlayerName(data);
+        phaserEvents.on('player-name-update', this.boundUpdatePlayerName);
     }
 
     updatePlayerName(data) {
@@ -60,8 +61,14 @@ export default class CharacterView {
 
         if (shouldUpdate) {
             this.character.name = data.name;
-            this.nameText.setText(`${this.character.name}: 準備中`);
-            console.log(`[CharacterView] Updated player name to: ${this.character.name}`);
+            
+            // nameTextが存在し、破棄されていない場合のみ更新
+            if (this.nameText && this.nameText.active) {
+                this.nameText.setText(`${this.character.name}: 準備中`);
+                console.log(`[CharacterView] Updated player name to: ${this.character.name}`);
+            } else {
+                console.warn('[CharacterView] nameText is null or destroyed, cannot update player name');
+            }
         }
     }
 
@@ -73,27 +80,55 @@ export default class CharacterView {
 
     setReady(isReady) {
         const displayName = this.character.name || 'プレイヤー';
-        this.nameText.setText(`${displayName}: ${isReady ? '準備完了' : '準備中'}`);
+        
+        // nameTextが存在し、破棄されていない場合のみ更新
+        if (this.nameText && this.nameText.active) {
+            this.nameText.setText(`${displayName}: ${isReady ? '準備完了' : '準備中'}`);
+        } else {
+            console.warn('[CharacterView] nameText is null or destroyed, cannot set ready status');
+        }
     }
 
     updateBars() {
-        this.hpBar.update(this.character.hp.current, 100);
-        this.mpBar.update(this.character.mp.current, 50);
+        if (this.hpBar && this.hpBar.scene) {
+            this.hpBar.update(this.character.hp.current, 100);
+        }
+        if (this.mpBar && this.mpBar.scene) {
+            this.mpBar.update(this.character.mp.current, 50);
+        }
     }
 
     updateCount(count) {
-        this.armorIcon.updateCount(count);
+        if (this.armorIcon && this.armorIcon.scene) {
+            this.armorIcon.updateCount(count);
+        }
     }
 
     destroy() {
         // spriteはCharacterクラスで管理されているため、ここでは削除しない
         // CharacterクラスのdestroyはGameSceneなどで呼び出される
-        this.hpBar.destroy();
-        this.mpBar.destroy();
-        this.skillLog.destroy();
+        
+        // UI要素を安全に削除
+        if (this.hpBar && this.hpBar.destroy) {
+            this.hpBar.destroy();
+        }
+        if (this.mpBar && this.mpBar.destroy) {
+            this.mpBar.destroy();
+        }
+        if (this.skillLog && this.skillLog.destroy) {
+            this.skillLog.destroy();
+        }
+        if (this.nameText && this.nameText.destroy) {
+            this.nameText.destroy();
+        }
+        if (this.armorIcon && this.armorIcon.destroy) {
+            this.armorIcon.destroy();
+        }
 
         // イベントリスナーを削除
-        phaserEvents.off('player-name-update', this.updatePlayerName);
+        if (this.boundUpdatePlayerName) {
+            phaserEvents.off('player-name-update', this.boundUpdatePlayerName);
+        }
     }
 
     getPosition() {
