@@ -44,17 +44,13 @@ export class SkillService {
         const skill = getSkillCard(skillId);
         player.mp -= skill.energy;
         if (skill.battleType === 'attack') {
-            const damage =
-                (skill.damage + player.buffs.muscular) *
-                player.buffs.brittleCheck() *
-                target.buffs.weaknesCheck() *
-                skill.Count;
+            const damage = this.damageCalculation(skill, player.buffs, target.buffs);
             const HPdamage = Math.max(0, damage - target.shield);
             target.shield = Math.max(0, target.shield - damage);
             target.hp = Math.max(0, target.hp - HPdamage);
         }
         if (skill.battleType === 'defense') {
-            const shield = skill.damage * skill.Count;
+            const shield = (skill.damage + player.buffs.guard) * skill.Count;
             player.shield = Math.min(player.maxshield, player.shield + shield);
         }
         if (skill.battleType === 'effect') {
@@ -64,7 +60,14 @@ export class SkillService {
         }
     }
 
-    public damageCalculation(skill: SkillCard, playerBuff: buff, targetBuff: buff) {}
+    public damageCalculation(skill: SkillCard, playerBuff: buff, targetBuff: buff) {
+        return (
+            (skill.damage + playerBuff.muscular) *
+            playerBuff.brittleCheck() *
+            targetBuff.weaknesCheck() *
+            skill.Count
+        );
+    }
 
     public useAllSkill() {
         const skills = this.selectAllSkills();
