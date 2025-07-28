@@ -124,13 +124,13 @@ export class StartScene extends Phaser.Scene {
 
     async checkFirstTimePlayerName() {
         const playerStore = usePlayerStore();
-        
+
         // プレイヤー名が設定されていない場合のみモーダルを表示
         if (!playerStore.hasPlayerName) {
             console.log('[StartScene] First time launch - requesting player name');
             const modal = useModalStore();
             const playerName = await modal.open('playerNameInput');
-            
+
             if (playerName) {
                 playerStore.setPlayerName(playerName);
                 console.log('[StartScene] Player name set:', playerName);
@@ -142,7 +142,6 @@ export class StartScene extends Phaser.Scene {
         } else {
             console.log('[StartScene] Player name already exists:', playerStore.getPlayerName());
         }
-    }
 
         const creditsButton = new CustomSceneButton(this, this.scale.width - 100, 50, 'button_bg', {
             onHover: (btn) => {

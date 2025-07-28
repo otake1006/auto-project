@@ -47,23 +47,23 @@ export class MatchScene extends Phaser.Scene {
             indicator.markDone(0); // 接続成功
 
             const joinCheck = indicator.addStatus('Joining room...');
-            this.room = await networkManager.joinOrCreateRoom('my_room');
+            const room = await networkManager.joinOrCreateRoom('my_room');
             indicator.markDone(1); // ルーム参加成功
             console.log('[MatchScene] Joined room:', room.sessionId);
-            
+
             // プレイヤー名をサーバーに送信
             const playerStore = usePlayerStore();
             const playerName = playerStore.getPlayerName();
             room.send('setPlayerName', { name: playerName });
             console.log('[MatchScene] Player name sent:', playerName);
-            console.log('[MatchScene] Joined room:', this.room.sessionId);
+            console.log('[MatchScene] Joined room:', room.sessionId);
             const waitCheck = indicator.addStatus('Waiting for opponent...');
 
-            this.room.onMessage('matching', () => {
+            room.onMessage('matching', () => {
                 indicator.markDone(2); // 相手見つかった
                 this.scene.launch('HudScene');
                 this.scene.launch('BackgroundScene');
-                this.scene.start('GameScene', { room: this.room });
+                this.scene.start('GameScene', { room });
             });
         } catch (error) {
             console.error('[MatchScene] Connection failed:', error);
