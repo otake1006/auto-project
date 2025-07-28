@@ -1,10 +1,6 @@
 import { networkManager } from '@/core/NetworkManager';
 import { StatusIndicator } from '@/game//ui/StatusIndicator';
 import { usePlayerStore } from '@/ui/stores/playerStore';
-import { HideShowMixin } from '@/game/ui/button/HideShowMixin';
-import { ImageButton } from '@/game/ui/button/ImageButton';
-
-class CustomSceneButton extends HideShowMixin(ImageButton) {}
 
 export class MatchScene extends Phaser.Scene {
     constructor() {
@@ -19,27 +15,30 @@ export class MatchScene extends Phaser.Scene {
 
         const indicator = new StatusIndicator(this, centerX, centerY);
 
-        // キャンセルボタンを追加
-        const cancelButton = new CustomSceneButton(this, centerX, centerY + 200, 'button_bg', {
-            onHover: (btn) => {
-                // btn.setAlpha(0.6);
-            },
-            onOut: (btn) => {
-                // btn.setAlpha(1);
-                // btn.setScale(1);
-            },
-            onClick: (btn) => {
+        // テキストベースのキャンセルボタン（左下に配置）
+        const cancelText = this.add
+            .text(20, this.scale.height - 20, 'Cancel', {
+                fontSize: '32px',
+                fontFamily: 'DotGothic16',
+                color: '#ffffff',
+                stroke: '#000000',
+                strokeThickness: 3,
+            })
+            .setOrigin(0, 1)
+            .setInteractive({ useHandCursor: true })
+            .on('pointerover', () => {
+                cancelText.setStyle({ color: '#ff9999' }); // ホバー時の色変更（薄い赤）
+            })
+            .on('pointerout', () => {
+                cancelText.setStyle({ color: '#ffffff' }); // 元の色に戻す
+            })
+            .on('pointerdown', () => {
+                cancelText.setScale(0.95); // クリック時のスケール
+            })
+            .on('pointerup', () => {
+                cancelText.setScale(1); // スケールを戻す
                 this.cancelMatching();
-            },
-            tweens: [
-                {
-                    scale: 0.95,
-                    duration: 80,
-                    ease: 'Quad.easeOut',
-                    yoyo: true,
-                },
-            ],
-        });
+            });
 
         const connectCheck = indicator.addStatus('Connecting to server...');
         try {
