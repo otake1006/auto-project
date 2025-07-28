@@ -50,6 +50,12 @@ export class buff extends Schema {
             case 'poison':
                 target.buffs.poison += effect.power;
                 break;
+            case 'playerReset':
+                player.buffs.reset();
+                break;
+            case 'enemyReset':
+                enemy.buffs.reset();
+                break;
         }
     }
 }
