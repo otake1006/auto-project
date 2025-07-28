@@ -1,5 +1,12 @@
 import { Schema, type, ArraySchema } from '@colyseus/schema';
-export type Type = 'muscular' | 'guard' | 'brittle' | 'weaknes' | 'poison';
+export type Type =
+    | 'muscular'
+    | 'guard'
+    | 'brittle'
+    | 'weaknes'
+    | 'poison'
+    | 'playerReset'
+    | 'enemyReset';
 export type Target = 'self' | 'enemy';
 
 export class effectCard extends Schema {
