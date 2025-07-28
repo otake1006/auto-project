@@ -1,4 +1,5 @@
 import { Schema, type, ArraySchema } from '@colyseus/schema';
+import { effectCard } from './effects/effect';
 export type BattleType = 'attack' | 'defense' | 'effect';
 
 export class SkillCard extends Schema {
@@ -12,6 +13,7 @@ export class SkillCard extends Schema {
     @type('number') Count: number;
     @type('string') imgSrc: string;
     @type('string') ability?: string;
+    @type([effectCard]) effects: effectCard[] = [];
 
     constructor(init?: Partial<SkillCard>) {
         super();
@@ -26,6 +28,7 @@ export class SkillCard extends Schema {
             this.Count = init.Count ?? 0;
             this.imgSrc = init.imgSrc ?? '';
             this.ability = init.ability;
+            this.effects = init.effects ?? [];
         }
     }
 }
@@ -209,5 +212,53 @@ export const skillCards: SkillCard[] = [
         battleType: 'attack',
         Count: 1,
         imgSrc: '/fc290.png',
+    }),
+    new SkillCard({
+        id: 13,
+        name: '筋肉増強',
+        energy: 10,
+        description: '筋トレして強くなる！',
+        ability: '筋肉 5',
+        damage: 0,
+        battleType: 'effect',
+        Count: 1,
+        imgSrc: '/fc290.png',
+        effects: [new effectCard({ type: 'muscular', power: 5, target: 'self' })],
+    }),
+    new SkillCard({
+        id: 14,
+        name: 'ボロボロ',
+        energy: 5,
+        description: '相手の攻撃力減少',
+        ability: '脆弱 5',
+        damage: 0,
+        battleType: 'effect',
+        Count: 1,
+        imgSrc: '/fc290.png',
+        effects: [new effectCard({ type: 'brittle', power: 1, target: 'enemy' })],
+    }),
+    new SkillCard({
+        id: 15,
+        name: '弱体化',
+        energy: 10,
+        description: '受けるダメージが1.5倍になる！',
+        ability: '弱体 5',
+        damage: 0,
+        battleType: 'effect',
+        Count: 1,
+        imgSrc: '/fc290.png',
+        effects: [new effectCard({ type: 'weaknes', power: 1, target: 'enemy' })],
+    }),
+    new SkillCard({
+        id: 16,
+        name: '鎧をまとう',
+        energy: 10,
+        description: 'まもりを固める！',
+        ability: 'ガード値 5',
+        damage: 0,
+        battleType: 'effect',
+        Count: 1,
+        imgSrc: '/fc290.png',
+        effects: [new effectCard({ type: 'guard', power: 5, target: 'self' })],
     }),
 ];
