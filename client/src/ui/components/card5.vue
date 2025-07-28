@@ -29,6 +29,28 @@ function onDragEnd(evt, targetIndex) {
     }
 }
 
+function onConditionDragEnd(evt, skillIndex) {
+    const mouseX = evt.originalEvent.clientX;
+    const mouseY = evt.originalEvent.clientY;
+    const dropRect = dropArea.value.getBoundingClientRect();
+    const isOutside =
+        mouseX < dropRect.left ||
+        mouseX > dropRect.right ||
+        mouseY < dropRect.top ||
+        mouseY > dropRect.bottom;
+
+    if (isOutside) {
+        const draggedElement = evt.item.__draggable_context.element;
+        if (skillIndex !== undefined && draggedElement) {
+            const conditions = skillStore.skillSets[skillIndex].conditions;
+            const elementIndex = conditions.findIndex(condition => condition.id === draggedElement.id);
+            if (elementIndex !== -1) {
+                conditions.splice(elementIndex, 1);
+            }
+        }
+    }
+}
+
 function canMove(evt) {
     console.log('canMove called', evt);
     const draggedElement = evt.relatedContext.element;
@@ -86,8 +108,8 @@ async function onDropped(data, index) {
                     </draggable>
 
                     <draggable v-model="element.conditions" :ghost-class="'ghost'" :group="{ name: 'condition' }"
-                        data-group="condition" :data-index="index" @add="(e) => onDropped(e, index)" item-key="id"
-                        class="flex gap-2" :move="canMove">
+                        data-group="condition" :data-index="index" @add="(e) => onDropped(e, index)"
+                        @end="(e) => onConditionDragEnd(e, index)" item-key="id" class="flex gap-2">
                         <template #item="{ element: condition }">
                             <card3 :cards="condition"></card3>
                         </template>
