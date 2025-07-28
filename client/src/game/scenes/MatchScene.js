@@ -81,7 +81,7 @@ export class MatchScene extends Phaser.Scene {
         }
 
         // ネットワークマネージャーを切断
-        // networkManager.disconnect();
+        networkManager.leave();
 
         // スタート画面に戻る
         this.scene.start('StartScene');
