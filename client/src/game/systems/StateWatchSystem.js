@@ -31,11 +31,12 @@ export class StateWatchSystem extends System {
                     }
                     previousReady = player.ready;
 
-                    phaserEvents.emit(isMyself ? 'player-upd' : 'enemy-upd', {
+                    phaserEvents.emit('enemy-upd', {
                         hp: player.hp,
                         mp: player.mp,
                         ready: player.ready,
                         shield: player.shield,
+                        buffs: player.buffs,
                     });
                 });
             } else {
@@ -46,6 +47,7 @@ export class StateWatchSystem extends System {
                         mp: player.mp,
                         ready: player.ready,
                         shield: player.shield,
+                        buffs: player.buffs,
                     });
                 });
             }

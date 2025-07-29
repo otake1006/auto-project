@@ -114,8 +114,38 @@ export class GameScene extends Phaser.Scene {
 
         networkManager.send('requestPlayer');
 
+        // Expose for testing (development only)
+        if (typeof window !== 'undefined') {
+            window.testBuffs = (buffs) => this.testBuffDisplay(buffs);
+        }
+
         /* 4. クリーンアップ ------------------------------------------------ */
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.shutdown());
+    }
+
+    // テスト用メソッド - バフ表示のテスト
+    testBuffDisplay(buffs = null) {
+        const testBuffs = buffs || {
+            power: 5,
+            defense: 3,
+            speed: 2,
+            heal: 1,
+            fire: 4,
+            poison: -2,
+            shield: 8
+        };
+        
+        if (this.playerView && this.playerView.updateBuffs) {
+            this.playerView.updateBuffs(testBuffs);
+        }
+        
+        if (this.enemyView && this.enemyView.updateBuffs) {
+            this.enemyView.updateBuffs({
+                curse: -3,
+                ice: 2,
+                magic: 4
+            });
+        }
     }
 
     shutdown() {

@@ -2,6 +2,7 @@
 import StatusBar from '@/game/ui/StatusBar.js';
 import SkillLog from '@/game/ui/SkillLog.js'; // 追加
 import { StatusIcon } from '@/game/ui/StatusIcon';
+import { BuffDisplay } from '@/game/ui/BuffDisplay';
 import { phaserEvents } from '@/events/EventCenter';
 
 export default class CharacterView {
@@ -36,6 +37,9 @@ export default class CharacterView {
             key: 'shield',
             count: 0,
         });
+
+        // バフ表示を追加（プレイヤーの横に配置）
+        this.buffDisplay = new BuffDisplay(scene, x, y, isRight);
 
         // プレイヤー名更新イベントを監視（バインドされたメソッドを保存）
         this.boundUpdatePlayerName = (data) => this.updatePlayerName(data);
@@ -104,6 +108,12 @@ export default class CharacterView {
         }
     }
 
+    updateBuffs(buffs) {
+        if (this.buffDisplay && this.buffDisplay.scene) {
+            this.buffDisplay.updateBuffs(buffs);
+        }
+    }
+
     destroy() {
         // spriteはCharacterクラスで管理されているため、ここでは削除しない
         // CharacterクラスのdestroyはGameSceneなどで呼び出される
@@ -123,6 +133,9 @@ export default class CharacterView {
         }
         if (this.armorIcon && this.armorIcon.destroy) {
             this.armorIcon.destroy();
+        }
+        if (this.buffDisplay && this.buffDisplay.destroy) {
+            this.buffDisplay.destroy();
         }
 
         // イベントリスナーを削除
