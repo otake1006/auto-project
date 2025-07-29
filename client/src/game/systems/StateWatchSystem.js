@@ -24,7 +24,7 @@ export class StateWatchSystem extends System {
                 $(player).onChange(() => {
                     // 相手が準備完了した時に通知音を再生
                     if (!isMyself && !previousReady && player.ready) {
-                        sm.play('assets/sounds/click.mp3');
+                        sm.play('click.mp3');
                         console.log(
                             '[StateWatchSystem] Enemy is ready - playing notification sound',
                         );
