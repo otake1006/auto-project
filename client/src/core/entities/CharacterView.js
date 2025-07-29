@@ -41,6 +41,9 @@ export default class CharacterView {
         // バフ表示を追加（プレイヤーの横に配置）
         this.buffDisplay = new BuffDisplay(scene, x, y, isRight);
 
+        // 初期状態でステータスバーを更新
+        this.updateBars();
+
         // プレイヤー名更新イベントを監視（バインドされたメソッドを保存）
         this.boundUpdatePlayerName = (data) => this.updatePlayerName(data);
         phaserEvents.on('player-name-update', this.boundUpdatePlayerName);
@@ -95,10 +98,10 @@ export default class CharacterView {
 
     updateBars() {
         if (this.hpBar && this.hpBar.scene) {
-            this.hpBar.update(this.character.hp.current, 100);
+            this.hpBar.update(this.character.hp.current, this.character.hp.max);
         }
         if (this.mpBar && this.mpBar.scene) {
-            this.mpBar.update(this.character.mp.current, 50);
+            this.mpBar.update(this.character.mp.current, this.character.mp.max);
         }
     }
 
