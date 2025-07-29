@@ -5,9 +5,9 @@ export class BuffDisplay extends Phaser.GameObjects.Container {
         this.scene = scene;
         this.isRight = isRight;
         this.buffItems = {};
-        this.maxBuffsPerColumn = 4; // 縦に最大6個まで表示（画面からはみ出ないように）
+        this.maxBuffsPerRow = 10; // 横に最大10個まで表示（一行のみ）
         this.buffSize = 32;
-        this.buffSpacing = 42; // 間隔も調整
+        this.buffSpacing = 32; // 一行表示用に間隔を狭く
         this.textOffset = 12;
 
         // バフアイコンのマッピング（assets/imagesのPNGファイルを使用）
@@ -54,16 +54,18 @@ export class BuffDisplay extends Phaser.GameObjects.Container {
     }
 
     createBuffItem(buffName, value, index) {
-        const col = Math.floor(index / this.maxBuffsPerColumn);
-        const row = index % this.maxBuffsPerColumn;
+        // 一行のみ表示、maxBuffsPerRowを超えたバフは表示しない
+        if (index >= this.maxBuffsPerRow) {
+            return;
+        }
 
-        // 右側キャラクターの場合は右側に、左側キャラクターの場合は左側に表示
-        // 複数列の場合は外側に向かって拡張
-        const baseOffsetX = this.isRight ? 95 : -95;
-        const offsetX = this.isRight
-            ? baseOffsetX + col * this.buffSpacing // 右キャラは右に拡張
-            : baseOffsetX - col * this.buffSpacing; // 左キャラは左に拡張
-        const offsetY = -50 + row * this.buffSpacing; // 上から下に配置
+        // ステータスバーの下に横一列で表示（プレイヤーを中心に左右に密着して広がる）
+        const isLeft = index % 2 === 0; // 偶数番目は左側
+        const position = Math.floor(index / 2); // 中心からの順番
+        const offsetX = isLeft
+            ? -(position + 0.5) * this.buffSpacing
+            : (position + 0.5) * this.buffSpacing;
+        const offsetY = 115; // より下の位置に配置
 
         const itemContainer = this.scene.add.container(offsetX, offsetY);
 
