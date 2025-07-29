@@ -2,7 +2,7 @@ import { BgmManager } from './BgmManager';
 import { ButtonClickSound } from './sounds/ButtonClickSound';
 
 export class SoundEventManager {
-    constructor(basePath = '/') {
+    constructor(basePath = '/assets/sounds/') {
         this.basePath = basePath;
         this.cache = {};
     }
