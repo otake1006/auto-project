@@ -1,8 +1,10 @@
 // stores/skillStore.js
 import { defineStore } from 'pinia';
 import { ref, computed, reactive } from 'vue';
+import { useGameStore } from './gameStore';
 
 export const useSkillStore = defineStore('skill', () => {
+    const gameStore = useGameStore();
     const tabs = ['スキル', '条件', 'レリック'];
 
     const tabTypeMap = {
@@ -51,6 +53,11 @@ export const useSkillStore = defineStore('skill', () => {
     }
 
     function handleSkillAdd(event, index) {
+        // ゲーム状態をチェック - カード編集不可の場合はスキル追加も無効にする
+        if (!gameStore.canEditCards) {
+            return;
+        }
+        
         // 追加されたスキルを取得
         const addedSkill =
             skillSets.value[index].skill ||
@@ -75,6 +82,11 @@ export const useSkillStore = defineStore('skill', () => {
     }
 
     function handleSkillRemove(index) {
+        // ゲーム状態をチェック - カード編集不可の場合はスキル削除も無効にする
+        if (!gameStore.canEditCards) {
+            return;
+        }
+        
         skillSets.value.splice(index, 1);
     }
 
