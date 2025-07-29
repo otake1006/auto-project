@@ -4,8 +4,10 @@ import card3 from './card.vue';
 import draggable from 'vuedraggable';
 import { useSkillStore } from '@/ui/stores/skillStore';
 import { useModalStore } from '@/ui/stores/modalStore';
+import { useGameStore } from '@/ui/stores/gameStore';
 
 const skillStore = useSkillStore();
+const gameStore = useGameStore();
 const props = defineProps({
     parentList: Object,
 });
@@ -13,6 +15,11 @@ const parent = ref(props.parentList);
 const dropArea = ref(null);
 
 function onDragEnd(evt, targetIndex) {
+    // ゲーム状態をチェック - カード編集不可の場合は削除も無効にする
+    if (!gameStore.canEditCards) {
+        return;
+    }
+
     const mouseX = evt.originalEvent.clientX;
     const mouseY = evt.originalEvent.clientY;
     const dropRect = dropArea.value.getBoundingClientRect();
@@ -30,6 +37,11 @@ function onDragEnd(evt, targetIndex) {
 }
 
 function onConditionDragEnd(evt, skillIndex) {
+    // ゲーム状態をチェック - カード編集不可の場合は削除も無効にする
+    if (!gameStore.canEditCards) {
+        return;
+    }
+
     const mouseX = evt.originalEvent.clientX;
     const mouseY = evt.originalEvent.clientY;
     const dropRect = dropArea.value.getBoundingClientRect();
@@ -53,13 +65,36 @@ function onConditionDragEnd(evt, skillIndex) {
 
 function canMove(evt) {
     console.log('canMove called', evt);
+
+    // ゲーム状態をチェック - カード編集不可の場合はドラッグを無効にする
+    if (!gameStore.canEditCards) {
+        return false;
+    }
+
     const draggedElement = evt.relatedContext.element;
     const contextElement = evt.draggedContext.element;
 
     return draggedElement.skill !== null && contextElement.skill !== null;
 }
 
+function canMoveCondition(evt) {
+    console.log('canMoveCondition called', evt);
+
+    // ゲーム状態をチェック - カード編集不可の場合はドラッグを無効にする
+    if (!gameStore.canEditCards) {
+        return false;
+    }
+
+    // conditionカードの移動制限ロジック（必要に応じて追加）
+    return true;
+}
+
 async function onDropped(data, index) {
+    // ゲーム状態をチェック - カード編集不可の場合はドロップも無効にする
+    if (!gameStore.canEditCards) {
+        return;
+    }
+
     const modalStore = useModalStore();
     const card = data.item.__draggable_context.element;
     const groupedCards = skillStore.getItemsByGroupId(card.groupId) || [card];
@@ -107,9 +142,10 @@ async function onDropped(data, index) {
                         </template>
                     </draggable>
 
-                    <draggable v-model="element.conditions" :ghost-class="'ghost'" :group="{ name: 'condition' }"
-                        data-group="condition" :data-index="index" @add="(e) => onDropped(e, index)"
-                        @end="(e) => onConditionDragEnd(e, index)" item-key="id" class="flex gap-2">
+                    <draggable v-model="element.conditions" :ghost-class="'ghost'"
+                        :group="{ name: 'condition', pull: false }" data-group="condition" :data-index="index"
+                        @add="(e) => onDropped(e, index)" @end="(e) => onConditionDragEnd(e, index)" item-key="id"
+                        class="flex gap-2" :move="canMoveCondition">
                         <template #item="{ element: condition }">
                             <card3 :cards="condition"></card3>
                         </template>
