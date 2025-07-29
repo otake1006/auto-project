@@ -5,7 +5,22 @@
         { "key": "shield", "url": "assets/images/fc2151.png" },
         { "key": "button_bg", "url": "assets/images/batlestartbottan.png" },
         { "key": "check-icon", "url": "assets/images/check-icon.png" },
-        { "key": "ready-button", "url": "assets/images/ready-button.png" }
+        { "key": "ready-button", "url": "assets/images/ready-button.png" },
+        { "key": "fc290", "url": "assets/images/fc290.png" },
+        { "key": "fc2151", "url": "assets/images/fc2151.png" },
+        { "key": "fc1026", "url": "assets/images/fc1026.png" },
+        { "key": "fc1107", "url": "assets/images/fc1107.png" },
+        { "key": "fc868", "url": "assets/images/fc868.png" },
+        { "key": "fc1025", "url": "assets/images/fc1025.png" },
+        { "key": "fc1098", "url": "assets/images/fc1098.png" },
+        { "key": "fc729", "url": "assets/images/fc729.png" },
+        { "key": "fc5", "url": "assets/images/fc5.png" },
+        { "key": "fc2114", "url": "assets/images/fc2114.png" },
+        { "key": "fc2151", "url": "assets/images/fc2151.png" },
+        { "key": "fc1699", "url": "assets/images/fc1699.png" },
+        { "key": "fc836", "url": "assets/images/fc836.png" },
+        { "key": "fc998", "url": "assets/images/fc998.png" },
+        { "key": "fc783", "url": "assets/images/fc783.png" }
     ],
     "spritesheets": [
         {

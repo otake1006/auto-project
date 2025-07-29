@@ -23,6 +23,11 @@ export class PlayerSyncSystem extends System {
         view.setReady?.(data.ready);
         view.updateBars();
         view.updateCount(data.shield);
+
+        // バフ情報を更新
+        if (data.buffs && view.updateBuffs) {
+            view.updateBuffs(data.buffs);
+        }
     }
 
     destroy() {
