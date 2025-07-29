@@ -73,7 +73,7 @@ export class GameScene extends Phaser.Scene {
                 defaultKey: 'ready-button',
                 hoverImageKey: 'ready-button',
                 downImageKey: 'ready-button',
-                sounds: { click: 'assets/sounds/click.mp3' },
+                sounds: { click: 'click.mp3' },
                 tweens: [bounceTween],
             },
         );
