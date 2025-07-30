@@ -222,7 +222,7 @@ export const skillCards: SkillCard[] = [
         damage: 0,
         battleType: 'effect',
         Count: 1,
-        imgSrc: '/fc1198.png',
+        imgSrc: '/fc657.png',
         effects: [new effectCard({ type: 'muscular', power: 5, target: 'self' })],
     }),
     new SkillCard({
