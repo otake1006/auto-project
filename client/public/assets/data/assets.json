@@ -43,9 +43,15 @@
         },
         {
             "key": "player",
-            "url": "assets/sheets/Slime_Blue.png",
-            "frameWidth": 32,
-            "frameHeight": 32
+            "url": "assets/sheets/player.png",
+            "frameWidth": 69,
+            "frameHeight": 44
+        },
+        {
+            "key": "enemy",
+            "url": "assets/sheets/enemy.png",
+            "frameWidth": 50,
+            "frameHeight": 37
         },
         {
             "key": "matching",

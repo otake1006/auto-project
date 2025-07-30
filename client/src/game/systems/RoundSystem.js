@@ -17,6 +17,15 @@ export class RoundSystem extends System {
     _show(round) {
         this.fx.shakeCamera();
         this.fx.flashColor();
+        
+        // 新しいラウンド開始時にアニメーションをアイドルにリセット
+        if (this.scene.player) {
+            this.scene.player.playIdle();
+        }
+        if (this.scene.enemy) {
+            this.scene.enemy.playIdle();
+        }
+        
         new WipeAppearDisappearText(
             this.scene,
             this.scene.centerX,

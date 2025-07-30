@@ -1,6 +1,6 @@
 // systems/PlayerSyncSystem.js
 import { System } from '@/core/System.js';
-import { phaserEvents, Event } from '@/events/EventCenter';
+import { phaserEvents } from '@/events/EventCenter';
 
 export class PlayerSyncSystem extends System {
     constructor(playerEnt, playerView, enemyEnt, enemyView) {
@@ -19,6 +19,7 @@ export class PlayerSyncSystem extends System {
     update() {}
 
     _apply([char, view], data) {
+        const previousHp = char.hp.current;
         char.updatePlayer(data);
         view.setReady?.(data.ready);
         view.updateBars();
@@ -27,6 +28,11 @@ export class PlayerSyncSystem extends System {
         // バフ情報を更新
         if (data.buffs && view.updateBuffs) {
             view.updateBuffs(data.buffs);
+        }
+
+        // HPが0になった場合、死亡アニメーションを再生
+        if (previousHp > 0 && data.hp === 0) {
+            char.playDeathAnimation();
         }
     }
 
