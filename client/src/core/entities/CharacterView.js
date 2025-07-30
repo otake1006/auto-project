@@ -50,20 +50,21 @@ export default class CharacterView {
     }
 
     updatePlayerName(data) {
-        // roomを取得（GameSceneから、またはnetworkManagerから）
-        const room = this.scene.room || this.scene.networkManager?.getRoom();
+        // networkManagerからsessionIdを取得
+        const networkManager = this.scene.networkManager;
+        const mySessionId = networkManager?.getSessionId();
 
-        if (!room) {
-            console.warn('[CharacterView] Room not available for player name update');
+        if (!mySessionId) {
+            console.warn('[CharacterView] SessionId not available for player name update');
             return;
         }
 
         // 自分のキャラクターか敵のキャラクターかを判定
-        const isMyself = data.sessionId === room.sessionId;
+        const isMyself = data.sessionId === mySessionId;
         const shouldUpdate = (isMyself && !this.isRight) || (!isMyself && this.isRight);
 
         console.log(
-            `[CharacterView] Player name update - SessionId: ${data.sessionId}, MySessionId: ${room.sessionId}, IsMyself: ${isMyself}, IsRight: ${this.isRight}, ShouldUpdate: ${shouldUpdate}, Name: ${data.name}`,
+            `[CharacterView] Player name update - SessionId: ${data.sessionId}, MySessionId: ${mySessionId}, IsMyself: ${isMyself}, IsRight: ${this.isRight}, ShouldUpdate: ${shouldUpdate}, Name: ${data.name}`,
         );
 
         if (shouldUpdate) {
