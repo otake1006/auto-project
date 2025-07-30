@@ -19,6 +19,7 @@ export class GameLogic {
         this.state.gameState = 'ingame';
         this.room.broadcast('turn', this.state.turn);
         this.room.broadcast('round', this.state.round);
+        //ラウンド開始時のレリック発動
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
         while (true) {
             if (player1.hp <= 0 || player2.hp <= 0 || this.state.turn > 10) {
@@ -46,6 +47,7 @@ export class GameLogic {
             this.room.disconnect();
             return;
         }
+        //ラウンド終了時のレリック発動
         this.state.gameState = 'ready';
         this.room.broadcast('showReady');
         player1.ready = false;
