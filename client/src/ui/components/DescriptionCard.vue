@@ -1,12 +1,12 @@
 <template>
     <div
         class="overflow-y-auto flex-shrink-0  w-110 flex flex-row items-start space-x-4 border-2 bg-neutral-700 text-white p-2">
-        <!-- 左側: ジャンルとエナジーを縦に並べる -->
+        <!-- 左側: ジャンルとコストを縦に並べる -->
         <div class="flex flex-col">
-            <!-- <div v-show="card.genre">ジャンル: {{ card.genre }}</div>
-            <div v-show="card.energy">エナジー:
+            <div v-show="card.genre">ジャンル: {{ card.genre }}</div>
+            <div v-show="card.energy">コスト:
                 <span class="text-sky-400">{{ card.energy }}</span>
-            </div> -->
+            </div>
 
         </div>
 
