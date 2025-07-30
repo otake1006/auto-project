@@ -23,7 +23,7 @@ export default class Character extends Phaser.GameObjects.Sprite {
         this.mp = new Stat('MP', maxMp);
 
         this.setScale(3);
-        this.setFlipX(!flipX);
+        this.setFlipX(flipX);
         this.initAnimations();
         this.skillSets = skillSets;
 
@@ -40,19 +40,31 @@ export default class Character extends Phaser.GameObjects.Sprite {
      * アイドルアニメーションを再生
      */
     playIdle() {
-        this.play('idle');
+        this.play(`idle_${this.texture.key}`);
     }
 
     /**
      * 攻撃アニメーションを再生し、完了後にアイドルに戻る
      */
     playAttackAnimation() {
-        this.play('attack');
+        this.play(`attack_${this.texture.key}`);
 
         // アニメーション完了後にidleアニメーションに戻す
         this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.playIdle();
         });
+    }
+
+    /**
+     * 死亡アニメーションを再生し、完了後にコールバックを実行
+     * @param {Function} onComplete - アニメーション完了時のコールバック
+     */
+    playDeathAnimation(onComplete) {
+        this.play(`death_${this.texture.key}`);
+
+        if (onComplete) {
+            this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, onComplete);
+        }
     }
 
     /**

@@ -25,7 +25,7 @@ import { useModalStore } from '@/ui/stores/modalStore';
 import { StateWatchSystem } from '@/game/systems/StateWatchSystem';
 import { ReadyButton } from '@/game/ui/button/ReadyButton';
 import { bounceTween } from '@/game/ui/animations/bounceTween.js';
-import { phaserEvents, Event } from '@/events/EventCenter';
+import { phaserEvents } from '@/events/EventCenter';
 import { InputLockSystem } from '@/game/systems/InputLockSystem';
 
 const PLAYER_CFG = { hp: 100, mp: 50, key: 'player' };
@@ -132,18 +132,18 @@ export class GameScene extends Phaser.Scene {
             heal: 1,
             fire: 4,
             poison: -2,
-            shield: 8
+            shield: 8,
         };
-        
+
         if (this.playerView && this.playerView.updateBuffs) {
             this.playerView.updateBuffs(testBuffs);
         }
-        
+
         if (this.enemyView && this.enemyView.updateBuffs) {
             this.enemyView.updateBuffs({
                 curse: -3,
                 ice: 2,
-                magic: 4
+                magic: 4,
             });
         }
     }
@@ -186,7 +186,7 @@ export class GameScene extends Phaser.Scene {
             this,
             position.x,
             position.y,
-            PLAYER_CONFIG.spriteKey,
+            id,
             id,
             PLAYER_CONFIG.hp,
             PLAYER_CONFIG.mp,
