@@ -3,7 +3,7 @@ import { Skill } from './Skill';
 import { buff } from './buff';
 import { GameConfig } from '../../config/game';
 import { SkillCard } from '../../data/skill';
-import { RelicCard } from '../../data/Relics';
+import { RelicCard, RelicCards } from '../../data/Relics';
 
 export class Player extends Schema {
     @type('string') name: string = 'player';
@@ -19,7 +19,7 @@ export class Player extends Schema {
     @type(['number']) useSkills: number[] = [];
     @type([Skill]) skill = new ArraySchema<Skill>(); //作戦ボード内のスキル
     @type(buff) buffs = new buff();
-    @type([RelicCard]) relics: RelicCard[] = [];
+    @type([RelicCard]) relics: RelicCard[] = RelicCards;
 
     reset() {
         this.hp = this.maxhp;
