@@ -1,7 +1,24 @@
 <template>
-    <ModalBase :visible="modalStore.isOpen" @close="modalStore.close()">
-        <component :is="modalComponent" v-if="modalComponent" v-bind="modalStore.modalPayload" @confirm="onConfirm"
-            @cancel="modalStore.close()" />
+    <!-- PlayerNameInputModalは直接表示（透明背景のため） -->
+    <PlayerNameInputModal 
+        v-if="modalStore.isOpen && modalStore.modalType === 'playerNameInput'"
+        v-bind="modalStore.modalPayload" 
+        @confirm="onConfirm"
+        @cancel="modalStore.close()" 
+    />
+    
+    <!-- その他のモーダルはModalBaseを使用 -->
+    <ModalBase 
+        v-else-if="modalStore.isOpen && modalComponent"
+        :visible="modalStore.isOpen" 
+        @close="modalStore.close()"
+    >
+        <component 
+            :is="modalComponent" 
+            v-bind="modalStore.modalPayload" 
+            @confirm="onConfirm"
+            @cancel="modalStore.close()" 
+        />
     </ModalBase>
 </template>
 
@@ -22,8 +39,7 @@ const modalComponent = computed(() => {
             return SkillSelectModal;
         case 'conditionInput':
             return ConditionInputModal;
-        case 'playerNameInput':
-            return PlayerNameInputModal;
+        // playerNameInputは直接表示するためここでは処理しない
         default:
             return null;
     }

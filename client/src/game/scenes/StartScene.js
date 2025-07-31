@@ -53,10 +53,8 @@ export class StartScene extends Phaser.Scene {
                 this.buttonPressed = true;
                 btn.setScale(1); // スケールを戻す
 
-                // プレイヤー名は既に設定済みなので、そのままマッチングに進む
-                this.bgmManager.fadeOut(500, () => {
-                    this.scene.start('MatchScene');
-                });
+                // プレイヤー名入力フィールドがある場合、自動送信してからマッチングに進む
+                this.handlePlayerNameBeforeMatch();
             },
             sounds: { click: 'click.mp3' },
             tweens: [
@@ -125,24 +123,6 @@ export class StartScene extends Phaser.Scene {
     async checkFirstTimePlayerName() {
         const playerStore = usePlayerStore();
 
-        // プレイヤー名が設定されていない場合のみモーダルを表示
-        if (!playerStore.hasPlayerName) {
-            console.log('[StartScene] First time launch - requesting player name');
-            const modal = useModalStore();
-            const playerName = await modal.open('playerNameInput');
-
-            if (playerName) {
-                playerStore.setPlayerName(playerName);
-                console.log('[StartScene] Player name set:', playerName);
-            } else {
-                // 名前が設定されなかった場合、デフォルト名を設定
-                playerStore.setPlayerName('プレイヤー');
-                console.log('[StartScene] Default player name set');
-            }
-        } else {
-            console.log('[StartScene] Player name already exists:', playerStore.getPlayerName());
-        }
-
         // テキストベースのチュートリアルボタン（copyrightTextの上に配置）
         const tutorialText = this.add
             .text(this.scale.width - 10, this.scale.height - 50, 'Tutorial', {
@@ -192,10 +172,47 @@ export class StartScene extends Phaser.Scene {
                 creditsText.setScale(1); // スケールを戻す
                 this.creditsModal.show();
             });
+
+        // プレイヤー名が設定されていない場合のみモーダルを表示
+        console.log('[StartScene] First time launch - requesting player name');
+        const modal = useModalStore();
+        const playerName = await modal.open('playerNameInput');
+
+        if (playerName) {
+            playerStore.setPlayerName(playerName);
+            console.log('[StartScene] Player name set:', playerName);
+        } else {
+            // 名前が設定されなかった場合、デフォルト名を設定
+            // playerStore.setPlayerName('プレイヤー');
+            console.log('[StartScene] Default player name set');
+        }
     }
 
     showTutorial() {
         this.tutorialModal.show();
+    }
+
+    handlePlayerNameBeforeMatch() {
+        const playerStore = usePlayerStore();
+        const modalStore = useModalStore();
+
+        // モーダルが開いている場合は閉じる
+        if (modalStore.isOpen && modalStore.modalType === 'playerNameInput') {
+            modalStore.close();
+        }
+
+        // プレイヤー名が設定されているか確認
+        const currentPlayerName = playerStore.getPlayerName();
+        if (!currentPlayerName || currentPlayerName === 'プレイヤー') {
+            // プレイヤー名が未設定の場合、デフォルト名を設定
+            playerStore.setPlayerName('プレイヤー');
+            console.log('[StartScene] Default player name set before match');
+        }
+
+        // マッチシーンに遷移
+        this.bgmManager.fadeOut(500, () => {
+            this.scene.start('MatchScene');
+        });
     }
 
     shutdown() {
