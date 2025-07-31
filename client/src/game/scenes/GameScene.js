@@ -27,6 +27,11 @@ import { ReadyButton } from '@/game/ui/button/ReadyButton';
 import { bounceTween } from '@/game/ui/animations/bounceTween.js';
 import { phaserEvents } from '@/events/EventCenter';
 import { InputLockSystem } from '@/game/systems/InputLockSystem';
+import { sm } from '@/core/SoundManager';
+import { HideShowMixin } from '@/game/ui/button/HideShowMixin';
+import { ImageButton } from '@/game/ui/button/ImageButton';
+
+class CustomSceneButton extends HideShowMixin(ImageButton) {}
 
 const PLAYER_CFG = { hp: 100, mp: 50, key: 'player' };
 const GAP = 300; // 左右の距離
@@ -119,6 +124,8 @@ export class GameScene extends Phaser.Scene {
             window.testBuffs = (buffs) => this.testBuffDisplay(buffs);
         }
 
+        this.createMuteButtons();
+
         /* 4. クリーンアップ ------------------------------------------------ */
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.shutdown());
     }
@@ -160,6 +167,26 @@ export class GameScene extends Phaser.Scene {
 
     update(_, dt) {
         this.world.update(dt);
+    }
+
+    createMuteButtons() {
+        // SE ミュートボタン
+        new CustomSceneButton(this, 1300, 30, 'button', {
+            onClick: (btn) => {
+                sm.toggleMuteSe();
+                btn.setTexture(sm.isMutedSe ? 'icon_se_off' : 'icon_se_on');
+            },
+            sounds: { click: null }, // ミュート状態でも音を鳴らさない
+        });
+
+        // BGM ミュートボタン
+        new CustomSceneButton(this, 1370, 30, 'button', {
+            onClick: (btn) => {
+                this.bgmMgr.toggleMute();
+                btn.setTexture(this.bgmMgr.isMuted ? 'icon_bgm_off' : 'icon_bgm_on');
+            },
+            sounds: { click: null },
+        });
     }
 
     createPlayers() {
