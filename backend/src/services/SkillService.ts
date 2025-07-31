@@ -5,10 +5,13 @@ import { getCondition } from '../data/condition';
 import { MyRoomState, Player } from '../rooms/schema/MyRoomState';
 import { MyRoom } from '../rooms/Room';
 import { buff } from '../rooms/schema/buff';
+import { PermanentRelic, SkillModifierRelic, OnObtainEffectRelic, RelicCard } from '../data/Relics';
+import { GameConfig } from '../config/game';
 
 export class SkillService {
     private state: MyRoomState;
     private room: MyRoom;
+    private startturn: boolean = true;
 
     constructor(room: MyRoom) {
         this.room = room;
@@ -49,15 +52,18 @@ export class SkillService {
             const HPdamage = Math.max(0, damage - target.shield);
             target.shield = Math.max(0, target.shield - damage);
             target.hp = Math.max(0, target.hp - HPdamage);
+            this.skillModifierEffect(player, target, HPdamage);
         }
         if (skill.battleType === 'defense') {
             const shield = (skill.damage + player.buffs.guard) * skill.Count;
             player.shield = Math.min(player.maxshield, player.shield + shield);
+            this.skillModifierEffect(player, target);
         }
         if (skill.battleType === 'effect') {
             for (const effect of skill.effects) {
                 player.buffs.getBuff(player, target, effect);
             }
+            this.skillModifierEffect(player, target);
         }
     }
 
@@ -71,6 +77,11 @@ export class SkillService {
     }
 
     public useAllSkill() {
+        if (this.startturn) {
+            //ターン開始時のレリック発動
+            this.PermanentEffectAll(GameConfig.TURN_START);
+            this.startturn = false;
+        }
         const skills = this.selectAllSkills();
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
         const player1skill = skills[0];
@@ -96,7 +107,12 @@ export class SkillService {
             player2.resetMp();
             player1.resetShield();
             player2.resetShield();
+
+            //ターン終了時のレリック発動
+            this.PermanentEffectAll(GameConfig.TURN_END);
+
             this.state.turn++;
+            this.startturn = true;
             player1.useSkills = [];
             player2.useSkills = [];
             this.room.broadcast('turn', this.state.turn);
@@ -147,5 +163,44 @@ export class SkillService {
         skillId: number,
     ) {
         return conditions.every((cond) => this.evaluateCondition(cond, player, enemy, skillId));
+    }
+
+    public PermanentEffectAll(trigger: string) {
+        const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
+        this.PermanentEffect(player1, player2, trigger);
+        this.PermanentEffect(player2, player1, trigger);
+    }
+
+    public PermanentEffect(player: Player, target: Player, Trigger: string) {
+        if (!player.relics) return;
+
+        for (const relic of player.relics) {
+            if (relic.Effect.type === 'permanent') {
+                const effect = relic.Effect as PermanentRelic;
+                if (effect.trigger === Trigger) {
+                    switch (effect.effectType) {
+                        case 'stat_boost':
+                            relic.stat_boost(player);
+                            break;
+                        case 'damage':
+                            relic.relicDamage(player, target, this.state.turn);
+                            break;
+                        case 'heal':
+                            relic.relicHeal(player, this.state.turn);
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    public skillModifierEffect(player: Player, target: Player, damage?: number) {
+        if (!player.relics) return;
+        for (const relic of player.relics) {
+            if (relic.Effect.type === 'skill_modifier') {
+                const effect = relic.Effect as SkillModifierRelic;
+                relic.skill_modifier(player, target, damage);
+            }
+        }
     }
 }
