@@ -1,7 +1,7 @@
 <template>
     <!-- PlayerNameInputModalは直接表示（透明背景のため） -->
     <PlayerNameInputModal 
-        v-if="modalStore.isOpen && modalStore.modalType === 'playerNameInput'"
+        v-if="modalStore.isOpen && modalStore.modalType === 'playerNameInput' && !modalStore.hidePlayerNameInput"
         v-bind="modalStore.modalPayload" 
         @confirm="onConfirm"
         @cancel="modalStore.close()" 

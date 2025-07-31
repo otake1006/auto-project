@@ -170,7 +170,7 @@ export class StartScene extends Phaser.Scene {
             })
             .on('pointerup', () => {
                 creditsText.setScale(1); // スケールを戻す
-                this.creditsModal.show();
+                this.showCredits();
             });
 
         // プレイヤー名が設定されていない場合のみモーダルを表示
@@ -189,7 +189,15 @@ export class StartScene extends Phaser.Scene {
     }
 
     showTutorial() {
+        const modalStore = useModalStore();
+        modalStore.setPlayerNameInputVisibility(false);
         this.tutorialModal.show();
+    }
+
+    showCredits() {
+        const modalStore = useModalStore();
+        modalStore.setPlayerNameInputVisibility(false);
+        this.creditsModal.show();
     }
 
     handlePlayerNameBeforeMatch() {
