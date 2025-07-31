@@ -7,6 +7,7 @@ import { GameConfig } from '../config/game';
 import { GameLogic } from '../services/GameLogic';
 import { SkillCard, getSkillCard } from '../data/skill';
 import { conditionCards } from '../data/condition';
+import { RelicCards } from '../data/Relics';
 
 export class ActionHandler {
     private state: MyRoomState;
@@ -42,6 +43,7 @@ export class ActionHandler {
         }
         this.room.broadcast('condition', conditionCards);
         this.room.broadcast('action', this.state.initialSkill);
+        this.room.broadcast('relic', RelicCards);
     }
 
     public handleSelectSkill(client: Client, payload: any) {
