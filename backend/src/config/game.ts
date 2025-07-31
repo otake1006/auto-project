@@ -7,7 +7,7 @@ export const GameConfig = {
     PLAYER_MAX_SHIELD: 100,
     PLAYER_RATIO_HP: 100,
     PLAYER_RATIO_MP: 100,
-    TURN_START: 'turn_end',
+    TURN_START: 'turn_start',
     TURN_END: 'turn_end',
     ROUND_START: 'round_start',
     ROUND_END: 'round_end',
