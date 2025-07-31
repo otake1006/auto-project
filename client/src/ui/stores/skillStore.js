@@ -57,7 +57,7 @@ export const useSkillStore = defineStore('skill', () => {
         if (!gameStore.canEditCards) {
             return;
         }
-        
+
         // 追加されたスキルを取得
         const addedSkill =
             skillSets.value[index].skill ||
@@ -86,7 +86,7 @@ export const useSkillStore = defineStore('skill', () => {
         if (!gameStore.canEditCards) {
             return;
         }
-        
+
         skillSets.value.splice(index, 1);
     }
 
@@ -99,8 +99,16 @@ export const useSkillStore = defineStore('skill', () => {
         if (type === 'condition') {
             return getGroupedByKey(conditions.value).map((group) => group.items[0]);
         }
+        if (type === 'relic') {
+            return relics.value;
+        }
         return [];
     });
+
+    function loadRelicFromColyseus(data) {
+        console.log(data, 'kokokokokookooko');
+        relics.value = data || [];
+    }
 
     function loadConditionFromColyseus(data) {
         conditions.value = data || [];
@@ -151,6 +159,7 @@ export const useSkillStore = defineStore('skill', () => {
         ];
         skills.value = [];
         conditions.value = [];
+        relics.value = [];
     }
 
     return {
@@ -168,6 +177,7 @@ export const useSkillStore = defineStore('skill', () => {
         handleSkillRemove,
         handleConditionInput,
         loadConditionFromColyseus,
+        loadRelicFromColyseus,
         getItemsByGroupId,
         setTab,
         clearSelectCards,
