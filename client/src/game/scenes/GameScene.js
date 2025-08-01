@@ -23,6 +23,7 @@ import { useSceneStore } from '@/ui/stores/sceneStore';
 import { useSkillStore } from '@/ui/stores/skillStore';
 import { useModalStore } from '@/ui/stores/modalStore';
 import { usePlayerStore } from '@/ui/stores/playerStore';
+import { useMuteStore } from '@/ui/stores/muteStore';
 import { StateWatchSystem } from '@/game/systems/StateWatchSystem';
 import { ReadyButton } from '@/game/ui/button/ReadyButton';
 import { bounceTween } from '@/game/ui/animations/bounceTween.js';
@@ -87,6 +88,8 @@ export class GameScene extends Phaser.Scene {
         this.battleManager = new BattleManager(this, this.playerView, this.enemyView);
         this.effectMgr = new EffectManager(this);
         this.bgmMgr = new BgmManager(this);
+        const muteStore = useMuteStore();
+        this.bgmMgr.setMute(muteStore.bgmMuted);
         this.bgmMgr.play(this.scene.key, bgmMap);
 
         // SkillLogSystemを保存して他のシステムからアクセス可能にする
@@ -171,13 +174,16 @@ export class GameScene extends Phaser.Scene {
     }
 
     createMuteButtons() {
+        const muteStore = useMuteStore();
+
         // SE ミュートボタン
         this.seButton = new MuteButton(this, 1320, 35, 'icon_se_on', {
             muteTexture: 'mute_x',
-            isMuted: sm.isMutedSe,
+            isMuted: muteStore.seMuted,
             scale: 1.5, // ベースアイコンを大きく
             muteScale: 1.8, // X画像をさらに大きく
             onToggle: (isMuted) => {
+                muteStore.setSeMuted(isMuted);
                 sm.setMuteSe(isMuted);
             },
             sounds: { click: null }, // ミュート状態でも音を鳴らさない
@@ -186,10 +192,11 @@ export class GameScene extends Phaser.Scene {
         // BGM ミュートボタン
         this.bgmButton = new MuteButton(this, 1390, 35, 'icon_bgm_on', {
             muteTexture: 'mute_x',
-            isMuted: this.bgmMgr.isMuted,
+            isMuted: muteStore.bgmMuted,
             scale: 1.5, // ベースアイコンを大きく
             muteScale: 1.8, // X画像をさらに大きく
             onToggle: (isMuted) => {
+                muteStore.setBgmMuted(isMuted);
                 this.bgmMgr.setMute(isMuted);
             },
             sounds: { click: null },

@@ -1,4 +1,5 @@
 import { bgmMap } from '@/core/sounds/bgmMap.js';
+import { useMuteStore } from '@/ui/stores/muteStore.js';
 
 // core/sounds/BgmManager.js
 export class BgmManager {
@@ -6,17 +7,22 @@ export class BgmManager {
         this.scene = scene;
         this.currentBgm = null;
         this.currentKey = null;
-        this.isMuted = false;
+        const muteStore = useMuteStore();
+        this.isMuted = muteStore.bgmMuted;
     }
 
     play(sceneKey, bgmMap) {
         const bgmInfo = bgmMap[sceneKey];
-        if (!bgmInfo || this.isMuted) return;
+        if (!bgmInfo) return;
+
+        // ミュート状態でも currentKey は保存する
+        this.currentKey = sceneKey;
+        
+        if (this.isMuted) return;
 
         this.stop();
         this.currentBgm = this.scene.sound.add(bgmInfo.key, { loop: bgmInfo.loop, volume: 0.1 });
         this.currentBgm.play();
-        this.currentKey = sceneKey;
     }
 
     stop() {
