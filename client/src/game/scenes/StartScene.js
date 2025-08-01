@@ -39,35 +39,41 @@ export class StartScene extends Phaser.Scene {
 
         this.add.sprite(0, 0, 'bgAnim').setOrigin(0).setDisplaySize(1440, 810).play('bg-loop');
 
-        const matchButton = new CustomSceneButton(this, 750, 450, 'button_bg', {
-            onHover: (btn) => {
-                btn.setAlpha(0.6);
-            },
-            onOut: (btn) => {
-                btn.setAlpha(1);
-                btn.setScale(1);
-            },
-            onClick: (btn) => {
-                if (this.buttonPressed) return;
-
-                this.buttonPressed = true;
-                btn.setScale(1); // スケールを戻す
-
-                // プレイヤー名は既に設定済みなので、そのままマッチングに進む
-                this.bgmManager.fadeOut(500, () => {
-                    this.scene.start('MatchScene');
-                });
-            },
-            sounds: { click: 'click.mp3' },
-            tweens: [
-                {
-                    scale: 0.95,
-                    duration: 80,
-                    ease: 'Quad.easeOut',
-                    yoyo: true,
+        const matchButton = new CustomSceneButton(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY + 150,
+            'button_bg',
+            {
+                onHover: (btn) => {
+                    btn.setAlpha(0.6);
                 },
-            ],
-        });
+                onOut: (btn) => {
+                    btn.setAlpha(1);
+                    btn.setScale(1);
+                },
+                onClick: (btn) => {
+                    if (this.buttonPressed) return;
+
+                    this.buttonPressed = true;
+                    btn.setScale(1); // スケールを戻す
+
+                    // プレイヤー名は既に設定済みなので、そのままマッチングに進む
+                    this.bgmManager.fadeOut(500, () => {
+                        this.scene.start('MatchScene');
+                    });
+                },
+                sounds: { click: 'click.mp3' },
+                tweens: [
+                    {
+                        scale: 0.95,
+                        duration: 80,
+                        ease: 'Quad.easeOut',
+                        yoyo: true,
+                    },
+                ],
+            },
+        );
 
         // ① 背景画像の追加（ボタン画像）
         // const bg = this.add.image(750, 450, 'button_bg').setOrigin(0.5);
