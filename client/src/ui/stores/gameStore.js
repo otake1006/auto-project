@@ -31,6 +31,11 @@ export const useGameStore = defineStore('game', () => {
         gameState.value = state;
     }
 
+    function reset() {
+        isMyPlayerReady.value = false;
+        isEnemyReady.value = false;
+        gameState.value = 'ready';
+    }
     // Phaserイベントリスナーを設定
     if (typeof window !== 'undefined' && phaserEvents) {
         phaserEvents.on('player-upd', updateMyPlayerState);
@@ -45,6 +50,7 @@ export const useGameStore = defineStore('game', () => {
         canEditCards,
         updateMyPlayerState,
         updateEnemyState,
-        updateGameState
+        updateGameState,
+        reset,
     };
 });

@@ -27,6 +27,7 @@ import { ReadyButton } from '@/game/ui/button/ReadyButton';
 import { bounceTween } from '@/game/ui/animations/bounceTween.js';
 import { phaserEvents } from '@/events/EventCenter';
 import { InputLockSystem } from '@/game/systems/InputLockSystem';
+import { useGameStore } from '@/ui/stores/gameStore';
 import { sm } from '@/core/SoundManager';
 import { MuteButton } from '@/game/ui/button/MuteButton';
 
@@ -155,7 +156,9 @@ export class GameScene extends Phaser.Scene {
     shutdown() {
         const skillStore = useSkillStore();
         const modalStore = useModalStore();
+        const gameStore = useGameStore();
         skillStore.reset();
+        gameStore.reset();
         modalStore.close();
         this.world.destroy();
         this.scene.stop('HudScene');
