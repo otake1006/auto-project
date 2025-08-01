@@ -76,6 +76,20 @@ export class ActionHandler {
         }
     }
 
+    public handleSetPlayerName(client: Client, payload: { name: string }) {
+        const player = this.state.players.get(client.sessionId);
+        if (player && payload.name) {
+            player.name = payload.name.trim();
+            console.log(`Player ${client.sessionId} name set to: ${player.name}`);
+            
+            // クライアントにプレイヤー名の更新を通知
+            this.room.broadcast('playerName', {
+                sessionId: client.sessionId,
+                name: player.name
+            });
+        }
+    }
+
     public skillsToArraySchema(payload: any[]): ArraySchema<Skill> {
         const skillSets = new ArraySchema<Skill>();
         payload.forEach((item: any) => {

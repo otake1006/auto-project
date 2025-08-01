@@ -20,7 +20,10 @@
         { "key": "fc1699", "url": "assets/images/fc1699.png" },
         { "key": "fc836", "url": "assets/images/fc836.png" },
         { "key": "fc998", "url": "assets/images/fc998.png" },
-        { "key": "fc783", "url": "assets/images/fc783.png" }
+        { "key": "fc783", "url": "assets/images/fc783.png" },
+        { "key": "icon_se_on", "url": "assets/images/icon_se_on.png" },
+        { "key": "icon_bgm_on", "url": "assets/images/icon_bgm_on.png" },
+        { "key": "mute_x", "url": "assets/images/mute_x.png" }
     ],
     "spritesheets": [
         {

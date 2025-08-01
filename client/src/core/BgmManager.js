@@ -1,16 +1,17 @@
+import { bgmMap } from '@/core/sounds/bgmMap.js';
+
 // core/sounds/BgmManager.js
 export class BgmManager {
     constructor(scene) {
         this.scene = scene;
         this.currentBgm = null;
         this.currentKey = null;
+        this.isMuted = false;
     }
 
     play(sceneKey, bgmMap) {
         const bgmInfo = bgmMap[sceneKey];
-        if (!bgmInfo) return;
-
-        if (this.currentKey === sceneKey) return; // 同じBGMはスキップ
+        if (!bgmInfo || this.isMuted) return;
 
         this.stop();
         this.currentBgm = this.scene.sound.add(bgmInfo.key, { loop: bgmInfo.loop, volume: 0.1 });
@@ -27,7 +28,10 @@ export class BgmManager {
             this.currentBgm.destroy();
             this.currentBgm = null;
         }
-        this.currentKey = null;
+        // ミュート時はcurrentKeyを保持して再生再開に使用
+        if (!this.isMuted) {
+            this.currentKey = null;
+        }
     }
 
     fadeOut(duration = 500, onComplete = null) {
@@ -45,5 +49,32 @@ export class BgmManager {
                 if (onComplete) onComplete();
             },
         });
+    }
+
+    toggleMute() {
+        this.isMuted = !this.isMuted;
+        if (this.isMuted) {
+            this.stop();
+        } else {
+            // ミュート解除時に前回のBGMを再生再開
+            if (this.currentKey) {
+                if (this.currentKey) {
+                    this.play(this.currentKey, bgmMap);
+                }
+            }
+        }
+    }
+
+    setMute(muted) {
+        this.isMuted = muted;
+        if (this.isMuted) {
+            this.stop();
+        } else {
+            // ミュート解除時に前回のBGMを再生再開
+            console.log(this.currentKey);
+            if (this.currentKey) {
+                this.play(this.currentKey, bgmMap);
+            }
+        }
     }
 }
