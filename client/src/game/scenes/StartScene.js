@@ -125,7 +125,7 @@ export class StartScene extends Phaser.Scene {
 
         // 初回起動時のプレイヤー名入力チェック
         this.checkFirstTimePlayerName();
-        
+
         // ミュートボタンを作成
         this.createMuteButtons();
     }
@@ -228,7 +228,8 @@ export class StartScene extends Phaser.Scene {
             },
             sounds: { click: null },
         });
-      
+    }
+
     showCredits() {
         const modalStore = useModalStore();
         modalStore.setPlayerNameInputVisibility(false);
