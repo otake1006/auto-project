@@ -28,10 +28,7 @@ import { bounceTween } from '@/game/ui/animations/bounceTween.js';
 import { phaserEvents } from '@/events/EventCenter';
 import { InputLockSystem } from '@/game/systems/InputLockSystem';
 import { sm } from '@/core/SoundManager';
-import { HideShowMixin } from '@/game/ui/button/HideShowMixin';
-import { ImageButton } from '@/game/ui/button/ImageButton';
-
-class CustomSceneButton extends HideShowMixin(ImageButton) {}
+import { MuteButton } from '@/game/ui/button/MuteButton';
 
 const PLAYER_CFG = { hp: 100, mp: 50, key: 'player' };
 const GAP = 300; // 左右の距離
@@ -171,19 +168,25 @@ export class GameScene extends Phaser.Scene {
 
     createMuteButtons() {
         // SE ミュートボタン
-        new CustomSceneButton(this, 1300, 30, 'button', {
-            onClick: (btn) => {
-                sm.toggleMuteSe();
-                btn.setTexture(sm.isMutedSe ? 'icon_se_off' : 'icon_se_on');
+        this.seButton = new MuteButton(this, 1320, 35, 'icon_se_on', {
+            muteTexture: 'mute_x',
+            isMuted: sm.isMutedSe,
+            scale: 1.5, // ベースアイコンを大きく
+            muteScale: 1.8, // X画像をさらに大きく
+            onToggle: (isMuted) => {
+                sm.setMuteSe(isMuted);
             },
             sounds: { click: null }, // ミュート状態でも音を鳴らさない
         });
 
         // BGM ミュートボタン
-        new CustomSceneButton(this, 1370, 30, 'button', {
-            onClick: (btn) => {
-                this.bgmMgr.toggleMute();
-                btn.setTexture(this.bgmMgr.isMuted ? 'icon_bgm_off' : 'icon_bgm_on');
+        this.bgmButton = new MuteButton(this, 1390, 35, 'icon_bgm_on', {
+            muteTexture: 'mute_x',
+            isMuted: this.bgmMgr.isMuted,
+            scale: 1.5, // ベースアイコンを大きく
+            muteScale: 1.8, // X画像をさらに大きく
+            onToggle: (isMuted) => {
+                this.bgmMgr.setMute(isMuted);
             },
             sounds: { click: null },
         });

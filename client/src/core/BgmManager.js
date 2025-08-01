@@ -56,4 +56,13 @@ export class BgmManager {
             // 再生再開はシーンごとに制御が必要なので明示的に play を呼ぶこと
         }
     }
+
+    setMute(muted) {
+        this.isMuted = muted;
+        if (this.isMuted) {
+            this.stop();
+        } else {
+            // 再生再開はシーンごとに制御が必要なので明示的に play を呼ぶこと
+        }
+    }
 }
