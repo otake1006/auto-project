@@ -389,6 +389,12 @@ export class TutorialModal {
         this.elements = [];
         this.dots = [];
         this.isVisible = false;
+        
+        // プレイヤー名入力欄を再表示
+        import('@/ui/stores/modalStore').then(({ useModalStore }) => {
+            const modalStore = useModalStore();
+            modalStore.setPlayerNameInputVisibility(true);
+        });
     }
 
     destroy() {
