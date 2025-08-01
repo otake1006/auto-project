@@ -7,7 +7,7 @@ import { GameConfig } from '../config/game';
 import { GameLogic } from '../services/GameLogic';
 import { SkillCard, getSkillCard } from '../data/skill';
 import { conditionCards } from '../data/condition';
-import { RelicCards } from '../data/Relics';
+import { RelicCards, getRelicCard } from '../data/Relics';
 
 export class ActionHandler {
     private state: MyRoomState;
@@ -43,7 +43,6 @@ export class ActionHandler {
         }
         this.room.broadcast('condition', conditionCards);
         this.room.broadcast('action', this.state.initialSkill);
-        this.room.broadcast('relic', RelicCards);
     }
 
     public handleSelectSkill(client: Client, payload: any) {
@@ -66,6 +65,29 @@ export class ActionHandler {
                 ) {
                     this.state.player2SkillState.push(getSkill);
                     console.log(this.state.player2SkillState);
+                }
+            }
+        }
+    }
+
+    public handleSelectRelic(client: Client, payload: any) {
+        const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
+        if (payload) {
+            //console.log(id);
+            const getRelic = getRelicCard(payload);
+            //console.log(getSkill.toJSON());
+            if (getRelic) {
+                if (
+                    client.sessionId === sessionId1 &&
+                    this.state.player1RandomRelic.some((skill) => skill.id === payload)
+                ) {
+                    player1.relics.push(getRelic);
+                }
+                if (
+                    client.sessionId === sessionId2 &&
+                    this.state.player2RandomRelic.some((skill) => skill.id === payload)
+                ) {
+                    player2.relics.push(getRelic);
                 }
             }
         }
