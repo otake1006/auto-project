@@ -42,7 +42,7 @@ export class StartScene extends Phaser.Scene {
         const matchButton = new CustomSceneButton(
             this,
             this.cameras.main.centerX,
-            this.cameras.main.centerY + 150,
+            this.cameras.main.centerY + 100,
             'button_bg',
             {
                 onHover: (btn) => {
