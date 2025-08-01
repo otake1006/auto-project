@@ -24,6 +24,10 @@ export class MyRoom extends Room {
                     break;
                 case 'selectSkill':
                     this.actionHandler.handleSelectSkill(client, payload);
+                    break;
+                case 'setPlayerName':
+                    this.actionHandler.handleSetPlayerName(client, payload);
+                    break;
             }
         });
     }
