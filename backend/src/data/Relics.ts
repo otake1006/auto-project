@@ -85,7 +85,7 @@ export class RelicCard extends Schema {
     }
 
     //永続レリックのスタッツ効果
-    public stat_boost(player: Player) {
+    public stat_boost(player: Player, target: Player) {
         const effect = this.Effect as PermanentRelic;
         switch (effect.targetStat) {
             case 'muscular':
@@ -95,15 +95,16 @@ export class RelicCard extends Schema {
                 player.buffs.guard += effect.value;
                 break;
             case 'weaknes':
-                player.buffs.weaknes += effect.value;
+                target.buffs.weaknes += effect.value;
                 break;
             case 'brittle':
-                player.buffs.brittle += effect.value;
+                target.buffs.brittle += effect.value;
                 break;
             case 'poison':
-                player.buffs.poison += effect.value;
+                target.buffs.poison += effect.value;
                 break;
             case 'shield':
+                console.log('シールド');
                 player.shield += effect.value;
         }
     }
@@ -167,7 +168,7 @@ export class RelicCard extends Schema {
         const effect = this.Effect as SkillModifierRelic;
         switch (effect.SkillModifierType) {
             case 'life_steal':
-                player.hp += damage;
+                player.hp += Math.round((damage * effect.value) / 100);
                 break;
             case 'countDamage':
                 const HPdamage = Math.max(0, effect.value - target.shield);
@@ -181,16 +182,172 @@ export class RelicCard extends Schema {
     }
 }
 
+export function getRelicCard(id: number): RelicCard | undefined {
+    let Relic = new RelicCard(RelicCards.find((card) => card.id === id));
+    return Relic;
+}
+
+export function shuffle<T>(array: T[]) {
+    const out = Array.from(array);
+    for (let i = out.length - 1; i > 0; i--) {
+        const r = Math.floor(Math.random() * (i + 1));
+        const tmp = out[i];
+        out[i] = out[r];
+        out[r] = tmp;
+    }
+    return out;
+}
+
+export function selectRandomRelics(arrayRelics: RelicCard[]): RelicCard[] {
+    const xIds = new Set(arrayRelics.map((card) => card.id));
+
+    // Card から x に含まれていないカードを抽出
+    const missing = RelicCards.filter((card) => !xIds.has(card.id));
+
+    // シャッフル
+    const shuffledRelics = shuffle(missing);
+
+    // 最初の3つを返す（足りなければ全部）
+    return shuffledRelics.slice(0, 3);
+}
+
 export const RelicCards: RelicCard[] = [
     new RelicCard({
         id: 1,
         name: '力の加護',
-        description: 'スキルを使用するたびダメージ５',
+        description: 'スキルを使用するたび３ダメージ',
         imgSrc: '/fc290.png',
         Effect: {
             type: 'skill_modifier',
             SkillModifierType: 'countDamage',
+            value: 3,
+        },
+    }),
+    new RelicCard({
+        id: 2,
+        name: '守りの加護',
+        description: 'スキルを使用するたび２シールド',
+        imgSrc: '/fc290.png',
+        Effect: {
+            type: 'skill_modifier',
+            SkillModifierType: 'countShield',
+            value: 2,
+        },
+    }),
+    new RelicCard({
+        id: 3,
+        name: '吸血の加護',
+        description: '与えたダメージの10%回復',
+        imgSrc: '/fc290.png',
+        Effect: {
+            type: 'skill_modifier',
+            SkillModifierType: 'life_steal',
+            value: 10,
+        },
+    }),
+    new RelicCard({
+        id: 4,
+        name: '魔法のプロテイン',
+        description: 'ターン開始時筋力１を得る',
+        imgSrc: '/fc290.png',
+        Effect: {
+            type: 'permanent',
+            trigger: 'turn_start',
+            effectType: 'stat_boost',
+            value: 1,
+            targetStat: 'muscular',
+        },
+    }),
+    new RelicCard({
+        id: 5,
+        name: '増殖鎧',
+        description: 'ターン開始時ガード値２を得る',
+        imgSrc: '/fc290.png',
+        Effect: {
+            type: 'permanent',
+            trigger: 'turn_start',
+            effectType: 'stat_boost',
+            value: 2,
+            targetStat: 'guard',
+        },
+    }),
+    new RelicCard({
+        id: 6,
+        name: '臨時シールド',
+        description: 'ターン開始時１０シールドを得る',
+        imgSrc: '/fc290.png',
+        Effect: {
+            type: 'permanent',
+            trigger: 'turn_start',
+            effectType: 'stat_boost',
+            value: 10,
+            targetStat: 'shield',
+        },
+    }),
+    new RelicCard({
+        id: 7,
+        name: '溶解液',
+        description: 'ターン開始時敵に弱体化３を与える',
+        imgSrc: '/fc290.png',
+        Effect: {
+            type: 'permanent',
+            trigger: 'turn_start',
+            effectType: 'stat_boost',
+            value: 3,
+            targetStat: 'weaknes',
+        },
+    }),
+    new RelicCard({
+        id: 8,
+        name: 'やる気ダウン剤',
+        description: 'ターン開始時敵に脆弱化３を与える',
+        imgSrc: '/fc290.png',
+        Effect: {
+            type: 'permanent',
+            trigger: 'turn_start',
+            effectType: 'stat_boost',
+            value: 3,
+            targetStat: 'brittle',
+        },
+    }),
+    new RelicCard({
+        id: 9,
+        name: '天使の加護',
+        description: 'ターン終了時にＨＰを５回復する',
+        imgSrc: '/fc290.png',
+        Effect: {
+            type: 'permanent',
+            trigger: 'turn_end',
+            effectType: 'heal',
             value: 5,
+        },
+    }),
+    new RelicCard({
+        id: 10,
+        name: 'プラズマチャージ',
+        description: 'ターン終了時に使用したスキルが３種類以上で２０ダメージ',
+        imgSrc: '/fc290.png',
+        Effect: {
+            type: 'permanent',
+            trigger: 'turn_end',
+            effectType: 'damage',
+            value: 20,
+            damageType: 'skillCountDamage',
+            specificTurn: 3,
+        },
+    }),
+    new RelicCard({
+        id: 10,
+        name: '呪いの人形',
+        description: '６ターン目終了時に敵の最大ＨＰ２５％分のダメージ',
+        imgSrc: '/fc290.png',
+        Effect: {
+            type: 'permanent',
+            trigger: 'turn_end',
+            effectType: 'damage',
+            value: 25,
+            damageType: 'percentage_max_hp',
+            specificTurn: 6,
         },
     }),
 ];
