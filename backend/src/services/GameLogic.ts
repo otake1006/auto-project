@@ -4,6 +4,7 @@ import { ArraySchema } from '@colyseus/schema';
 import { SkillService } from '../services/SkillService';
 import { SkillCard, selectRandomSkills } from '../data/skill';
 import { GameConfig } from '../config/game';
+import { selectRandomRelics } from '../data/Relics';
 
 export class GameLogic {
     private state: MyRoomState;
@@ -36,10 +37,17 @@ export class GameLogic {
     }
 
     public checkEndGame() {
+        const winner = '';
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
         this.state.turn = 1;
-        if (player1.hp > 0 && player2.hp <= 0) this.state.winCount1 += 1;
-        if (player2.hp > 0 && player1.hp <= 0) this.state.winCount2 += 1;
+        if (player1.hp > 0 && player2.hp <= 0) {
+            this.state.winCount1 += 1;
+            this.state.roundLoser = sessionId2;
+        }
+        if (player2.hp > 0 && player1.hp <= 0) {
+            this.state.winCount2 += 1;
+            this.state.roundLoser = sessionId1;
+        }
         this.state.round += 1;
         player1.reset();
         player2.reset();
@@ -60,6 +68,8 @@ export class GameLogic {
         player1.ready = false;
         player2.ready = false;
         this.randomSkills();
+        this.randomRelics(this.state.roundLoser);
+        this.state.roundLoser = 'draw';
         return;
     }
 
@@ -90,6 +100,25 @@ export class GameLogic {
                 client.send('giveCards', this.state.player2RandomSkill);
             }
         });
+    }
+
+    public randomRelics(loser: string) {
+        if (loser === 'draw') {
+            const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
+            this.room.clients.forEach((client) => {
+                if (client.sessionId === sessionId1) {
+                    this.state.player1RandomRelic = selectRandomRelics(player1.relics);
+                    client.send('giveRelics', this.state.player1RandomRelic);
+                }
+                if (client.sessionId === sessionId2) {
+                    this.state.player2RandomRelic = selectRandomRelics(player2.relics);
+                    client.send('giveRelics', this.state.player2RandomRelic);
+                }
+            });
+        } else {
+            const player = this.state.players.get(loser);
+            this.room.clients.getById(loser).send('giveRelics', selectRandomRelics(player.relics));
+        }
     }
 
     public mergeSkills(
