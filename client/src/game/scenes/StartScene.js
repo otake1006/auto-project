@@ -58,16 +58,7 @@ export class StartScene extends Phaser.Scene {
                     this.buttonPressed = true;
                     btn.setScale(1); // スケールを戻す
 
-
-                this.handlePlayerNameBeforeMatch();
-            },
-            sounds: { click: 'click.mp3' },
-            tweens: [
-                {
-                    scale: 0.95,
-                    duration: 80,
-                    ease: 'Quad.easeOut',
-                    yoyo: true,
+                    this.handlePlayerNameBeforeMatch();
                 },
                 sounds: { click: 'click.mp3' },
                 tweens: [
