@@ -30,6 +30,7 @@ export class NetworkSystem extends System {
         reg('turn', this.onTurn);
         reg('round', this.onRound);
         reg('condition', this.onCondition);
+        reg('relic', this.onRelic);
         reg('leave', this.onLeave);
         reg('playerName', this.onPlayerName);
     }
@@ -49,7 +50,7 @@ export class NetworkSystem extends System {
     async onGiveCards(cards) {
         // 演出が進行中の場合は待機
         await this.waitForAnimationsToComplete();
-        
+
         const modal = useModalStore();
         const skill = useSkillStore();
         skill.setSelectCards(cards);
@@ -70,15 +71,18 @@ export class NetworkSystem extends System {
             const checkAnimations = () => {
                 // SkillLogSystemの演出状態を確認
                 const skillLogSystem = this.getSkillLogSystem();
-                
-                if (!skillLogSystem || (!skillLogSystem.isProcessing && skillLogSystem.pendingLogs.length === 0)) {
+
+                if (
+                    !skillLogSystem ||
+                    (!skillLogSystem.isProcessing && skillLogSystem.pendingLogs.length === 0)
+                ) {
                     resolve();
                 } else {
                     // 100ms後に再チェック
                     setTimeout(checkAnimations, 100);
                 }
             };
-            
+
             checkAnimations();
         });
     }
@@ -120,10 +124,13 @@ export class NetworkSystem extends System {
     onCondition(c) {
         useSkillStore().loadConditionFromColyseus(c);
     }
+    onRelic(c) {
+        useSkillStore().loadRelicFromColyseus(c);
+    }
     onLeave() {
         phaserEvents.emit('leave-room');
     }
-    
+
     onPlayerName(data) {
         phaserEvents.emit('player-name-update', data);
     }

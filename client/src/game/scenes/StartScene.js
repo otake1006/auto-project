@@ -39,21 +39,26 @@ export class StartScene extends Phaser.Scene {
 
         this.add.sprite(0, 0, 'bgAnim').setOrigin(0).setDisplaySize(1440, 810).play('bg-loop');
 
-        const matchButton = new CustomSceneButton(this, 750, 450, 'button_bg', {
-            onHover: (btn) => {
-                btn.setAlpha(0.6);
-            },
-            onOut: (btn) => {
-                btn.setAlpha(1);
-                btn.setScale(1);
-            },
-            onClick: (btn) => {
-                if (this.buttonPressed) return;
+        const matchButton = new CustomSceneButton(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY + 150,
+            'button_bg',
+            {
+                onHover: (btn) => {
+                    btn.setAlpha(0.6);
+                },
+                onOut: (btn) => {
+                    btn.setAlpha(1);
+                    btn.setScale(1);
+                },
+                onClick: (btn) => {
+                    if (this.buttonPressed) return;
 
-                this.buttonPressed = true;
-                btn.setScale(1); // スケールを戻す
+                    this.buttonPressed = true;
+                    btn.setScale(1); // スケールを戻す
 
-                // プレイヤー名入力フィールドがある場合、自動送信してからマッチングに進む
+
                 this.handlePlayerNameBeforeMatch();
             },
             sounds: { click: 'click.mp3' },
@@ -64,8 +69,17 @@ export class StartScene extends Phaser.Scene {
                     ease: 'Quad.easeOut',
                     yoyo: true,
                 },
-            ],
-        });
+                sounds: { click: 'click.mp3' },
+                tweens: [
+                    {
+                        scale: 0.95,
+                        duration: 80,
+                        ease: 'Quad.easeOut',
+                        yoyo: true,
+                    },
+                ],
+            },
+        );
 
         // ① 背景画像の追加（ボタン画像）
         // const bg = this.add.image(750, 450, 'button_bg').setOrigin(0.5);

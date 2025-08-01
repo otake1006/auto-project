@@ -4,11 +4,12 @@ export class BgmManager {
         this.scene = scene;
         this.currentBgm = null;
         this.currentKey = null;
+        this.isMuted = false;
     }
 
     play(sceneKey, bgmMap) {
         const bgmInfo = bgmMap[sceneKey];
-        if (!bgmInfo) return;
+        if (!bgmInfo || this.isMuted) return;
 
         if (this.currentKey === sceneKey) return; // 同じBGMはスキップ
 
@@ -45,5 +46,23 @@ export class BgmManager {
                 if (onComplete) onComplete();
             },
         });
+    }
+
+    toggleMute() {
+        this.isMuted = !this.isMuted;
+        if (this.isMuted) {
+            this.stop();
+        } else {
+            // 再生再開はシーンごとに制御が必要なので明示的に play を呼ぶこと
+        }
+    }
+
+    setMute(muted) {
+        this.isMuted = muted;
+        if (this.isMuted) {
+            this.stop();
+        } else {
+            // 再生再開はシーンごとに制御が必要なので明示的に play を呼ぶこと
+        }
     }
 }
