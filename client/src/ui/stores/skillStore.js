@@ -143,6 +143,11 @@ export const useSkillStore = defineStore('skill', () => {
         skills.value = test;
     }
 
+    function addRelics(value) {
+        const test = [...relics.value, ...value];
+        relics.value = test;
+    }
+
     const currentType = computed(() => tabTypeMap[currentTab.value]);
 
     function setTab(tab) {
@@ -168,6 +173,7 @@ export const useSkillStore = defineStore('skill', () => {
         skillSets,
         setSkills,
         addSkills,
+        addRelics,
         tabs,
         currentType,
         currentTab,
