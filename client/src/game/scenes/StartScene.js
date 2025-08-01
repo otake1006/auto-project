@@ -4,11 +4,13 @@ import { bgmMap } from '@/core/sounds/bgmMap';
 import { VERSION } from '@/constants/version';
 import { HideShowMixin } from '@/game/ui/button/HideShowMixin';
 import { ImageButton } from '@/game/ui/button/ImageButton';
+import { MuteButton } from '@/game/ui/button/MuteButton';
 import { useSceneStore } from '@/ui/stores/sceneStore';
 import { useModalStore } from '@/ui/stores/modalStore';
 import { usePlayerStore } from '@/ui/stores/playerStore';
 import { TutorialModal } from '@/game/ui/modal/TutorialModal';
 import { CreditsModal } from '@/game/ui/modal/CreditsModal';
+import { sm } from '@/core/SoundManager';
 
 class CustomSceneButton extends HideShowMixin(ImageButton) {}
 // scenes/TitleScene.js
@@ -123,6 +125,9 @@ export class StartScene extends Phaser.Scene {
 
         // 初回起動時のプレイヤー名入力チェック
         this.checkFirstTimePlayerName();
+        
+        // ミュートボタンを作成
+        this.createMuteButtons();
     }
 
     async checkFirstTimePlayerName() {
@@ -199,6 +204,31 @@ export class StartScene extends Phaser.Scene {
         this.tutorialModal.show();
     }
 
+    createMuteButtons() {
+        // SE ミュートボタン
+        this.seButton = new MuteButton(this, this.scale.width - 100, 30, 'icon_se_on', {
+            muteTexture: 'mute_x',
+            isMuted: sm.isMutedSe,
+            scale: 1.2,
+            muteScale: 1.5,
+            onToggle: (isMuted) => {
+                sm.setMuteSe(isMuted);
+            },
+            sounds: { click: null },
+        });
+
+        // BGM ミュートボタン
+        this.bgmButton = new MuteButton(this, this.scale.width - 50, 30, 'icon_bgm_on', {
+            muteTexture: 'mute_x',
+            isMuted: this.bgmManager.isMuted,
+            scale: 1.2,
+            muteScale: 1.5,
+            onToggle: (isMuted) => {
+                this.bgmManager.setMute(isMuted);
+            },
+            sounds: { click: null },
+        });
+      
     showCredits() {
         const modalStore = useModalStore();
         modalStore.setPlayerNameInputVisibility(false);
