@@ -8,6 +8,7 @@ import { MuteButton } from '@/game/ui/button/MuteButton';
 import { useSceneStore } from '@/ui/stores/sceneStore';
 import { useModalStore } from '@/ui/stores/modalStore';
 import { usePlayerStore } from '@/ui/stores/playerStore';
+import { useMuteStore } from '@/ui/stores/muteStore';
 import { TutorialModal } from '@/game/ui/modal/TutorialModal';
 import { CreditsModal } from '@/game/ui/modal/CreditsModal';
 import { sm } from '@/core/SoundManager';
@@ -28,6 +29,8 @@ export class StartScene extends Phaser.Scene {
         this.buttonPressed = false;
         phaserEvents.emit('scene-changed', 'StartScene');
         this.bgmManager = new BgmManager(this);
+        const muteStore = useMuteStore();
+        this.bgmManager.setMute(muteStore.bgmMuted);
         this.bgmManager.play(this.scene.key, bgmMap);
         this.tutorialModal = new TutorialModal(this);
         this.creditsModal = new CreditsModal(this);
@@ -205,13 +208,16 @@ export class StartScene extends Phaser.Scene {
     }
 
     createMuteButtons() {
+        const muteStore = useMuteStore();
+
         // SE ミュートボタン
         this.seButton = new MuteButton(this, this.scale.width - 100, 30, 'icon_se_on', {
             muteTexture: 'mute_x',
-            isMuted: sm.isMutedSe,
+            isMuted: muteStore.seMuted,
             scale: 1.2,
             muteScale: 1.5,
             onToggle: (isMuted) => {
+                muteStore.setSeMuted(isMuted);
                 sm.setMuteSe(isMuted);
             },
             sounds: { click: null },
@@ -220,10 +226,11 @@ export class StartScene extends Phaser.Scene {
         // BGM ミュートボタン
         this.bgmButton = new MuteButton(this, this.scale.width - 50, 30, 'icon_bgm_on', {
             muteTexture: 'mute_x',
-            isMuted: this.bgmManager.isMuted,
+            isMuted: muteStore.bgmMuted,
             scale: 1.2,
             muteScale: 1.5,
             onToggle: (isMuted) => {
+                muteStore.setBgmMuted(isMuted);
                 this.bgmManager.setMute(isMuted);
             },
             sounds: { click: null },
