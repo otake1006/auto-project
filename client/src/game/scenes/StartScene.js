@@ -41,35 +41,38 @@ export class StartScene extends Phaser.Scene {
 
         this.add.sprite(0, 0, 'bgAnim').setOrigin(0).setDisplaySize(1440, 810).play('bg-loop');
 
-        const matchButton = new CustomSceneButton(this, 750, 450, 'button_bg', {
-            onHover: (btn) => {
-                btn.setAlpha(0.6);
-            },
-            onOut: (btn) => {
-                btn.setAlpha(1);
-                btn.setScale(1);
-            },
-            onClick: (btn) => {
-                if (this.buttonPressed) return;
-
-                this.buttonPressed = true;
-                btn.setScale(1); // スケールを戻す
-
-                // プレイヤー名は既に設定済みなので、そのままマッチングに進む
-                this.bgmManager.fadeOut(500, () => {
-                    this.scene.start('MatchScene');
-                });
-            },
-            sounds: { click: 'click.mp3' },
-            tweens: [
-                {
-                    scale: 0.95,
-                    duration: 80,
-                    ease: 'Quad.easeOut',
-                    yoyo: true,
+        const matchButton = new CustomSceneButton(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY + 100,
+            'button_bg',
+            {
+                onHover: (btn) => {
+                    btn.setAlpha(0.6);
                 },
-            ],
-        });
+                onOut: (btn) => {
+                    btn.setAlpha(1);
+                    btn.setScale(1);
+                },
+                onClick: (btn) => {
+                    if (this.buttonPressed) return;
+
+                    this.buttonPressed = true;
+                    btn.setScale(1); // スケールを戻す
+
+                    this.handlePlayerNameBeforeMatch();
+                },
+                sounds: { click: 'click.mp3' },
+                tweens: [
+                    {
+                        scale: 0.95,
+                        duration: 80,
+                        ease: 'Quad.easeOut',
+                        yoyo: true,
+                    },
+                ],
+            },
+        );
 
         // ① 背景画像の追加（ボタン画像）
         // const bg = this.add.image(750, 450, 'button_bg').setOrigin(0.5);
@@ -130,24 +133,6 @@ export class StartScene extends Phaser.Scene {
     async checkFirstTimePlayerName() {
         const playerStore = usePlayerStore();
 
-        // プレイヤー名が設定されていない場合のみモーダルを表示
-        if (!playerStore.hasPlayerName) {
-            console.log('[StartScene] First time launch - requesting player name');
-            const modal = useModalStore();
-            const playerName = await modal.open('playerNameInput');
-
-            if (playerName) {
-                playerStore.setPlayerName(playerName);
-                console.log('[StartScene] Player name set:', playerName);
-            } else {
-                // 名前が設定されなかった場合、デフォルト名を設定
-                playerStore.setPlayerName('プレイヤー');
-                console.log('[StartScene] Default player name set');
-            }
-        } else {
-            console.log('[StartScene] Player name already exists:', playerStore.getPlayerName());
-        }
-
         // テキストベースのチュートリアルボタン（copyrightTextの上に配置）
         const tutorialText = this.add
             .text(this.scale.width - 10, this.scale.height - 50, 'Tutorial', {
@@ -195,11 +180,27 @@ export class StartScene extends Phaser.Scene {
             })
             .on('pointerup', () => {
                 creditsText.setScale(1); // スケールを戻す
-                this.creditsModal.show();
+                this.showCredits();
             });
+
+        // プレイヤー名が設定されていない場合のみモーダルを表示
+        console.log('[StartScene] First time launch - requesting player name');
+        const modal = useModalStore();
+        const playerName = await modal.open('playerNameInput');
+
+        if (playerName) {
+            playerStore.setPlayerName(playerName);
+            console.log('[StartScene] Player name set:', playerName);
+        } else {
+            // 名前が設定されなかった場合、デフォルト名を設定
+            // playerStore.setPlayerName('プレイヤー');
+            console.log('[StartScene] Default player name set');
+        }
     }
 
     showTutorial() {
+        const modalStore = useModalStore();
+        modalStore.setPlayerNameInputVisibility(false);
         this.tutorialModal.show();
     }
 
@@ -226,6 +227,34 @@ export class StartScene extends Phaser.Scene {
                 this.bgmManager.setMute(isMuted);
             },
             sounds: { click: null },
+        });
+      
+    showCredits() {
+        const modalStore = useModalStore();
+        modalStore.setPlayerNameInputVisibility(false);
+        this.creditsModal.show();
+    }
+
+    handlePlayerNameBeforeMatch() {
+        const playerStore = usePlayerStore();
+        const modalStore = useModalStore();
+
+        // モーダルが開いている場合は閉じる
+        if (modalStore.isOpen && modalStore.modalType === 'playerNameInput') {
+            modalStore.close();
+        }
+
+        // プレイヤー名が設定されているか確認
+        const currentPlayerName = playerStore.getPlayerName();
+        if (!currentPlayerName || currentPlayerName === 'プレイヤー') {
+            // プレイヤー名が未設定の場合、デフォルト名を設定
+            playerStore.setPlayerName('プレイヤー');
+            console.log('[StartScene] Default player name set before match');
+        }
+
+        // マッチシーンに遷移
+        this.bgmManager.fadeOut(500, () => {
+            this.scene.start('MatchScene');
         });
     }
 

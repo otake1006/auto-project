@@ -6,6 +6,7 @@ export const useModalStore = defineStore('modal', () => {
     const isOpen = ref(false);
     const modalType = ref(null);
     const modalPayload = ref(null);
+    const hidePlayerNameInput = ref(false);
 
     let resolve;
 
@@ -33,11 +34,17 @@ export const useModalStore = defineStore('modal', () => {
         }
     }
 
+    function setPlayerNameInputVisibility(visible) {
+        hidePlayerNameInput.value = !visible;
+    }
+
     return {
         isOpen,
         modalType,
         modalPayload,
+        hidePlayerNameInput,
         open,
         close,
+        setPlayerNameInputVisibility,
     };
 });

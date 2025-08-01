@@ -22,11 +22,13 @@ import CharacterView from '@/core/entities/CharacterView.js';
 import { useSceneStore } from '@/ui/stores/sceneStore';
 import { useSkillStore } from '@/ui/stores/skillStore';
 import { useModalStore } from '@/ui/stores/modalStore';
+import { usePlayerStore } from '@/ui/stores/playerStore';
 import { StateWatchSystem } from '@/game/systems/StateWatchSystem';
 import { ReadyButton } from '@/game/ui/button/ReadyButton';
 import { bounceTween } from '@/game/ui/animations/bounceTween.js';
 import { phaserEvents } from '@/events/EventCenter';
 import { InputLockSystem } from '@/game/systems/InputLockSystem';
+import { useGameStore } from '@/ui/stores/gameStore';
 import { sm } from '@/core/SoundManager';
 import { MuteButton } from '@/game/ui/button/MuteButton';
 
@@ -155,7 +157,9 @@ export class GameScene extends Phaser.Scene {
     shutdown() {
         const skillStore = useSkillStore();
         const modalStore = useModalStore();
+        const gameStore = useGameStore();
         skillStore.reset();
+        gameStore.reset();
         modalStore.close();
         this.world.destroy();
         this.scene.stop('HudScene');
@@ -212,12 +216,20 @@ export class GameScene extends Phaser.Scene {
     }
 
     createCharacter(position, isPlayer, id) {
+        let name = id;
+        
+        // プレイヤーの場合はstoreから名前を取得
+        if (isPlayer) {
+            const playerStore = usePlayerStore();
+            name = playerStore.getPlayerName() || 'プレイヤー';
+        }
+        
         return new Character(
             this,
             position.x,
             position.y,
             id,
-            id,
+            name,
             PLAYER_CONFIG.hp,
             PLAYER_CONFIG.mp,
             !isPlayer, // flipX: プレイヤーは左向き(false)、敵は右向き(true)
