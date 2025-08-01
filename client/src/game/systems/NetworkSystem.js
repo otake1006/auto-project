@@ -14,6 +14,8 @@ export class NetworkSystem extends System {
         this.room = room;
         this.listeners = []; // 解除用に保存
         this.scene = null; // シーンへの参照を保存
+        this.modalQueue = []; // モーダル表示のキュー
+        this.isProcessingModal = false; // モーダル処理中フラグ
 
         const reg = (ev, fn) => {
             const bound = fn.bind(this);
@@ -25,6 +27,7 @@ export class NetworkSystem extends System {
         reg('randomSkill', this.onRandomSkill);
         reg('skillLogs', this.onSkillLogs);
         reg('giveCards', this.onGiveCards);
+        reg('giveRelics', this.onReceiveRelic);
         reg('showReady', this.onShowReady);
         reg('winner', this.onWinner);
         reg('turn', this.onTurn);
@@ -48,17 +51,82 @@ export class NetworkSystem extends System {
     }
 
     async onGiveCards(cards) {
+        // キューに追加
+        this.modalQueue.push({
+            type: 'skill',
+            cards: cards,
+            modalType: 'skillSelect',
+            messageType: 'selectSkill',
+            addMethod: 'addSkills'
+        });
+        
+        // キュー処理を開始
+        this.processModalQueue();
+    }
+
+    async onReceiveRelic(cards) {
+        // キューに追加
+        this.modalQueue.push({
+            type: 'relic',
+            cards: cards,
+            modalType: 'relicSelect',
+            messageType: 'selectRelic',
+            addMethod: 'addRelics'
+        });
+        
+        // キュー処理を開始
+        this.processModalQueue();
+    }
+
+    /**
+     * モーダルキューを順次処理
+     */
+    async processModalQueue() {
+        // 既に処理中の場合は何もしない
+        if (this.isProcessingModal) {
+            return;
+        }
+
+        // キューが空の場合は何もしない
+        if (this.modalQueue.length === 0) {
+            return;
+        }
+
+        this.isProcessingModal = true;
+
+        try {
+            while (this.modalQueue.length > 0) {
+                const item = this.modalQueue.shift();
+                await this.processModalItem(item);
+            }
+        } finally {
+            this.isProcessingModal = false;
+        }
+    }
+
+    /**
+     * 個別のモーダル処理
+     */
+    async processModalItem(item) {
         // 演出が進行中の場合は待機
         await this.waitForAnimationsToComplete();
 
         const modal = useModalStore();
         const skill = useSkillStore();
-        skill.setSelectCards(cards);
+        
+        skill.setSelectCards(item.cards);
 
-        const selected = await modal.open('skillSelect', { cards });
+        const selected = await modal.open(item.modalType, { cards: item.cards });
         if (selected) {
-            this.room.send('selectSkill', selected.id);
-            skill.addSkills([selected]);
+            this.room.send(item.messageType, selected.id);
+            
+            // カードタイプに応じて適切なメソッドを呼び出し
+            if (item.addMethod === 'addRelics') {
+                skill.addRelics([selected]);
+            } else {
+                skill.addSkills([selected]);
+            }
+            
             skill.clearSelectCards();
         }
     }
@@ -145,6 +213,9 @@ export class NetworkSystem extends System {
     destroy() {
         //this.listeners.forEach(([ev, fn]) => this.room.off(ev, fn));
         this.listeners.length = 0;
+        // モーダルキューをクリア
+        this.modalQueue.length = 0;
+        this.isProcessingModal = false;
         // this.room.leave().catch((err) => {
         //     console.error('Failed to leave room:', err);
         // });

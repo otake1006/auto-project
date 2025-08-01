@@ -2,7 +2,7 @@
     <div class="fixed inset-0 flex items-center justify-center" @click="handleOverlayClick">
         <div class="modal-content" @click.stop>
             <div
-                class="mx-auto w-full max-w-md bg-[url('https://cdn.discordapp.com/attachments/1331433261716475925/1400388960618024969/UntitledArtwork10.png?ex=688c755a&is=688b23da&hm=f1860ba27ca1aed8349f05236a4ac7b80abba34127aa84b46012d4929076553b&')] bg-contain bg-center bg-no-repeat"
+                class="mx-auto w-full max-w-md bg-[url('/assets/images/input-field.png')] bg-contain bg-center bg-no-repeat"
             >
                 <!-- カスタム背景画像を使用したカード -->
 
