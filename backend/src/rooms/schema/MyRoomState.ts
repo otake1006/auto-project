@@ -19,7 +19,7 @@ export class Player extends Schema {
     @type(['number']) useSkills: number[] = [];
     @type([Skill]) skill = new ArraySchema<Skill>(); //作戦ボード内のスキル
     @type(buff) buffs = new buff();
-    @type([RelicCard]) relics: RelicCard[] = RelicCards;
+    @type([RelicCard]) relics: RelicCard[] = [];
 
     reset() {
         this.hp = this.maxhp;
@@ -44,6 +44,7 @@ export class MyRoomState extends Schema {
     @type({ map: Player }) players = new MapSchema<Player>();
     @type('string') gameState: string = 'ready';
     @type('string') winner: string = 'draw';
+    @type('string') roundLoser: string = 'draw';
     @type('number') winCount1: number = 0;
     @type('number') winCount2: number = 0;
     @type('number') drawCount: number = 0;
@@ -54,4 +55,6 @@ export class MyRoomState extends Schema {
     @type([SkillCard]) player2SkillState: SkillCard[] = [];
     @type([SkillCard]) player1RandomSkill: SkillCard[] = [];
     @type([SkillCard]) player2RandomSkill: SkillCard[] = [];
+    @type([RelicCard]) player1RandomRelic: RelicCard[] = [];
+    @type([RelicCard]) player2RandomRelic: RelicCard[] = [];
 }
