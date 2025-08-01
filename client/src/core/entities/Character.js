@@ -21,6 +21,7 @@ export default class Character extends Phaser.GameObjects.Sprite {
         this.name = name;
         this.hp = new Stat('HP', maxHp);
         this.mp = new Stat('MP', maxMp);
+        this.isDead = false; // 死亡状態フラグ
 
         this.setScale(3);
         this.setFlipX(flipX);
@@ -47,11 +48,19 @@ export default class Character extends Phaser.GameObjects.Sprite {
      * 攻撃アニメーションを再生し、完了後にアイドルに戻る
      */
     playAttackAnimation() {
+        // 死亡状態の場合は攻撃アニメーションを再生しない
+        if (this.isDead) {
+            return;
+        }
+
         this.play(`attack_${this.texture.key}`);
 
         // アニメーション完了後にidleアニメーションに戻す
         this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-            this.playIdle();
+            // 死亡していない場合のみidleに戻る
+            if (!this.isDead) {
+                this.playIdle();
+            }
         });
     }
 
@@ -60,6 +69,7 @@ export default class Character extends Phaser.GameObjects.Sprite {
      * @param {Function} onComplete - アニメーション完了時のコールバック
      */
     playDeathAnimation(onComplete) {
+        this.isDead = true; // 死亡状態に設定
         this.play(`death_${this.texture.key}`);
 
         if (onComplete) {
@@ -126,6 +136,6 @@ export default class Character extends Phaser.GameObjects.Sprite {
     }
 
     isAlive() {
-        return !this.hp.isEmpty();
+        return !this.hp.isEmpty() && !this.isDead;
     }
 }
