@@ -24,6 +24,8 @@ export class MyRoom extends Room {
                     break;
                 case 'selectSkill':
                     this.actionHandler.handleSelectSkill(client, payload);
+                case 'selectRelic':
+                    this.actionHandler.handleSelectRelic(client, payload);
             }
         });
     }
