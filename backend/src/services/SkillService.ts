@@ -76,8 +76,10 @@ export class SkillService {
         );
     }
 
-    public useAllSkill() {
+    async useAllSkill() {
+        await this.sleep(1000);
         if (this.startturn) {
+            console.log('ターン開始');
             //ターン開始時のレリック発動
             this.PermanentEffectAll(GameConfig.TURN_START);
             this.startturn = false;
@@ -166,6 +168,7 @@ export class SkillService {
     }
 
     public PermanentEffectAll(trigger: string) {
+        console.log(trigger);
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
         this.PermanentEffect(player1, player2, trigger);
         this.PermanentEffect(player2, player1, trigger);
@@ -180,7 +183,7 @@ export class SkillService {
                 if (effect.trigger === Trigger) {
                     switch (effect.effectType) {
                         case 'stat_boost':
-                            relic.stat_boost(player);
+                            relic.stat_boost(player, target);
                             break;
                         case 'damage':
                             relic.relicDamage(player, target, this.state.turn);
@@ -202,5 +205,9 @@ export class SkillService {
                 relic.skill_modifier(player, target, damage);
             }
         }
+    }
+
+    public sleep(options: number) {
+        return new Promise((resolve) => setTimeout(resolve, options));
     }
 }
