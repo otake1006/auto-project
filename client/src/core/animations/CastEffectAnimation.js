@@ -228,7 +228,19 @@ export class CastEffectAnimation extends AnimationBase {
         return colors[this.options.waveType] || colors.energy;
     }
 
+    loadMuteState(key, defaultValue) {
+        try {
+            const stored = localStorage.getItem(`mute_${key}`);
+            return stored !== null ? JSON.parse(stored) : defaultValue;
+        } catch (error) {
+            console.warn(`Failed to load ${key} from localStorage:`, error);
+            return defaultValue;
+        }
+    }
+
     playLaunchSound() {
+        if (this.loadMuteState('seMuted', false)) return;
+
         // 波動タイプに応じた発射音
         const launchSounds = {
             energy: 'cast_energy_launch',
@@ -250,6 +262,8 @@ export class CastEffectAnimation extends AnimationBase {
     }
 
     playImpactSound() {
+        if (this.loadMuteState('seMuted', false)) return;
+
         // 波動タイプに応じた着弾音
         const impactSounds = {
             energy: 'impact_energy_hit',

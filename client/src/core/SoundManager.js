@@ -4,8 +4,19 @@ export class SoundEventManager {
         this.cache = {};
         this.bgmAudio = null;
 
-        this.isMutedSe = false;
-        this.isMutedBgm = false;
+        // localStorageから直接読み込み（Piniaが使えない場合のフォールバック）
+        this.isMutedSe = this.loadMuteState('seMuted', false);
+        this.isMutedBgm = this.loadMuteState('bgmMuted', false);
+    }
+
+    loadMuteState(key, defaultValue) {
+        try {
+            const stored = localStorage.getItem(`mute_${key}`);
+            return stored !== null ? JSON.parse(stored) : defaultValue;
+        } catch (error) {
+            console.warn(`Failed to load ${key} from localStorage:`, error);
+            return defaultValue;
+        }
     }
 
     play(fileName) {

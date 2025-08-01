@@ -1,5 +1,4 @@
 import { bgmMap } from '@/core/sounds/bgmMap.js';
-import { useMuteStore } from '@/ui/stores/muteStore.js';
 
 // core/sounds/BgmManager.js
 export class BgmManager {
@@ -7,8 +6,18 @@ export class BgmManager {
         this.scene = scene;
         this.currentBgm = null;
         this.currentKey = null;
-        const muteStore = useMuteStore();
-        this.isMuted = muteStore.bgmMuted;
+        // localStorageから直接読み込み（Piniaが使えない場合のフォールバック）
+        this.isMuted = this.loadMuteState('bgmMuted', false);
+    }
+
+    loadMuteState(key, defaultValue) {
+        try {
+            const stored = localStorage.getItem(`mute_${key}`);
+            return stored !== null ? JSON.parse(stored) : defaultValue;
+        } catch (error) {
+            console.warn(`Failed to load ${key} from localStorage:`, error);
+            return defaultValue;
+        }
     }
 
     play(sceneKey, bgmMap) {
