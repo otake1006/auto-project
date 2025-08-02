@@ -194,11 +194,22 @@ export class StartScene extends Phaser.Scene {
         if (playerName) {
             playerStore.setPlayerName(playerName);
             console.log('[StartScene] Player name set:', playerName);
+            // Enterキーで名前を確定した場合、自動的にMatchSceneに遷移
+            this.transitionToMatchScene();
         } else {
             // 名前が設定されなかった場合、デフォルト名を設定
             // playerStore.setPlayerName('プレイヤー');
             console.log('[StartScene] Default player name set');
         }
+    }
+
+    transitionToMatchScene() {
+        if (this.buttonPressed) return;
+        this.buttonPressed = true;
+        
+        this.bgmManager.fadeOut(500, () => {
+            this.scene.start('MatchScene');
+        });
     }
 
     showTutorial() {
@@ -261,9 +272,7 @@ export class StartScene extends Phaser.Scene {
         }
 
         // マッチシーンに遷移
-        this.bgmManager.fadeOut(500, () => {
-            this.scene.start('MatchScene');
-        });
+        this.transitionToMatchScene();
     }
 
     shutdown() {
