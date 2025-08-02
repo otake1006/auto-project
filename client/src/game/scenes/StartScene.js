@@ -204,9 +204,9 @@ export class StartScene extends Phaser.Scene {
     }
 
     transitionToMatchScene() {
-        if (this.buttonPressed) return;
-        this.buttonPressed = true;
-        
+        // if (this.buttonPressed) return;
+        // this.buttonPressed = true;
+
         this.bgmManager.fadeOut(500, () => {
             this.scene.start('MatchScene');
         });
