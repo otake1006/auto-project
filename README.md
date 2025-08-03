@@ -1,103 +1,109 @@
-# 🎮 AU-TA
+# 🔥 AUTA - リアルタイム対戦型カードバトルゲーム
 
-<img width="720" alt="image" src="https://github.com/user-attachments/assets/766d8327-d6f8-4cf2-b27b-c44c143fd8cc" />
+> Vue.js × Phaser × Colyseus で構築した、2人チームによるリアルタイム対戦カードゲームです。
 
----
-
-## 📌 概要 / Overview
-
-このプロジェクトは Vue.js / Phaser / Colyseus を用いて開発した、1vs1のリアルタイム対戦型カードバトルゲームです。
-プレイヤーはスキルカード・条件カードを組み合わせて独自の戦略を構築し、ターン制の戦いを通じて勝利を目指します。
+<p align="center"> <img src="docs/images/202508031631.gif" alt="gameplay preview"> </p>
 
 ---
 
-## 🚀 デモ / Demo
+## 📌 概要
 
-- 💻 [オンラインで遊べるURL](https://auto-project-1.onrender.com/)
-
----
-
-## 🔗 個人ポートフォリオ
-
-このプロジェクトは2人で開発しました。  
-各メンバーの技術的な工夫・貢献内容は以下のリンクからご覧いただけます。
-
-- 👨‍🎨 [Elic0deのフロントエンドREADME](./docs/readme_elic0de.md)
-- 🧠 [otake1006のバックエンドREADME](./docs/readme_otake.md)
+AUTA は、スキルカードや条件カードを駆使して戦う、戦略的な1v1対戦ゲームです。リアルタイム通信と演出同期、データ駆動アセット管理など、実践的な技術課題を統合的に解決することを目的としています。
 
 ---
 
-## 👥 チームメンバー
+## 🎯 制作背景・モチベーション
 
-| 名前      | 担当領域                             | GitHub                                     |
-| --------- | ------------------------------------ | ------------------------------------------ |
-| Elicode   | フロントエンド（UI/UX・演出）        | [@Elic0de](https://github.com/Elic0de)     |
-| otake1006 | バックエンド（通信・ゲームロジック） | [@otake1006](https://github.com/otake1006) |
-
-## 🛠️ 技術スタック / Tech Stack
-
-| 技術   | 採用理由                       |
-| ------ | ------------------------------ |
-| Vue 3  | 柔軟なUI設計と再利用性の高さ   |
-| Pinia  | 状態の一元管理と再現性の高いUI |
-| Phaser | 表現力の高い2Dアニメーション   |
+- 就活やスキル証明に直結する「総合演習的な題材」を求めて選定
+- リアルタイム通信／UI演出／状態管理などを1つの題材で統合的に試せる
+- チーム開発での責任分担や、設計のすり合わせを経験したかった
 
 ---
 
-## 🔍 詳細解説
+## ⚙️ 使用技術と選定理由
 
-<details>
-<summary>Vue 3 の技術的な工夫・選定理由</summary>
+| 技術     | 役割                | 選定理由                                           |
+| -------- | ------------------- | -------------------------------------------------- |
+| Vue 3    | UI/状態管理         | Composition APIとコンポーネント再利用性の高さ      |
+| Pinia    | 状態管理            | 非同期処理とVueとの親和性／キャッシュ管理          |
+| Phaser   | 演出/アニメーション | 高い自由度と軽量さ。Canvasベースで柔軟な演出が可能 |
+| Colyseus | リアルタイム通信    | Schemaベースで状態同期しやすく、開発効率が高い     |
+| Vite     | フロントビルド      | 高速なビルド／HMRで開発効率向上                    |
 
-- Composition API による責務分離
-- `useXxx()` composable 化でロジックを整理
-- Phaserとの同期を `nextTick` で制御
+---
 
-📚 [Vue 3 Docs](https://vuejs.org/guide/introduction.html)
+## 🏗️ アーキテクチャ概要
 
-</details>
-
-<details>
-<summary>Pinia の技術的な工夫・選定理由</summary>
-
-- 状態の責務ごとにStoreを分離
-- watchEffect + socket イベントで状態同期
-- グローバル状態に依存せずテストしやすい設計
-
-📚 [Pinia Docs](https://pinia.vuejs.org/introduction.html)
-
-</details>
-| 技術       | 用途               |
-| ---------- | ------------------ |
-| Vue.js     | UI構築             |
-| Phaser     | ゲームエンジン     |
-| Colyseus   | マルチプレイ通信   |
-| Pinia      | 状態管理           |
-| TypeScript | 型安全・保守性向上 |
-
-## 🔍 開発で工夫した点 / Key Points
-
-- ### 🎯 責務分離と保守性
-    - ゲームロジック、描画、エフェクト演出を**独立したクラス構成**で管理
-    - 例：`Character.ts`・`EffectManager.ts`・`BattleSystem.ts` など
-
-- ### 🎲 拡張可能なゲーム設計
-    - スキル・バフ・レリックなどを**データ駆動で実装**（JSON or データベース）
-    - 「〇〇の条件で□□が発動」のような複雑な挙動を**汎用的に記述可能**
-
-- ### 🌐 マルチプレイ対応
-    - Colyseusを使ってリアルタイム同期
-    - 再接続・観戦・セッション管理にも対応
-
-## 🗂️ ディレクトリ構成 / Project Structure
-
-```bash
-├── src/
-│   ├── core/              # ゲームのロジック層
-│   ├── components/        # Vueコンポーネント
-│   ├── stores/            # 状態管理 (Pinia)
-│   ├── scenes/            # Phaserのシーン管理
-│   └── assets/            # 画像や音声
-├── server/                # Colyseusサーバー
-└── README.md              # このファイル
 ```
+Vue（画面表示・入力）⇄ Pinia（状態管理）
+            ↓
+        Phaser（演出制御）
+            ↓
+     Colyseus（通信・同期）
+```
+
+- 状態の一元管理と責務分離（Store / Scene / Logic / Assets）
+- データ駆動アセット読み込み（JSONベース）
+- イベント駆動設計による状態と演出の分離
+
+---
+
+## 🧠 技術的チャレンジと工夫
+
+<details>
+<summary>1. フロント演出とバックエンドの同期</summary>
+
+Colyseus の Schema による即時HP反映と、演出（攻撃アニメ等）との非同期性が課題でした。  
+→ アニメーション完了フラグをクライアントで管理し、完了後に状態反映を進める「演出キューシステム」を実装。
+
+</details>
+
+<details>
+<summary>2. データ駆動によるアセット管理</summary>
+
+アセット定義を JSON 管理し、Phaser ローダーを自動化。  
+→ 非エンジニアでも `assets.json` のみ編集で画像差し替え可能。
+
+</details>
+
+<details>
+<summary>3. UI演出の再利用性</summary>
+
+Vue の CustomButton コンポーネントを抽出。Props でホバー/クリック/SE挙動を指定可能にし、全UIに統一感をもたせた。
+
+</details>
+
+---
+
+## 👥 チーム開発体制
+
+| 名前      | 役割             | 主な担当                                 |
+| --------- | ---------------- | ---------------------------------------- |
+| Elic0de   | フロント全般     | UI設計／状態管理／演出制御／アセット連携 |
+| otake1006 | サーバ／ロジック | Colyseusロジック／通信同期／ルーム管理   |
+
+- GitHub / Discord による非同期連携
+- Figma モックと Notion による設計共有
+
+---
+
+## 🔗 関連リンク
+
+- [チームメンバーotakeの個人README →](./README_A.md)
+- [チームメンバーElic0deの個人README →](./README_B.md)
+- [デモ動画（YouTube）](#)
+- [プレイ可能なビルド](https://auta-game.vercel.app)
+
+---
+
+## 📈 今後の展望
+
+- マルチプレイ観戦モードの実装
+- スキルやレリックのバランス調整を自動化（Pythonシミュレーション導入予定）
+- チュートリアルや音声ガイドで初心者対応を強化
+
+---
+
+## 💬 お問い合わせ
+
+> ご不明点や詳細については [Issues](https://github.com/example/auta-game/issues) または DM にてお気軽にお問い合わせください。
