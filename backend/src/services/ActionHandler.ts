@@ -70,6 +70,20 @@ export class ActionHandler {
         }
     }
 
+    public handleSetPlayerName(client: Client, payload: { name: string }) {
+        const player = this.state.players.get(client.sessionId);
+        if (player && payload.name) {
+            player.name = payload.name.trim();
+            console.log(`Player ${client.sessionId} name set to: ${player.name}`);
+
+            // クライアントにプレイヤー名の更新を通知
+            this.room.broadcast('playerName', {
+                sessionId: client.sessionId,
+                name: player.name,
+            });
+        }
+    }
+
     public handleSelectRelic(client: Client, payload: any) {
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
         if (payload) {

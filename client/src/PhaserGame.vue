@@ -6,15 +6,15 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import Phaser from 'phaser';
-import { StartScene } from '@/scenes/StartScene';
-import { ResultScene } from '@/scenes/ResultScene';
-import { useModalStore } from '@/stores/modalStore';
-import { PreloadScene } from '@/scenes/PreloadScene';
-import { BootScene } from '@/scenes/BootScene';
-import { MatchScene } from '@/scenes/MatchScene';
-import { GameScene } from '@/scenes/GameScene';
-import { HudScene } from '@/scenes/HudScene';
-import { BackgroundScene } from './scenes/BackgroundScene';
+import { StartScene } from '@/game/scenes/StartScene';
+import { ResultScene } from '@/game/scenes/ResultScene';
+import { PreloadScene } from '@/game/scenes/PreloadScene';
+import { BootScene } from '@/game/scenes/BootScene';
+import { MatchScene } from '@/game/scenes/MatchScene';
+import { GameScene } from '@/game/scenes/GameScene';
+import { HudScene } from '@/game/scenes/HudScene';
+import { BackgroundScene } from '@/game/scenes/BackgroundScene';
+import { AssetLoader } from '@/game/plugins/AssetLoader';
 
 
 const gameContainer = ref(null);
@@ -31,6 +31,9 @@ onMounted(() => {
         height: 810,
         parent: gameContainer.value,
         scene: [BootScene, PreloadScene, StartScene, MatchScene, HudScene, BackgroundScene, GameScene, ResultScene],
+        plugins: {
+            global: [{ key: 'AssetLoader', plugin: AssetLoader, start: true }],
+        }
     };
 
     game = new Phaser.Game(config);
