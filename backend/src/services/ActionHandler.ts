@@ -22,6 +22,7 @@ export class ActionHandler {
 
     public handleReady(client: Client, payload: any) {
         const player = this.state.players.get(client.sessionId);
+        console.log(player.buffs.toJSON(), 'はじめ');
         if (this.state.gameState === 'ingame') return;
         if (this.state.gameState === 'endgame') return;
         const skillSets = this.skillsToArraySchema(payload);
@@ -30,6 +31,7 @@ export class ActionHandler {
             player.skill = skillSets;
             player.ready = true;
         }
+        console.log(player.buffs.toJSON());
         if (this.checkReady() && this.state.players.size === GameConfig.MAX_CLIENTS) {
             console.log('戦闘開始');
             this.gameLogic.playTurn();
@@ -37,10 +39,10 @@ export class ActionHandler {
     }
 
     public handleRequestPlayer() {
-        for (const [sessionId, player] of this.state.players) {
-            player.delete();
-            player.reset();
-        }
+        // for (const [sessionId, player] of this.state.players) {
+        //     player.delete();
+        //     player.reset();
+        // }
         this.room.broadcast('condition', conditionCards);
         this.room.broadcast('action', this.state.initialSkill);
     }
@@ -57,14 +59,12 @@ export class ActionHandler {
                     this.state.player1RandomSkill.some((skill) => skill.id === payload)
                 ) {
                     this.state.player1SkillState.push(getSkill);
-                    console.log(this.state.player1SkillState);
                 }
                 if (
                     client.sessionId === sessionId2 &&
                     this.state.player2RandomSkill.some((skill) => skill.id === payload)
                 ) {
                     this.state.player2SkillState.push(getSkill);
-                    console.log(this.state.player2SkillState);
                 }
             }
         }
