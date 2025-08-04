@@ -7,8 +7,8 @@ import { RelicCard, RelicCards } from '../../data/Relics';
 
 export class Player extends Schema {
     @type('string') name: string = 'player';
-    @type('number') hp: number = 0;
-    @type('number') mp: number = 0;
+    @type('number') hp: number = 100;
+    @type('number') mp: number = 50;
     @type('number') shield: number = 0;
     @type('number') maxhp: number = GameConfig.PLAYER_MAX_HP;
     @type('number') maxmp: number = GameConfig.PLAYER_MAX_MP;
