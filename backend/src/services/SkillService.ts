@@ -38,7 +38,6 @@ export class SkillService {
         const player1skill = this.selectSkill(sessionId1, sessionId2);
         const player2skill = this.selectSkill(sessionId2, sessionId1);
         skills.push(player1skill, player2skill);
-        console.log(skills);
         return skills;
     }
 
@@ -63,7 +62,7 @@ export class SkillService {
             for (const effect of skill.effects) {
                 player.buffs.getBuff(player, target, effect);
             }
-            this.skillModifierEffect(player, target);
+            this.skillModifierEffect(player, target); //レリックの効果
         }
     }
 
@@ -77,7 +76,6 @@ export class SkillService {
     }
 
     async useAllSkill() {
-        await this.sleep(1000);
         if (this.startturn) {
             console.log('ターン開始');
             //ターン開始時のレリック発動
@@ -89,6 +87,8 @@ export class SkillService {
         const player1skill = skills[0];
         const player2skill = skills[1];
         const skill = getSkillCard(player2skill);
+        console.log(player1.hp, 'スキル使用前');
+        console.log(player2.hp, 'スキル使用前');
         if (skill.battleType === 'defense') {
             this.useSkill(player2skill, player2, player1);
             this.useSkill(player1skill, player1, player2);
@@ -104,6 +104,8 @@ export class SkillService {
                 { sessionId: sessionId1, skill: getSkillCard(player1skill)?.name },
             ]);
         }
+        console.log(player1.hp, player1.mp, 'スキル使用後');
+        console.log(player2.hp, player2.mp, 'スキル使用後');
         if (!player1skill && !player2skill) {
             player1.resetMp();
             player2.resetMp();
