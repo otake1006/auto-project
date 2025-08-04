@@ -26,11 +26,15 @@ export class GameLogic {
         this.skillService.PermanentEffectAll(GameConfig.ROUND_START);
 
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
+        console.log(player1.buffs.toJSON());
+        console.log(player2.buffs.toJSON());
         while (true) {
             if (player1.hp <= 0 || player2.hp <= 0 || this.state.turn > 10) {
                 this.checkEndGame();
                 return;
             }
+            console.log('処理');
+            await this.sleep(300);
             this.skillService.useAllSkill();
             await this.sleep(500);
         }
@@ -70,7 +74,6 @@ export class GameLogic {
         this.randomSkills();
         this.randomRelics(this.state.roundLoser);
         this.state.roundLoser = 'draw';
-        return;
     }
 
     public checkWinner() {
