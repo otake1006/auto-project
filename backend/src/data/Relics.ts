@@ -168,7 +168,9 @@ export class RelicCard extends Schema {
         const effect = this.Effect as SkillModifierRelic;
         switch (effect.SkillModifierType) {
             case 'life_steal':
-                player.hp += Math.round((damage * effect.value) / 100);
+                if (damage) {
+                    player.hp += Math.round((damage * effect.value) / 100);
+                }
                 break;
             case 'countDamage':
                 const HPdamage = Math.max(0, effect.value - target.shield);
