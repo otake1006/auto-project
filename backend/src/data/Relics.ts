@@ -339,7 +339,7 @@ export const RelicCards: RelicCard[] = [
         },
     }),
     new RelicCard({
-        id: 10,
+        id: 11,
         name: '呪いの人形',
         description: '６ターン目終了時に敵の最大ＨＰ２５％分のダメージ',
         imgSrc: '/fc290.png',

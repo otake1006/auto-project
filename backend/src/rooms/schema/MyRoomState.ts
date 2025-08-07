@@ -39,6 +39,15 @@ export class Player extends Schema {
     resetShield() {
         this.shield = 0;
     }
+
+    checkUseskills(skillId: number) {
+        for (const skill of this.useSkills) {
+            if (skill === skillId) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 export class MyRoomState extends Schema {
     @type({ map: Player }) players = new MapSchema<Player>();
@@ -50,7 +59,7 @@ export class MyRoomState extends Schema {
     @type('number') drawCount: number = 0;
     @type('number') round: number = 1;
     @type('number') turn: number = 1;
-    @type([SkillCard]) initialSkill = new ArraySchema<SkillCard>();
+    @type([SkillCard]) initialSkill: SkillCard[] = [];
     @type([SkillCard]) player1SkillState: SkillCard[] = [];
     @type([SkillCard]) player2SkillState: SkillCard[] = [];
     @type([SkillCard]) player1RandomSkill: SkillCard[] = [];

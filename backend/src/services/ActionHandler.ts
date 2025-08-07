@@ -129,7 +129,7 @@ export class ActionHandler {
     checkReady() {
         return this.state.players.values().every((player) => player.ready);
     }
-    mergeSkills(schemaSkills: ArraySchema<SkillCard>, arraySkills: SkillCard[]): SkillCard[] {
+    mergeSkills(schemaSkills: SkillCard[], arraySkills: SkillCard[]): SkillCard[] {
         return [...schemaSkills, ...arraySkills];
     }
     extractIds(items: any[]): number[] {
