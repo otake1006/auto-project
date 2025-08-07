@@ -87,9 +87,8 @@ export class GameScene extends Phaser.Scene {
 
         this.battleManager = new BattleManager(this, this.playerView, this.enemyView);
         this.effectMgr = new EffectManager(this);
-        this.bgmMgr = new BgmManager(this);
         const muteStore = useMuteStore();
-        this.bgmMgr.setMute(muteStore.bgmMuted);
+        this.bgmMgr = new BgmManager(this, muteStore);
         this.bgmMgr.play(this.scene.key, bgmMap);
 
         // SkillLogSystemを保存して他のシステムからアクセス可能にする
@@ -192,11 +191,10 @@ export class GameScene extends Phaser.Scene {
         // BGM ミュートボタン
         this.bgmButton = new MuteButton(this, 1390, 35, 'icon_bgm_on', {
             muteTexture: 'mute_x',
-            isMuted: muteStore.bgmMuted,
+            isMuted: this.bgmMgr.getMuteState(),
             scale: 1.5, // ベースアイコンを大きく
             muteScale: 1.8, // X画像をさらに大きく
             onToggle: (isMuted) => {
-                muteStore.setBgmMuted(isMuted);
                 this.bgmMgr.setMute(isMuted);
             },
             sounds: { click: null },
@@ -224,13 +222,13 @@ export class GameScene extends Phaser.Scene {
 
     createCharacter(position, isPlayer, id) {
         let name = id;
-        
+
         // プレイヤーの場合はstoreから名前を取得
         if (isPlayer) {
             const playerStore = usePlayerStore();
             name = playerStore.getPlayerName() || 'プレイヤー';
         }
-        
+
         return new Character(
             this,
             position.x,
