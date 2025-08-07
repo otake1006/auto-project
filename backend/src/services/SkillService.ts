@@ -11,7 +11,7 @@ import { GameConfig } from '../config/game';
 export class SkillService {
     private state: MyRoomState;
     private room: MyRoom;
-    private startturn: boolean = true;
+    public startturn: boolean = true;
 
     constructor(room: MyRoom) {
         this.room = room;
@@ -44,7 +44,7 @@ export class SkillService {
     private useSkill(skillId: number, player: Player, target: Player) {
         if (!skillId) return;
         const skill = getSkillCard(skillId);
-        player.useSkills.push(skillId); //使用したスキルを記録
+        if (player.checkUseskills(skillId)) player.useSkills.push(skillId); //使用したスキルを記録
         player.mp -= skill.energy;
         if (skill.battleType === 'attack') {
             const damage = this.damageCalculation(skill, player.buffs, target.buffs);
