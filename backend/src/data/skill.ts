@@ -39,7 +39,7 @@ export function getSkillCard(id: number): SkillCard | undefined {
 }
 
 export function getInitialSkill() {
-    const initialSkill = new ArraySchema<SkillCard>();
+    const initialSkill = [];
     const shuffleCard = shuffle(skillCards);
 
     for (let i = 0; i < 3; i++) {
@@ -222,7 +222,7 @@ export const skillCards: SkillCard[] = [
         damage: 0,
         battleType: 'effect',
         Count: 1,
-        imgSrc: '/fc657.png',
+        imgSrc: '/fc1098.png',
         effects: [new effectCard({ type: 'muscular', power: 5, target: 'self' })],
     }),
     new SkillCard({
