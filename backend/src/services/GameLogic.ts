@@ -24,6 +24,7 @@ export class GameLogic {
 
         //ラウンド開始時のレリック発動
         this.skillService.PermanentEffectAll(GameConfig.ROUND_START);
+        this.skillService.startturn = true;
 
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
         console.log(player1.buffs.toJSON());
@@ -124,10 +125,7 @@ export class GameLogic {
         }
     }
 
-    public mergeSkills(
-        schemaSkills: ArraySchema<SkillCard>,
-        arraySkills: SkillCard[],
-    ): SkillCard[] {
+    public mergeSkills(schemaSkills: SkillCard[], arraySkills: SkillCard[]): SkillCard[] {
         return [...schemaSkills, ...arraySkills];
     }
     public sleep(options: number) {
