@@ -3,6 +3,7 @@ import { System } from '@/core/System.js';
 import { phaserEvents } from '@/events/EventCenter';
 import { useSkillStore } from '@/ui/stores/skillStore';
 import { useModalStore } from '@/ui/stores/modalStore';
+import { useGameStore } from '@/ui/stores/gameStore';
 import { networkManager } from '@/core/NetworkManager';
 
 export class NetworkSystem extends System {
@@ -208,6 +209,8 @@ export class NetworkSystem extends System {
         return scene?.battleManager || window.battleManager;
     }
     onShowReady() {
+        const gameStore = useGameStore();
+        gameStore.reset();
         phaserEvents.emit('show-ready');
     }
     onWinner(data) {
