@@ -1,19 +1,13 @@
 import { MyRoom } from '../rooms/Room';
 import { Client } from 'colyseus';
-import { MyRoomState } from '../rooms/schema/MyRoomState2';
+import { MyRoomState } from '../rooms/schema/MyRoomState';
 import { Skill, Condition } from '../rooms/schema/Skill';
 import { ArraySchema } from '@colyseus/schema';
-import { Player } from '../rooms/schema/MyRoomState';
 import { GameConfig } from '../config/game';
 import { GameLogic } from '../services/GameLogic';
-import {
-    SkillCard,
-    conditionCards,
-    ConditionCard,
-    getInitialSkill,
-    getSkillCard,
-    selectRandomSkills,
-} from '../data/card';
+import { SkillCard, getSkillCard } from '../data/skill';
+import { conditionCards } from '../data/condition';
+import { RelicCards, getRelicCard } from '../data/Relics';
 
 export class ActionHandler {
     private state: MyRoomState;
@@ -28,6 +22,7 @@ export class ActionHandler {
 
     public handleReady(client: Client, payload: any) {
         const player = this.state.players.get(client.sessionId);
+        console.log(player.buffs.toJSON(), 'はじめ');
         if (this.state.gameState === 'ingame') return;
         if (this.state.gameState === 'endgame') return;
         const skillSets = this.skillsToArraySchema(payload);
@@ -36,6 +31,7 @@ export class ActionHandler {
             player.skill = skillSets;
             player.ready = true;
         }
+        console.log(player.buffs.toJSON());
         if (this.checkReady() && this.state.players.size === GameConfig.MAX_CLIENTS) {
             console.log('戦闘開始');
             this.gameLogic.playTurn();
@@ -43,10 +39,10 @@ export class ActionHandler {
     }
 
     public handleRequestPlayer() {
-        for (const [sessionId, player] of this.state.players) {
-            player.delete();
-            player.reset();
-        }
+        // for (const [sessionId, player] of this.state.players) {
+        //     player.delete();
+        //     player.reset();
+        // }
         this.room.broadcast('condition', conditionCards);
         this.room.broadcast('action', this.state.initialSkill);
     }
@@ -63,14 +59,12 @@ export class ActionHandler {
                     this.state.player1RandomSkill.some((skill) => skill.id === payload)
                 ) {
                     this.state.player1SkillState.push(getSkill);
-                    console.log(this.state.player1SkillState);
                 }
                 if (
                     client.sessionId === sessionId2 &&
                     this.state.player2RandomSkill.some((skill) => skill.id === payload)
                 ) {
                     this.state.player2SkillState.push(getSkill);
-                    console.log(this.state.player2SkillState);
                 }
             }
         }
@@ -81,12 +75,35 @@ export class ActionHandler {
         if (player && payload.name) {
             player.name = payload.name.trim();
             console.log(`Player ${client.sessionId} name set to: ${player.name}`);
-            
+
             // クライアントにプレイヤー名の更新を通知
             this.room.broadcast('playerName', {
                 sessionId: client.sessionId,
-                name: player.name
+                name: player.name,
             });
+        }
+    }
+
+    public handleSelectRelic(client: Client, payload: any) {
+        const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
+        if (payload) {
+            //console.log(id);
+            const getRelic = getRelicCard(payload);
+            //console.log(getSkill.toJSON());
+            if (getRelic) {
+                if (
+                    client.sessionId === sessionId1 &&
+                    this.state.player1RandomRelic.some((skill) => skill.id === payload)
+                ) {
+                    player1.relics.push(getRelic);
+                }
+                if (
+                    client.sessionId === sessionId2 &&
+                    this.state.player2RandomRelic.some((skill) => skill.id === payload)
+                ) {
+                    player2.relics.push(getRelic);
+                }
+            }
         }
     }
 
@@ -112,7 +129,7 @@ export class ActionHandler {
     checkReady() {
         return this.state.players.values().every((player) => player.ready);
     }
-    mergeSkills(schemaSkills: ArraySchema<SkillCard>, arraySkills: SkillCard[]): SkillCard[] {
+    mergeSkills(schemaSkills: SkillCard[], arraySkills: SkillCard[]): SkillCard[] {
         return [...schemaSkills, ...arraySkills];
     }
     extractIds(items: any[]): number[] {

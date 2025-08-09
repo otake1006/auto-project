@@ -30,6 +30,7 @@ export const useSkillStore = defineStore('skill', () => {
     ]);
 
     const selectCards = ref([]);
+    const selectRelicCards = ref([]);
 
     function setSelectCards(cards) {
         selectCards.value = cards;
@@ -37,6 +38,14 @@ export const useSkillStore = defineStore('skill', () => {
 
     function clearSelectCards() {
         selectCards.value = [];
+    }
+
+    function setSelectRelicCards(cards) {
+        selectRelicCards.value = cards;
+    }
+
+    function clearSelectRelicCards() {
+        selectRelicCards.value = [];
     }
 
     const skills = ref([]);
@@ -165,6 +174,8 @@ export const useSkillStore = defineStore('skill', () => {
         skills.value = [];
         conditions.value = [];
         relics.value = [];
+        selectCards.value = [];
+        selectRelicCards.value = [];
     }
 
     return {
@@ -179,6 +190,7 @@ export const useSkillStore = defineStore('skill', () => {
         currentTab,
         filteredCards,
         selectCards,
+        selectRelicCards,
         handleSkillAdd,
         handleSkillRemove,
         handleConditionInput,
@@ -188,6 +200,8 @@ export const useSkillStore = defineStore('skill', () => {
         setTab,
         clearSelectCards,
         setSelectCards,
+        clearSelectRelicCards,
+        setSelectRelicCards,
         reset,
     };
 });

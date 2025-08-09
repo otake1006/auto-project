@@ -31,6 +31,7 @@ import SkillSelectModal from '@/ui/components/modals/SkillSelectModal.vue';
 import ConditionInputModal from '@/ui/components/modals/ConditionInputModal.vue';
 import PlayerNameInputModal from '@/ui/components/modals/PlayerNameInputModal.vue';
 import RelicSelectModal from '@/ui/components/modals/RelicSelectModal.vue';
+import UnifiedSelectModal from '@/ui/components/modals/UnifiedSelectModal.vue';
 
 const modalStore = useModalStore();
 
@@ -40,6 +41,8 @@ const modalComponent = computed(() => {
             return SkillSelectModal;
         case 'relicSelect':
             return RelicSelectModal;
+        case 'unifiedSelect':
+            return UnifiedSelectModal;
         case 'conditionInput':
             return ConditionInputModal;
         // playerNameInputは直接表示するためここでは処理しない

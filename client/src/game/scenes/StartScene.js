@@ -28,9 +28,8 @@ export class StartScene extends Phaser.Scene {
         this.scale.resize(1440, 810);
         this.buttonPressed = false;
         phaserEvents.emit('scene-changed', 'StartScene');
-        this.bgmManager = new BgmManager(this);
         const muteStore = useMuteStore();
-        this.bgmManager.setMute(muteStore.bgmMuted);
+        this.bgmManager = new BgmManager(this, muteStore);
         this.bgmManager.play(this.scene.key, bgmMap);
         this.tutorialModal = new TutorialModal(this);
         this.creditsModal = new CreditsModal(this);
@@ -237,11 +236,10 @@ export class StartScene extends Phaser.Scene {
         // BGM ミュートボタン
         this.bgmButton = new MuteButton(this, this.scale.width - 50, 30, 'icon_bgm_on', {
             muteTexture: 'mute_x',
-            isMuted: muteStore.bgmMuted,
+            isMuted: this.bgmManager.getMuteState(),
             scale: 1.2,
             muteScale: 1.5,
             onToggle: (isMuted) => {
-                muteStore.setBgmMuted(isMuted);
                 this.bgmManager.setMute(isMuted);
             },
             sounds: { click: null },

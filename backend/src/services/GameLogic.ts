@@ -1,19 +1,10 @@
 import { MyRoom } from '../rooms/Room';
-import { Client } from 'colyseus';
-import { MyRoomState } from '../rooms/schema/MyRoomState2';
-import { Skill, Condition } from '../rooms/schema/Skill';
+import { MyRoomState } from '../rooms/schema/MyRoomState';
 import { ArraySchema } from '@colyseus/schema';
-import { Player } from '../rooms/schema/MyRoomState';
-import { GameConfig } from '../config/game';
 import { SkillService } from '../services/SkillService';
-import {
-    SkillCard,
-    conditionCards,
-    ConditionCard,
-    getInitialSkill,
-    getSkillCard,
-    selectRandomSkills,
-} from '../data/card';
+import { SkillCard, selectRandomSkills } from '../data/skill';
+import { GameConfig } from '../config/game';
+import { selectRandomRelics } from '../data/Relics';
 
 export class GameLogic {
     private state: MyRoomState;
@@ -30,48 +21,77 @@ export class GameLogic {
         this.state.gameState = 'ingame';
         this.room.broadcast('turn', this.state.turn);
         this.room.broadcast('round', this.state.round);
+
+        //ラウンド開始時のレリック発動
+        this.skillService.PermanentEffectAll(GameConfig.ROUND_START);
+        this.skillService.startturn = true;
+
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
+        console.log(player1.buffs.toJSON());
+        console.log(player2.buffs.toJSON());
         while (true) {
             if (player1.hp <= 0 || player2.hp <= 0 || this.state.turn > 10) {
                 this.checkEndGame();
                 return;
             }
+            console.log('処理');
+            await this.sleep(300);
             this.skillService.useAllSkill();
             await this.sleep(500);
         }
     }
 
     public checkEndGame() {
+        const winner = '';
         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
         this.state.turn = 1;
-        if (player1.hp > 0 && player2.hp <= 0) this.state.winCount1 += 1;
-        if (player2.hp > 0 && player1.hp <= 0) this.state.winCount2 += 1;
+        if (player1.hp > 0 && player2.hp <= 0) {
+            this.state.winCount1 += 1;
+            this.state.roundLoser = sessionId2;
+        }
+        if (player2.hp > 0 && player1.hp <= 0) {
+            this.state.winCount2 += 1;
+            this.state.roundLoser = sessionId1;
+        }
         this.state.round += 1;
         player1.reset();
         player2.reset();
+        player1.buffs.reset();
+        player2.buffs.reset();
         if (this.state.round >= 6) {
             this.room.broadcast('winner', this.checkWinner());
             this.state.gameState = 'endgame';
             this.room.disconnect();
             return;
         }
+
+        //ラウンド終了時のレリック発動
+        this.skillService.PermanentEffectAll(GameConfig.ROUND_END);
+
         this.state.gameState = 'ready';
         this.room.broadcast('showReady');
         player1.ready = false;
         player2.ready = false;
         this.randomSkills();
-        return;
+        this.randomRelics(this.state.roundLoser);
+        this.state.roundLoser = 'draw';
     }
 
     public checkWinner() {
+        const [, player1] = Array.from(this.state.players)[0];
+        const [, player2] = Array.from(this.state.players)[1];
+        
         if (this.state.winCount1 > this.state.winCount2) {
-            this.state.winner = 'player1';
+            this.state.winner = player1.name;
             return this.state.winner;
         }
         if (this.state.winCount1 < this.state.winCount2) {
-            this.state.winner = 'player2';
+            this.state.winner = player2.name;
             return this.state.winner;
         }
+        // 引き分けの場合
+        this.state.winner = 'draw';
+        return this.state.winner;
     }
 
     public randomSkills() {
@@ -92,88 +112,29 @@ export class GameLogic {
         });
     }
 
-    public mergeSkills(
-        schemaSkills: ArraySchema<SkillCard>,
-        arraySkills: SkillCard[],
-    ): SkillCard[] {
+    public randomRelics(loser: string) {
+        if (loser === 'draw') {
+            const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
+            this.room.clients.forEach((client) => {
+                if (client.sessionId === sessionId1) {
+                    this.state.player1RandomRelic = selectRandomRelics(player1.relics);
+                    client.send('giveRelics', this.state.player1RandomRelic);
+                }
+                if (client.sessionId === sessionId2) {
+                    this.state.player2RandomRelic = selectRandomRelics(player2.relics);
+                    client.send('giveRelics', this.state.player2RandomRelic);
+                }
+            });
+        } else {
+            const player = this.state.players.get(loser);
+            this.room.clients.getById(loser).send('giveRelics', selectRandomRelics(player.relics));
+        }
+    }
+
+    public mergeSkills(schemaSkills: SkillCard[], arraySkills: SkillCard[]): SkillCard[] {
         return [...schemaSkills, ...arraySkills];
     }
     public sleep(options: number) {
         return new Promise((resolve) => setTimeout(resolve, options));
     }
 }
-
-//     async playTurn() {
-//         this.gameState = 'ingame';
-//         this.broadcast('turn', this.turn);
-//         this.broadcast('round', this.round);
-//         const [[sessionId1, player1], [sessionId2, player2]] = Array.from(this.state.players);
-
-//         while (true) {
-//             if (player1.hp <= 0 || player2.hp <= 0 || this.turn > 10) {
-//                 this.turn = 1;
-//                 if (player1.hp > 0 && player2.hp <= 0) this.winCount1 += 1;
-//                 if (player2.hp > 0 && player1.hp <= 0) this.winCount2 += 1;
-//                 this.round += 1;
-//                 player1.reset();
-//                 player2.reset();
-//                 if (this.round >= 6) {
-//                     if (this.winCount1 > this.winCount2) {
-//                         this.winner = 'player1';
-//                     }
-//                     if (this.winCount1 < this.winCount2) {
-//                         this.winner = 'player2';
-//                     }
-//                     this.broadcast('winner', this.winner);
-//                     this.gameState = 'endgame';
-//                     this.disconnect();
-//                     return;
-//                 }
-//                 this.gameState = 'ready';
-//                 this.broadcast('showReady');
-//                 player1.ready = false;
-//                 player2.ready = false;
-//                 this.player1RandomSkill = selectRandomSkills(
-//                     this.mergeSkills(this.initialSkill, this.player1SkillState),
-//                 );
-//                 this.player2RandomSkill = selectRandomSkills(
-//                     this.mergeSkills(this.initialSkill, this.player2SkillState),
-//                 );
-//                 this.clients.forEach((client) => {
-//                     if (client.sessionId === sessionId1) {
-//                         client.send('giveCards', this.player1RandomSkill);
-//                     }
-//                     if (client.sessionId === sessionId2) {
-//                         client.send('giveCards', this.player2RandomSkill);
-//                     }
-//                 });
-
-//                 return;
-//             }
-//             const player1skill = player1.selectSkill();
-//             const player2skill = player2.selectSkill();
-//             const skill = getSkillCard(player2skill);
-//             if (skill.battleType === 'defense') {
-//                 player2.useSkill(player2skill, player1);
-//                 player1.useSkill(player1skill, player2);
-//             } else {
-//                 player1.useSkill(player1skill, player2);
-//                 player2.useSkill(player2skill, player1);
-//             }
-
-//             this.broadcast('skillLogs', [
-//                 { sessionId: sessionId1, skill: getSkillCard(player1skill)?.name },
-//                 { sessionId: sessionId2, skill: getSkillCard(player2skill)?.name },
-//             ]);
-//             if (!player1skill && !player2skill) {
-//                 player1.resetMp();
-//                 player2.resetMp();
-//                 player1.resetShield();
-//                 player2.resetShield();
-//                 this.turn++;
-//                 this.broadcast('turn', this.turn);
-//             }
-//             await this.sleep(500);
-//         }
-//     }
-// }

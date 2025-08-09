@@ -1,5 +1,6 @@
 import { phaserEvents } from '@/events/EventCenter';
 import { useSceneStore } from '@/ui/stores/sceneStore';
+import { usePlayerStore } from '@/ui/stores/playerStore';
 
 export class ResultScene extends Phaser.Scene {
     constructor() {
@@ -16,8 +17,7 @@ export class ResultScene extends Phaser.Scene {
         useSceneStore().set(this.scene.key);
         this.scale.resize(1440, 810);
 
-        const displayText = this.winner === 'draw' ? '相打ち！' : `${this.winner}`;
-        // 背景色などが必要であれば追加してください
+        const displayText = this.getDisplayText();
 
         this.add.sprite(0, 0, 'result').setOrigin(0).setDisplaySize(1440, 810).play('loop');
 
@@ -40,6 +40,29 @@ export class ResultScene extends Phaser.Scene {
             .on('pointerdown', () => {
                 this.scene.start('StartScene');
             });
+    }
+
+    getDisplayText() {
+        const playerStore = usePlayerStore();
+        
+        // 引き分けの場合
+        if (this.winner === 'draw' || this.winner === '引き分け') {
+            return '引き分け';
+        }
+        
+        // 勝者がプレイヤー自身の場合
+        const playerName = playerStore.getPlayerName();
+        if (this.winner === playerName || this.winner === 'player' || this.winner === 'you') {
+            return `${playerName} の勝利！`;
+        }
+        
+        // 相手が勝った場合や、具体的なプレイヤー名が送られてきた場合
+        if (this.winner && this.winner !== '不明') {
+            return `${this.winner} の勝利！`;
+        }
+        
+        // 不明な場合
+        return '結果不明';
     }
 
     shutdown() {
