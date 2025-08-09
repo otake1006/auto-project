@@ -72,6 +72,8 @@ export class GameScene extends Phaser.Scene {
             this.centerX,
             this.centerY + 30,
             () => {
+                const gameStore = useGameStore();
+                gameStore.setMyPlayerReady(true);
                 phaserEvents.emit('ready');
             },
             {
