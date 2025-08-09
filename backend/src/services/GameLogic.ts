@@ -78,14 +78,20 @@ export class GameLogic {
     }
 
     public checkWinner() {
+        const [, player1] = Array.from(this.state.players)[0];
+        const [, player2] = Array.from(this.state.players)[1];
+        
         if (this.state.winCount1 > this.state.winCount2) {
-            this.state.winner = 'player1';
+            this.state.winner = player1.name;
             return this.state.winner;
         }
         if (this.state.winCount1 < this.state.winCount2) {
-            this.state.winner = 'player2';
+            this.state.winner = player2.name;
             return this.state.winner;
         }
+        // 引き分けの場合
+        this.state.winner = 'draw';
+        return this.state.winner;
     }
 
     public randomSkills() {
