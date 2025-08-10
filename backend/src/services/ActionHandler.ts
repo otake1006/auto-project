@@ -25,8 +25,8 @@ export class ActionHandler {
         console.log(player.buffs.toJSON(), 'はじめ');
         if (this.state.gameState === 'ingame') return;
         if (this.state.gameState === 'endgame') return;
-        const skillSets = this.skillsToArraySchema(payload);
-        const skillSetId = this.extractIds([...skillSets]);
+        const skillSets = this.skills(payload);
+        const skillSetId = this.extractIds(payload);
         if (this.checkSkill(skillSetId, client)) {
             player.skill = skillSets;
             player.ready = true;
@@ -107,8 +107,8 @@ export class ActionHandler {
         }
     }
 
-    public skillsToArraySchema(payload: any[]): ArraySchema<Skill> {
-        const skillSets = new ArraySchema<Skill>();
+    public skills(payload: any[]): Skill[] {
+        const skillSets: Skill[] = [];
         payload.forEach((item: any) => {
             const skillSet = new Skill();
             skillSet.skill = item.skill;
