@@ -69,6 +69,7 @@ const props = defineProps({
 const emit = defineEmits(['confirm', 'cancel'])
 
 const selected = ref(null)
+const selectedCards = ref({ skill: [], relic: [] }) // 選択済みカード追跡
 
 // カードがあるタブを自動選択
 const getInitialTab = () => {
@@ -114,13 +115,25 @@ const allTabs = computed(() => {
 const currentCards = computed(() => {
     switch (currentTab.value) {
         case 'skill':
-            return props.skillCards
+            // 選択済みのスキルカードを除外
+            return props.skillCards.filter(card => 
+                !selectedCards.value.skill.some(selected => selected.id === card.id)
+            )
         case 'relic':
-            return props.relicCards
+            // 選択済みのレリックカードを除外
+            return props.relicCards.filter(card => 
+                !selectedCards.value.relic.some(selected => selected.id === card.id)
+            )
         default:
             return []
     }
 })
+
+// 両方のカードタイプがあるかどうか
+const hasBothTypes = computed(() => {
+    return props.skillCards.length > 0 && props.relicCards.length > 0
+})
+
 
 function getCardClasses(card) {
     const baseClasses = []
@@ -146,7 +159,40 @@ function selectCard(card) {
 
 function confirmSelection() {
     if (selected.value) {
-        emit('confirm', { card: selected.value, type: currentTab.value })
+        // 選択済みカードに追加
+        selectedCards.value[currentTab.value].push(selected.value)
+        const selectedCard = selected.value
+        const selectedType = currentTab.value
+        
+        // 選択をリセット
+        selected.value = null
+        
+        // 両方のタイプがあるかチェック
+        if (hasBothTypes.value) {
+            // まだ選択していない方のタブがあるかチェック
+            const skillNotSelected = props.skillCards.length > 0 && selectedCards.value.skill.length === 0
+            const relicNotSelected = props.relicCards.length > 0 && selectedCards.value.relic.length === 0
+            
+            if (skillNotSelected || relicNotSelected) {
+                // 次に選択すべきタブに切り替え
+                if (skillNotSelected) {
+                    currentTab.value = 'skill'
+                } else if (relicNotSelected) {
+                    currentTab.value = 'relic'
+                }
+                
+                // サーバーに通知（モーダルは開いたまま）
+                emit('confirm', { 
+                    card: selectedCard, 
+                    type: selectedType,
+                    keepOpen: true 
+                })
+                return
+            }
+        }
+        
+        // 全て選択完了、モーダルを閉じる
+        emit('confirm', { card: selectedCard, type: selectedType, keepOpen: false })
     }
 }
 
