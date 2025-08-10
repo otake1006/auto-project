@@ -57,23 +57,23 @@ export class NetworkSystem extends System {
         // 受け取ったスキルカードをstoreに追加
         skill.setSelectCards(cards);
 
-        // 既存のレリックカードをチェック
-        const existingRelics = skill.selectRelicCards;
+        // // 既存のレリックカードをチェック
+        // const existingRelics = skill.selectRelicCards;
 
-        // カードが何もない場合は開かない
-        if (cards.length === 0 && existingRelics.length === 0) return;
+        // // カードが何もない場合は開かない
+        // if (cards.length === 0 && existingRelics.length === 0) return;
 
-        this.modalQueue.push({
-            type: 'unified',
-            skillCards: cards,
-            relicCards: existingRelics,
-            modalType: 'unifiedSelect',
-            messageTypes: { skill: 'selectSkill', relic: 'selectRelic' },
-            addMethods: { skill: 'addSkills', relic: 'addRelics' },
-        });
+        // this.modalQueue.push({
+        //     type: 'unified',
+        //     skillCards: cards,
+        //     relicCards: existingRelics,
+        //     modalType: 'unifiedSelect',
+        //     messageTypes: { skill: 'selectSkill', relic: 'selectRelic' },
+        //     addMethods: { skill: 'addSkills', relic: 'addRelics' },
+        // });
 
-        // キュー処理を開始
-        this.processModalQueue();
+        // // キュー処理を開始
+        // this.processModalQueue();
     }
 
     async onReceiveRelic(cards) {
@@ -82,23 +82,23 @@ export class NetworkSystem extends System {
         // 受け取ったレリックカードを選択用カードとして保存
         skill.setSelectRelicCards(cards);
 
-        // 既存のスキルカードをチェック
-        // const existingSkills = skill.selectCards;
+        // 既存のスキルカードをチェック;
+        const existingSkills = skill.selectCards;
 
-        // // カードが何もない場合は開かない
-        // if (existingSkills.length === 0 && cards.length === 0) return;
+        // カードが何もない場合は開かない
+        if (existingSkills.length === 0 && cards.length === 0) return;
 
-        // this.modalQueue.push({
-        //     type: 'unified',
-        //     skillCards: existingSkills,
-        //     relicCards: cards,
-        //     modalType: 'unifiedSelect',
-        //     messageTypes: { skill: 'selectSkill', relic: 'selectRelic' },
-        //     addMethods: { skill: 'addSkills', relic: 'addRelics' },
-        // });
+        this.modalQueue.push({
+            type: 'unified',
+            skillCards: existingSkills,
+            relicCards: cards,
+            modalType: 'unifiedSelect',
+            messageTypes: { skill: 'selectSkill', relic: 'selectRelic' },
+            addMethods: { skill: 'addSkills', relic: 'addRelics' },
+        });
 
-        // // キュー処理を開始
-        // this.processModalQueue();
+        // キュー処理を開始
+        this.processModalQueue();
     }
 
     /**
@@ -138,26 +138,38 @@ export class NetworkSystem extends System {
         const skill = useSkillStore();
 
         if (item.type === 'unified') {
-            // 統合モーダルの場合
-            const result = await modal.open(item.modalType, {
-                skillCards: item.skillCards,
-                relicCards: item.relicCards,
-                initialTab: 'skill',
-            });
+            // 統合モーダルの場合 - 連続選択対応
+            let continuousSelection = true;
 
-            if (result) {
-                const { card, type } = result;
-                this.room.send(item.messageTypes[type], card.id);
+            while (continuousSelection) {
+                const result = await modal.open(item.modalType, {
+                    skillCards: item.skillCards,
+                    relicCards: item.relicCards,
+                    initialTab: 'skill',
+                });
 
-                // カードタイプに応じて適切なメソッドを呼び出し
-                if (type === 'skill') {
-                    skill.addSkills([card]);
-                } else if (type === 'relic') {
-                    skill.addRelics([card]);
+                if (result) {
+                    const { card, type, keepOpen } = result;
+                    this.room.send(item.messageTypes[type], card.id);
+
+                    // カードタイプに応じて適切なメソッドを呼び出し
+                    if (type === 'skill') {
+                        skill.addSkills([card]);
+                    } else if (type === 'relic') {
+                        skill.addRelics([card]);
+                    }
+
+                    // keepOpenがfalseの場合は終了
+                    if (!keepOpen) {
+                        continuousSelection = false;
+                    }
+
+                    skill.clearSelectCards();
+                    skill.clearSelectRelicCards();
+                } else {
+                    // キャンセルされた場合は終了
+                    continuousSelection = false;
                 }
-
-                skill.clearSelectCards();
-                skill.clearSelectRelicCards();
             }
         }
     }

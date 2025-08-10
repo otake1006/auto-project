@@ -22,6 +22,14 @@ export const useModalStore = defineStore('modal', () => {
     }
 
     function close(result = null) {
+        // keepOpenフラグがある場合は、結果を返すがモーダルは開いたままにする
+        if (result && result.keepOpen) {
+            if (resolve) {
+                resolve(result);
+            }
+            return;
+        }
+
         isOpen.value = false;
         modalType.value = null;
         modalPayload.value = null;
